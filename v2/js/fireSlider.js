@@ -178,21 +178,26 @@
 		// Position Slides
 		function positionSlides(array) {
 			var startPostion = Math.ceil(array.length / 2) * -100 + (100 * (settings.active - 1));
+			var positionsFirst = [];
+			var positionsSecond = [];
 			settings.minX = startPostion;
 			settings.maxX = startPostion + ((array.length - 1) * 100);
 			for(var i = Math.floor(array.length / 2); i < array.length; i++) {
 				Velocity(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
+				positionsSecond.push(startPostion);
 				startPostion += 100;
 			}
 			for(i = 0; i < Math.ceil(array.length / 2); i++) {
 				Velocity(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
+				positionsFirst.push(startPostion);
 				startPostion += 100;
 			}
 
+			positions = positionsFirst.concat(positionsSecond);
 			Velocity.Utilities.dequeue(array, options.effect);
 		}
 
@@ -248,10 +253,6 @@
 				}
 			}
 			return result;
-		}
-
-		function getTransformValue(string) {
-			return string.match(/(-?[0-9\.]+)/g);
 		}
 
 		// Starts the timer
@@ -394,16 +395,9 @@
 				settings.currentSlide = (slides.length - 1);
 			}
 
-			// Set Positions
-			if(positions.length) {
-				for(var i = 0; i < slides.length; i++) {
-					slides[i].style.transform = 'translateX('+positions.shift()+'%)';
-				}
-			}
-
 			// Calculate New Position
 			for(var i = 0; i < slides.length; i++) {
-				var oldPosition = parseInt(getTransformValue(slides[i].style.transform));
+				var oldPosition = positions.shift();
 				var newPosition = oldPosition + 100;
 				var zIndex = 0;
 				if(newPosition < settings.minX) {
@@ -445,16 +439,9 @@
 				settings.currentSlide = 0;
 			}
 
-			// Set Positions
-			if(positions.length) {
-				for(var i = 0; i < slides.length; i++) {
-					slides[i].style.transform = 'translateX('+positions.shift()+'%)';
-				}
-			}
-
 			// Calculate next position
 			for(var i = 0; i < slides.length; i++) {
-				var oldPosition = parseInt(getTransformValue(slides[i].style.transform));
+				var oldPosition = positions.shift();
 				var newPosition = oldPosition - 100;
 				var zIndex = 0;
 				if(newPosition < settings.minX) {
