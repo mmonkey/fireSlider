@@ -1,20 +1,25 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
-1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
-1 verbose cli   'install' ]
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'uninstall', 'gulp-browserify' ]
 2 info using npm@1.4.28
-3 info using node@v0.10.33
-4 verbose node symlink C:\Program Files\nodejs\\node.exe
-5 error install Couldn't read dependencies
-6 error package.json ENOENT, open 'C:\Users\mmonkey\Repositories\fireSlider\package.json'
-6 error package.json This is most likely not a problem with npm itself.
-6 error package.json npm can't find a package.json file in your current directory.
-7 error System Windows_NT 6.1.7601
-8 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install"
-9 error cwd C:\Users\mmonkey\Repositories\fireSlider
-10 error node -v v0.10.33
-11 error npm -v 1.4.28
-12 error path C:\Users\mmonkey\Repositories\fireSlider\package.json
-13 error code ENOPACKAGEJSON
-14 error errno 34
-15 verbose exit [ 34, true ]
+3 info using node@v0.10.32
+4 verbose node_modules/gulp-browserify unbuild
+5 info preuninstall gulp-browserify@0.5.0
+6 info uninstall gulp-browserify@0.5.0
+7 verbose true,/Users/cj.ohara/Repositories/fireSlider/node_modules,/Users/cj.ohara/Repositories/fireSlider/node_modules unbuild gulp-browserify@0.5.0
+8 info postuninstall gulp-browserify@0.5.0
+9 error Error: EACCES, unlink '/Users/cj.ohara/Repositories/fireSlider/node_modules/gulp-browserify/node_modules/.bin/browserify'
+9 error  { [Error: EACCES, unlink '/Users/cj.ohara/Repositories/fireSlider/node_modules/gulp-browserify/node_modules/.bin/browserify']
+9 error   errno: 3,
+9 error   code: 'EACCES',
+9 error   path: '/Users/cj.ohara/Repositories/fireSlider/node_modules/gulp-browserify/node_modules/.bin/browserify' }
+10 error Please try running this command again as root/Administrator.
+11 error System Darwin 12.5.0
+12 error command "node" "/usr/local/bin/npm" "uninstall" "gulp-browserify"
+13 error cwd /Users/cj.ohara/Repositories/fireSlider
+14 error node -v v0.10.32
+15 error npm -v 1.4.28
+16 error path /Users/cj.ohara/Repositories/fireSlider/node_modules/gulp-browserify/node_modules/.bin/browserify
+17 error code EACCES
+18 error errno 3
+19 error stack Error: EACCES, unlink '/Users/cj.ohara/Repositories/fireSlider/node_modules/gulp-browserify/node_modules/.bin/browserify'
+20 verbose exit [ 3, true ]

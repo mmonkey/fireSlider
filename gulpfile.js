@@ -5,28 +5,39 @@ var gulp = require('gulp'),
 	browserSync = require('browser-sync');
 
 gulp.task('lint', function() {
-	return gulp.src(['js/*.js', '!js/**/*.min.js'])
+	return gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
 
+gulp.task('beautify', function() {
+	gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
+		.pipe(uglify({
+			output: {
+				beautify: true,
+				comments: true
+			}
+		}))
+		.pipe(gulp.dest('dist'));
+})
+
 gulp.task('compress', function() {
-	gulp.src(['js/*.js', '!js/**/*.min.js'])
-	.pipe(uglify())
-	.pipe(rename({suffix: '.min'}))
-	.pipe(gulp.dest('dist'));
+	gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
+		.pipe(uglify())
+		.pipe(rename({suffix: '.min'}))
+		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('browser-sync', function() {
 	browserSync.init(null, {
 		server: {
-			baseDir: "./",
-			directory: true
+			baseDir: "./build/",
+			directory: false
 		}
 	});
 });
 
 gulp.task('default', ['browser-sync'], function() {
-	gulp.start('lint', 'compress');
-	gulp.watch('js/*.js', ['lint', 'compress', browserSync.reload]);
+	gulp.start('lint', 'beautify', 'compress');
+	gulp.watch('js/*.js', ['lint', 'beautify', 'compress', browserSync.reload]);
 });
