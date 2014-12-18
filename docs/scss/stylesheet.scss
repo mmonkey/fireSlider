@@ -1,0 +1,16 @@
+@import 'normalize';
+@import 'doc/settings';
+
+body, html {
+  width: 100%;
+}
+
+#page-title {
+	text-align: center;
+}
+
+.code-block {
+	width: 100%;
+	display: block;
+	background: #ccc;
+}

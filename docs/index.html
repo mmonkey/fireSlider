@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>fireSlider - Test</title>
+	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+
+	<script src="vendor/js/velocity.min.js"></script>
+	<script src="js/fireSlider.js"></script>
+
+
+</head>
+<body>
+
+	<h1 id="page-title">FireSlider</h1>
+
+	<div id="spotlight_section">
+		<ul id="fireSlider">
+			<li class="slide-1">1<a href="#">Test</a></li>
+			<li class="slide-2">2<a href="#">Test</a></li>
+			<li class="slide-3">3<a href="#">Test</a></li>
+			<li class="slide-4">4<a href="#">Test</a></li>
+			<li class="slide-5">5<a href="#">Test</a></li>
+		</ul>
+
+		<div id="pager"></div>
+	</div>
+
+	<a id="prev" href="">Prev</a>
+	<a id="next" href="">Next</a>
+
+
+<footer>
+		<script type="text/javascript">
+		var slider = new fireSlider(
+			'#fireSlider',
+			{
+				show: 1,
+				active: 1,
+				prev: '#prev',
+				next: '#next',
+				speed: 500,
+				duration: 4000
+			},
+			[
+				{breakpoint: 480, show: 1, active: 1},
+				{breakpoint: 960, show: 1, active: 1}
+			]
+		);
+	</script>
+</footer>
+
+
+</body>
+</htm>
