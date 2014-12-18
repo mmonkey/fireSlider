@@ -115,13 +115,24 @@
 
 		// Duplicates slides based on the multiplier, returns new array
 		function multiplySlides(array, multiplier) {
-			var additional = (settings.totalSlides * multiplier) - array.length;
-			for(var i = 0; i < additional; i++) {
-				var temp = array[i % settings.totalSlides].cloneNode(true);
-				if(hasClass(temp, 'fire-slider-active')) {
-					removeClass(temp, 'fire-slider-active');
+			var difference = (settings.totalSlides * multiplier) - array.length;
+
+			// Add elements if there is a possitive difference
+			if(difference > 0) {
+				for(var i = 0; i < difference; i++) {
+					var temp = array[i % settings.totalSlides].cloneNode(true);
+					if(hasClass(temp, 'fire-slider-active')) {
+						removeClass(temp, 'fire-slider-active');
+					}
+					slider.appendChild(temp);
 				}
-				slider.appendChild(temp);
+			}
+
+			// Remove elements if there is a negative difference
+			if(difference < 0) {
+				for(var i = array.length - 1; i >= (array.length + difference); i--) {
+					slider.removeChild(slides[i]);
+				}
 			}
 		}
 
@@ -199,19 +210,6 @@
 			positions = positionsFirst.concat(positionsSecond);
 			Velocity.Utilities.dequeue(array, options.effect);
 		}
-
-		// Update slides postion based on current slide postion
-		/*function shiftSlides(array) {
-			for(var i = 0; i < (settings.currentSlide); i++) {
-				for(var j = 0; j < array.length; j++) {
-					if(Math.floor(parseFloat(array[j].style.left) * 10000) === Math.floor(parseFloat(settings.minX) * 10000)) {
-						array[j].style.left = parseFloat(settings.maxX) + '%';
-					} else {
-						array[j].style.left = (parseFloat(array[j].style.left) - settings.slideWidthPercent) + '%';
-					}
-				}
-			}
-		}*/
 
 		// Create and trigger an event
 		function triggerEvent(element, eventName) {
@@ -303,45 +301,24 @@
 			var multiplier = calculateMultiplier();
 
 			if(slides.length !== (multiplier * settings.totalSlides)) {
-				var temp = listToArray(slides);
 
-				// Unshift Temp[]
-				//unshiftArray(temp, Math.floor(temp.length / 2));
+				// Remove active class
+				removeClass(slides[settings.currentSlide], 'fire-slider-active');
 
-				// Find index of active element, store the index and remove class
-				//var index = getClassIndex(temp, "fire-slider-active");
-				//removeClass(temp[index], 'fire-slider-active');
+				// Update currentSlide
+				settings.currentSlide = settings.currentSlide % settings.totalSlides;
 
-				// Multiply slides with new multiplier
-				temp = multiplySlides(temp, multiplier);
-				//addClass(newArr[index], 'fire-slider-active');
+				multiplySlides(slides, multiplier);
+				
+				// Re-add active class
+				addClass(slides[settings.currentSlide], 'fire-slider-active');
 
-				// Shift newArr[]
-				//var reshift = Math.floor(newArr.length / 2);
-				//shiftArray(newArr, reshift);
-
-				// Re-add active class and update active
-				//settings.currentSlide = index;
-
-				// Empty slider
-				slider.innerHTML = '';
-
-				// Re-position Elements
-				positionSlides(temp);
-				//shiftSlides(newArr);
-
-				// Save new slides array
-				slides = temp.slice();
-
-				// Add new elements to slider
-				var totalToAppend = temp.length;
-				for(i = 0; i < totalToAppend; i++) {
-					slider.appendChild(temp.shift());
-				}
+				// Re-position slides
+				reloadSlider();
+				positionSlides(slides);
 
 			} else {
-				//positionSlides(slides);
-				//shiftSlides(slides);
+				positionSlides(slides);
 			}
 		}
 
