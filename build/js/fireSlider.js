@@ -74,41 +74,6 @@
 			return result;
 		}
 
-		// Returns the last index of the array that contains the class
-		function getClassIndex(array, className) {
-			var index = -1;
-			for(var i = 0; i < array.length; i++) {
-				if( (" " + array[i].className + " " ).indexOf( " " + className + " " ) > -1 ) {
-					index = i;
-				}
-			}
-			return index;
-		}
-
-		// Returns a new array from a DOM list
-		function listToArray(list) {
-			var result = [];
-			for(var i = 0; i < list.length; i++) {
-				var temp = list[i].cloneNode(true);
-				result.push(temp);
-			}
-			return result;
-		}
-
-		// Cycles n elemnts from the end of the array to the beginning of the array
-		function shiftArray(array, amount) {
-			for(var i = 0; i < amount; i++) {
-				array.unshift(array.pop(array.length));
-			}
-		}
-
-		// Cycles n elemnts from the beginning of the array to the end of the array
-		function unshiftArray(array, amount) {
-			for(i = 0; i < amount; i++) {
-				array.push(array.shift());
-			}
-		}
-
 		function reloadSlider() {
 			slides = slider.querySelectorAll(':scope > ' + options.slide);
 		}
@@ -178,7 +143,7 @@
 			if(settings.slideWidth * settings.totalSlides < settings.windowWidth) {
 				addSlides = Math.ceil((settings.windowWidth - (settings.slideWidth * settings.totalSlides)) / settings.slideWidth);
 			}
-			addSlides += 2;
+			addSlides += settings.totalSlides * 2;
 
 			// Create a multiply based on the number of additional slides needed
 			if(addSlides > 0) {
@@ -313,6 +278,9 @@
 
 		// Refresh positions, breakpoints and slide count
 		function refresh() {
+			// Pause transitions
+			pause();
+
 			// Update breakpoints and width settings
 			settings.windowWidth = window.innerWidth;
 			settings.sliderWidth = slider.offsetWidth;
@@ -355,10 +323,9 @@
 				calculatePositions(slider, settings.currentSlide);
 				Velocity.Utilities.dequeue(slides, options.effect);
 			}
-		}
 
-		function resetZIndex(element) {
-			element.style.zIndex = '';
+			// Play Transitions
+			play();
 		}
 
 		// Basic slide transition effect
@@ -487,45 +454,69 @@
 				// Stop Timer
 				pause();
 
-				// get current slides
-				var items = slider.querySelectorAll(':scope > ' + options.slide);
-				
-				// Create an array of current positions
-				var positions = [];
-				for(var i = 0; i < items.length; i++) {
-					positions.push(items[i].style.left);
-				}
+				// Re-load slides
+				reloadSlider();
 
 				// Remove active classes
-				var activeSlide = getClassIndex(items, 'fire-slider-active');
-				removeClass(items[activeSlide], 'fire-slider-active');
+				removeClass(slides[settings.currentSlide], 'fire-slider-active');
 				removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
 				// Using the difference, determine where the slides' next position will be and send to transition manager
-				if(difference > 0) {
-					for(i = difference; i < items.length; i++) {
-						transitionManager(items[i], parseFloat(positions.shift()), {direction: 'next', multiplier: Math.abs(difference)});
+				if(difference < 0) {
+					
+					// Previous Direction
+					for(var i = 0; i < slides.length; i++) {
+						var oldPositionPrev = positions.shift();
+						var newPositionPrev = oldPositionPrev;
+						var snappingPrev = false;
+
+						for(var j = 0; j < Math.abs(difference); j++) {
+							newPositionPrev = newPositionPrev + 100;
+							if(newPositionPrev < settings.minX) {
+								newPositionPrev = settings.maxX;
+								snappingPrev = true;
+							}
+							if(newPositionPrev > settings.maxX) {
+								newPositionPrev = settings.minX;
+								snappingPrev = true;
+							}
+						}
+						transitionManager(slides[i], {oldPosition: oldPositionPrev, newPosition: newPositionPrev, snapping: snappingPrev});
+						positions.push(newPositionPrev);
 					}
-					for(i = 0; i < difference; i++) {
-						transitionManager(items[i], parseFloat(positions.shift()), {direction: 'next', multiplier: Math.abs(difference)});
-					}
+
 				} else {
-					for(i = (items.length + difference); i < items.length; i++) {
-						transitionManager(items[i], parseFloat(positions.shift()), {direction: 'prev', multiplier: Math.abs(difference)});
-					}
-					for(i = 0; i < (items.length + difference); i++) {
-						transitionManager(items[i], parseFloat(positions.shift()), {direction: 'prev', multiplier: Math.abs(difference)});
+					
+					// Next Direction
+					for(var k = 0; k < slides.length; k++) {
+						var oldPositionNext = positions.shift();
+						var newPositionNext = oldPositionNext;
+						var snappingNext = false;
+
+						for(var l = 0; l < Math.abs(difference); l++) {
+							newPositionNext = newPositionNext - 100;
+							if(newPositionNext < settings.minX) {
+								newPositionNext = settings.maxX;
+								snappingNext = true;
+							}
+							if(newPositionNext > settings.maxX) {
+								newPositionNext = settings.minX;
+								snappingNext = true;
+							}
+						}
+						transitionManager(slides[k], {oldPosition: oldPositionNext, newPosition: newPositionNext, snapping: snappingNext});
+						positions.push(newPositionNext);
 					}
 				}
 
 				// Perform transitions
-				Velocity.Utilities.dequeue(items, options.effect);
+				Velocity.Utilities.dequeue(slides, options.effect);
 
 				// Set current slide
-				settings.currentSlide = (settings.currentSlide + difference) % items.length;
+				settings.currentSlide = (settings.currentSlide + difference) % slides.length;
 
 				// Add new active classes
-				addClass(items[(settings.currentSlide + Math.floor(items.length / 2)) % items.length], 'fire-slider-active');
+				addClass(slides[settings.currentSlide], 'fire-slider-active');
 				addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
 				// Restart timer
