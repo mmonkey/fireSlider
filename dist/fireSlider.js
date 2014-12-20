@@ -1,3 +1,4 @@
+/* fireSlider (1.0.0). (C) 2014 CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
 !function() {
     fireSlider = function(e, t, i) {
         // Add class to node's classList
