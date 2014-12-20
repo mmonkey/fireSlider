@@ -130,8 +130,8 @@
 
 			// Remove elements if there is a negative difference
 			if(difference < 0) {
-				for(var i = array.length - 1; i >= (array.length + difference); i--) {
-					slider.removeChild(slides[i]);
+				for(var j = array.length - 1; j >= (array.length + difference); j--) {
+					slider.removeChild(slides[j]);
 				}
 			}
 		}
@@ -332,17 +332,14 @@
 			if(opts.multiplier) {
 				offset = opts.multiplier * 100;
 			}
+			
 			Velocity(element, {translateX: (opts.oldPosition + '%')}, {duration: 0, queue: options.effect});
-			Velocity(element, {translateX: (opts.newPosition + '%')}, {duration: options.speed, queue: options.effect,
-				begin: function() {
-					if(opts.zIndex === -1) {
-						element.style.zIndex = -1;
-					}
-				},
-				complete: function() {
-					element.style.zIndex = '';
-				}
-			});
+
+			if(opts.snapping) {
+				Velocity(element, {translateX: (opts.newPosition + '%')}, {duration: 0, queue: options.effect});
+			} else {
+				Velocity(element, {translateX: (opts.newPosition + '%')}, {duration: options.speed, queue: options.effect});
+			}
 		}
 
 		// Routes slide to correct transition
@@ -375,16 +372,16 @@
 			for(var i = 0; i < slides.length; i++) {
 				var oldPosition = positions.shift();
 				var newPosition = oldPosition + 100;
-				var zIndex = 0;
+				var snapping = false;
 				if(newPosition < settings.minX) {
 					newPosition = settings.maxX;
-					zIndex = -1;
+					snapping = true;
 				}
 				if(newPosition > settings.maxX) {
 					newPosition = settings.minX;
-					zIndex = -1;
+					snapping = true;
 				}
-				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, zIndex: zIndex});
+				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping});
 				positions.push(newPosition);
 			}
 
@@ -419,16 +416,16 @@
 			for(var i = 0; i < slides.length; i++) {
 				var oldPosition = positions.shift();
 				var newPosition = oldPosition - 100;
-				var zIndex = 0;
+				var snapping = false;
 				if(newPosition < settings.minX) {
 					newPosition = settings.maxX;
-					zIndex = -1;
+					snapping = true;
 				}
 				if(newPosition > settings.maxX) {
 					newPosition = settings.minX;
-					zIndex = -1;
+					snapping = true;
 				}
-				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, zIndex: zIndex});
+				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping});
 				positions.push(newPosition);
 			}
 
