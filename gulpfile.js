@@ -17,8 +17,19 @@ gulp.task('sass', function() {
 		.pipe(browserSync.reload({stream: true}));
 });
 
+gulp.task('doc-sass', function() {
+	return gulp.src(['docs/scss/*.scss', '!docs/scss/_*.scss'])
+		.pipe(sass({
+			style: 'compressed',
+			sourcemapPath: 'docs/css'
+		}))
+		.on('error', function (err) { console.log(err.message); })
+		.pipe(gulp.dest('docs/css'))
+		.pipe(browserSync.reload({stream: true}));
+});
+
 gulp.task('lint', function() {
-	return gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
+	return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', 'docs/js/*.js', '!docs/js/**/*.min.js'])
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
@@ -44,15 +55,16 @@ gulp.task('compress', function() {
 gulp.task('browser-sync', function() {
 	browserSync.init(null, {
 		server: {
-			baseDir: "./build/",
-			directory: false
+			baseDir: "./",
+			directory: true
 		}
 	});
 });
 
 gulp.task('default', ['browser-sync'], function() {
-	gulp.start('sass', 'lint', 'beautify', 'compress');
+	gulp.start('sass', 'doc-sass', 'lint', 'beautify', 'compress');
 	gulp.watch('build/js/*.js', ['lint', 'beautify', 'compress', browserSync.reload]);
 	gulp.watch('**/*.html', browserSync.reload);
 	gulp.watch('build/scss/**/*.scss', ['sass']);
+	gulp.watch('docs/scss/**/*.scss', ['doc-sass']);
 });
