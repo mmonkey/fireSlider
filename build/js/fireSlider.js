@@ -134,6 +134,8 @@
 					slider.removeChild(slides[j]);
 				}
 			}
+
+			return difference;
 		}
 
 		// Updates show and active based on breakpoints set in options
@@ -199,7 +201,7 @@
 				positionsSecond.push(startPostion);
 				startPostion += 100;
 			}
-			for(i = 0; i < Math.ceil(array.length / 2); i++) {
+			for(i = 0; i < Math.floor(array.length / 2); i++) {
 				Velocity(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
@@ -209,6 +211,27 @@
 
 			positions = positionsFirst.concat(positionsSecond);
 			Velocity.Utilities.dequeue(array, options.effect);
+		}
+
+		// Calculates positions for revolution amount
+		function calculatePositions(array, revolutions) {
+			for(var i = 0; i < slides.length; i++) {
+				var oldPosition = positions.shift();
+				var newPosition = oldPosition;
+
+				for(var j = 0; j < revolutions; j++) {
+					newPosition = newPosition - 100;
+					if(newPosition < settings.minX) {
+						newPosition = settings.maxX;
+					}
+					if(newPosition > settings.maxX) {
+						newPosition = settings.minX;
+					}
+				}
+
+				Velocity(slides[i], {translateX: (newPosition + '%')}, {duration: 0, queue: options.effect});
+				positions.push(newPosition);
+			}
 		}
 
 		// Create and trigger an event
@@ -285,7 +308,7 @@
 			positionSlides(slides);
 
 			triggerEvent(slider, 'fire-slider-init');
-			//play();
+			play();
 		}
 
 		// Refresh positions, breakpoints and slide count
@@ -305,20 +328,32 @@
 				// Remove active class
 				removeClass(slides[settings.currentSlide], 'fire-slider-active');
 
-				// Update currentSlide
-				settings.currentSlide = settings.currentSlide % settings.totalSlides;
+				// Multipy slides and calculate difference
+				var difference = multiplySlides(slides, multiplier);
 
-				multiplySlides(slides, multiplier);
-				
+				// Fetch new slider
+				reloadSlider();
+
+				// Position slides
+				positionSlides(slides);
+
+				if(settings.currentSlide > slides.length) {
+
+					// Calculate current slide
+					settings.currentSlide = (settings.currentSlide % slides.length);
+
+					// Get new positions
+					calculatePositions(slider, Math.abs(difference));
+					Velocity.Utilities.dequeue(slides, options.effect);
+				}
+
 				// Re-add active class
 				addClass(slides[settings.currentSlide], 'fire-slider-active');
 
-				// Re-position slides
-				reloadSlider();
-				positionSlides(slides);
-
 			} else {
 				positionSlides(slides);
+				calculatePositions(slider, settings.currentSlide);
+				Velocity.Utilities.dequeue(slides, options.effect);
 			}
 		}
 
@@ -357,7 +392,7 @@
 		// Go to previous slide
 		function prev() {
 			// Stop timer
-			//pause();
+			pause();
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -395,13 +430,13 @@
 			triggerEvent(slider, 'fire-slider-prev');
 
 			// Restart timer
-			//play();
+			play();
 		}
 
 		// Go to next slide
 		function next() {
 			// Stop timer
-			//pause();
+			pause();
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -439,7 +474,7 @@
 			triggerEvent(slider, 'fire-slider-prev');
 
 			// Restart timer
-			//play();
+			play();
 		}
 
 		// Go to the slide relative to the index of a pager span

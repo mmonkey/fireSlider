@@ -4,13 +4,13 @@ var gulp = require('gulp'),
 	rename = require('gulp-rename'),
 	uglify = require('gulp-uglify'),
 	notify = require('gulp-notify'),
+	util = require('gulp-util'),
 	browserSync = require('browser-sync');
 
 gulp.task('sass', function() {
 	return gulp.src(['build/scss/*.scss', '!build/scss/_*.scss'])
 		.pipe(sass({
-			style: 'compressed',
-			sourcemapPath: 'build/css'
+			style: 'compressed'
 		}))
 		.on('error', function (err) { console.log(err.message); })
 		.pipe(gulp.dest('build/css'))
@@ -20,8 +20,7 @@ gulp.task('sass', function() {
 gulp.task('doc-sass', function() {
 	return gulp.src(['docs/scss/*.scss', '!docs/scss/_*.scss'])
 		.pipe(sass({
-			style: 'compressed',
-			sourcemapPath: 'docs/css'
+			style: 'compressed'
 		}))
 		.on('error', function (err) { console.log(err.message); })
 		.pipe(gulp.dest('docs/css'))
@@ -47,7 +46,7 @@ gulp.task('beautify', function() {
 
 gulp.task('compress', function() {
 	gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
-		.pipe(uglify())
+		.pipe(uglify().on('error', util.log))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('dist'));
 });
