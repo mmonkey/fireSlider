@@ -61,7 +61,6 @@ gulp.task('browser-sync', function() {
 });
 
 gulp.task('default', ['browser-sync'], function() {
-	gulp.start('sass', 'doc-sass', 'lint', 'beautify', 'compress');
 	gulp.watch('build/scss/**/*.scss', ['sass']);
 	gulp.watch('docs/scss/**/*.scss', ['doc-sass']);
 	gulp.watch('**/*.html', browserSync.reload);
