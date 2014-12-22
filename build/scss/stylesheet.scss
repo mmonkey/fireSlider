@@ -4,14 +4,14 @@ body, html {
 	width: 100%;
 }
 
-#spotlight_section {
+.section {
 	width: 100%;
 	overflow: hidden;
 	background: #000;
 	position: relative;
 }
 
-#pager {
+#pager, #pager2 {
 	width: 300px;
 	position: absolute;
 	bottom: 12px;
@@ -43,6 +43,77 @@ body, html {
 	padding: 0;
 	position: relative;
 	//overflow: hidden;
+
+	li {
+		display: block;
+		height: 100%;
+		font-size: 120px;
+		color: #fff;
+		text-align: center;
+		padding-top: 80px;
+		opacity: 0.25;
+		transition: opacity 0.5s ease;
+
+		a {
+			display: block;
+			width: 80%;
+			margin: 0 10%;
+			padding: 4px 0;
+			font-size: 16px;
+			background: darken(#fff, .10);
+			border: 2px solid darken(#fff, .10);
+			border-radius: 5px;
+			text-decoration: none;
+			font-weight: bold;
+			color: #013940;
+			
+			&:hover {
+				background: #013940;
+				color: darken(#fff, .10);
+			}
+		}
+
+		ul {
+			height: auto;
+			
+			li {
+				display: block;
+				height: auto;
+				font-size: 16px;
+				padding-top: 0;
+				text-align: left;
+			}
+		}
+	}
+	li.slide-1 {
+		background: #012840;
+	}
+	li.slide-2 {
+		background: #013940;
+	}
+	li.slide-3 {
+		background: #f2d857;
+	}
+	li.slide-4 {
+		background: #d98723;
+	}
+	li.slide-5 {
+		background: #bf3604;
+	}
+	li.fire-slider-active {
+		opacity: 1;
+	}
+}
+
+
+#fireSlider2 {
+	width: 100%;
+	max-width: 1200px;
+	height: 300px;
+	margin: 0 auto;
+	padding: 0;
+	position: relative;
+	overflow: hidden;
 
 	li {
 		display: block;

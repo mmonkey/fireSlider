@@ -15,7 +15,7 @@
 
 	<h1>FireSlider - Development</h1>
 
-	<div id="spotlight_section">
+	<div class="section">
 		<ul id="fireSlider">
 			<li class="slide-1">1
 				<ul>
@@ -38,6 +38,30 @@
 	<a id="prev" href="">Prev</a>
 	<a id="next" href="">Next</a>
 
+
+	<div class="section">
+		<ul id="fireSlider2">
+			<li class="slide-1">1
+				<ul>
+					<li>1</li>
+					<li>2</li>
+					<li>3</li>
+				</ul>
+			</li>
+			<li class="slide-2">2
+				<a href="">Test Link Clicking</a>
+			</li>
+			<li class="slide-3">3</li>
+			<li class="slide-4">4</li>
+			<li class="slide-5">5</li>
+		</ul>
+
+		<div id="pager2"></div>
+	</div>
+
+	<a id="prev2" href="">Prev</a>
+	<a id="next2" href="">Next</a>
+
 	<script type="text/javascript">
 		var slider = new fireSlider(
 			'#fireSlider',
@@ -47,11 +71,30 @@
 				prev: '#prev',
 				next: '#next',
 				speed: 500,
-				duration: 4000
+				delay: 4000
 			},
 			[
-				{breakpoint: 480, show: 1, active: 1},
+				{breakpoint: 520, show: 1, active: 1},
 				{breakpoint: 960, show: 3, active: 2}
+			]
+		);
+
+		var slider2 = new fireSlider(
+			'#fireSlider2',
+			{
+				show: 5,
+				active: 3,
+				prev: '#prev2',
+				next: '#next2',
+				pager: '#pager2',
+				speed: 300,
+				delay: 6200
+			},
+			[
+				{breakpoint: 360, show: 1, active: 1},
+				{breakpoint: 580, show: 2, active: 1},
+				{breakpoint: 720, show: 3, active: 2},
+				{breakpoint: 860, show: 4, active: 2}
 			]
 		);
 	</script>

@@ -1,4 +1,4 @@
-/* fireSlider (1.0.0). (C) 2014 CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.0). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 (function () {
 
 	fireSlider = function(selector, options, breakpoints) {
@@ -255,6 +255,8 @@
 		function init() {
 
 			setupPager();
+
+			console.log(options);
 
 			// Check Breakpoints
 			updateBreakpoints();
