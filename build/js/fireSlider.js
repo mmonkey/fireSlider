@@ -6,9 +6,6 @@
 			slide: 'li',
 			show: 1,
 			active: 1,
-			//prev: '#prev',
-			//next: '#next',
-			//pager: '#pager',
 			speed: 500,
 			delay: 5000,
 			effect: 'slideInOut',
@@ -32,9 +29,6 @@
 		var settings = {
 			show: options.show,
 			active: options.active,
-			//prev: document.querySelectorAll(options.prev)[0],
-			//next: document.querySelectorAll(options.next)[0],
-			//pager: document.querySelectorAll(options.pager)[0],
 			pagerSpans: [],
 			totalSlides: slides.length,
 			windowWidth: window.innerWidth,
@@ -45,18 +39,18 @@
 			minX: 0,
 			maxX: 0
 		};
-
 		if(typeof options.prev !== "undefined") {
 			settings.prev = document.querySelectorAll(options.prev)[0];
 		}
-
 		if(typeof options.next !== "undefined") {
 			settings.next = document.querySelectorAll(options.next)[0];
 		}
-
 		if(typeof options.pager !== "undefined") {
 			settings.pager = document.querySelectorAll(options.pager)[0];
 		}
+
+		// Set up Velocity
+		if(window.jQuery) { var V = $.Velocity; } else { var V = Velocity; }
 
 		// Add class to node's classList
 		function addClass(node, newClass) {
@@ -173,14 +167,14 @@
 			settings.minX = startPostion;
 			settings.maxX = startPostion + ((array.length - 1) * 100);
 			for(var i = Math.floor(array.length / 2); i < array.length; i++) {
-				Velocity(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
+				V(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
 				positionsSecond.push(startPostion);
 				startPostion += 100;
 			}
 			for(i = 0; i < Math.floor(array.length / 2); i++) {
-				Velocity(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
+				V(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
 				positionsFirst.push(startPostion);
@@ -188,7 +182,7 @@
 			}
 
 			positions = positionsFirst.concat(positionsSecond);
-			Velocity.Utilities.dequeue(array, options.effect);
+			V.Utilities.dequeue(array, options.effect);
 		}
 
 		// Calculates positions for revolution amount
@@ -207,7 +201,7 @@
 					}
 				}
 
-				Velocity(slides[i], {translateX: (newPosition + '%')}, {duration: 0, queue: options.effect});
+				V(slides[i], {translateX: (newPosition + '%')}, {duration: 0, queue: options.effect});
 				positions.push(newPosition);
 			}
 		}
@@ -327,7 +321,7 @@
 
 					// Get new positions
 					calculatePositions(slider, Math.abs(difference));
-					Velocity.Utilities.dequeue(slides, options.effect);
+					V.Utilities.dequeue(slides, options.effect);
 				}
 
 				// Re-add active class
@@ -336,7 +330,7 @@
 			} else {
 				positionSlides(slides);
 				calculatePositions(slider, settings.currentSlide);
-				Velocity.Utilities.dequeue(slides, options.effect);
+				V.Utilities.dequeue(slides, options.effect);
 			}
 
 			// Play Transitions
@@ -350,12 +344,12 @@
 				offset = opts.multiplier * 100;
 			}
 			
-			Velocity(element, {translateX: (opts.oldPosition + '%')}, {duration: 0, queue: options.effect});
+			V(element, {translateX: (opts.oldPosition + '%')}, {duration: 0, queue: options.effect});
 
 			if(opts.snapping) {
-				Velocity(element, {translateX: (opts.newPosition + '%')}, {duration: 0, queue: options.effect});
+				V(element, {translateX: (opts.newPosition + '%')}, {duration: 0, queue: options.effect});
 			} else {
-				Velocity(element, {translateX: (opts.newPosition + '%')}, {duration: options.speed, queue: options.effect});
+				V(element, {translateX: (opts.newPosition + '%')}, {duration: options.speed, queue: options.effect});
 			}
 		}
 
@@ -404,7 +398,7 @@
 				positions.push(newPosition);
 			}
 
-			Velocity.Utilities.dequeue(slides, options.effect);
+			V.Utilities.dequeue(slides, options.effect);
 
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -452,7 +446,7 @@
 				positions.push(newPosition);
 			}
 
-			Velocity.Utilities.dequeue(slides, options.effect);
+			V.Utilities.dequeue(slides, options.effect);
 
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -533,7 +527,7 @@
 				}
 
 				// Perform transitions
-				Velocity.Utilities.dequeue(slides, options.effect);
+				V.Utilities.dequeue(slides, options.effect);
 
 				// Set current slide
 				settings.currentSlide = (settings.currentSlide + difference) % slides.length;
