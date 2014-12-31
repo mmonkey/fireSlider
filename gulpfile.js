@@ -42,7 +42,7 @@ gulp.task('beautify', function() {
 			}
 		}))
 		.pipe(gulp.dest('dist'));
-})
+});
 
 gulp.task('compress', function() {
 	gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])

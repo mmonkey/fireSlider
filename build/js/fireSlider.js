@@ -6,9 +6,9 @@
 			slide: 'li',
 			show: 1,
 			active: 1,
-			prev: '#prev',
-			next: '#next',
-			pager: '#pager',
+			//prev: '#prev',
+			//next: '#next',
+			//pager: '#pager',
 			speed: 500,
 			delay: 5000,
 			effect: 'slideInOut',
@@ -32,9 +32,9 @@
 		var settings = {
 			show: options.show,
 			active: options.active,
-			prev: document.querySelectorAll(options.prev)[0],
-			next: document.querySelectorAll(options.next)[0],
-			pager: document.querySelectorAll(options.pager)[0],
+			//prev: document.querySelectorAll(options.prev)[0],
+			//next: document.querySelectorAll(options.next)[0],
+			//pager: document.querySelectorAll(options.pager)[0],
 			pagerSpans: [],
 			totalSlides: slides.length,
 			windowWidth: window.innerWidth,
@@ -45,6 +45,18 @@
 			minX: 0,
 			maxX: 0
 		};
+
+		if(typeof options.prev !== "undefined") {
+			settings.prev = document.querySelectorAll(options.prev)[0];
+		}
+
+		if(typeof options.next !== "undefined") {
+			settings.next = document.querySelectorAll(options.next)[0];
+		}
+
+		if(typeof options.pager !== "undefined") {
+			settings.pager = document.querySelectorAll(options.pager)[0];
+		}
 
 		// Add class to node's classList
 		function addClass(node, newClass) {
@@ -221,12 +233,14 @@
 
 		// Fills pager with empty spans based on total slides, adds active class to the first slide
 		function setupPager() {
-			for(var i = 0; i < settings.totalSlides; i++) {
-				var span = document.createElement('span');
-				settings.pager.appendChild(span);
+			if(typeof settings.pager !== "undefined") {
+				for(var i = 0; i < settings.totalSlides; i++) {
+					var span = document.createElement('span');
+					settings.pager.appendChild(span);
+				}
+				settings.pagerSpans = settings.pager.querySelectorAll(':scope > span');
+				addClass(settings.pagerSpans[0], 'fire-pager-active');
 			}
-			settings.pagerSpans = settings.pager.querySelectorAll(':scope > span');
-			addClass(settings.pagerSpans[0], 'fire-pager-active');
 		}
 
 		// Gets the index of a DOM element relative to it's parent element
@@ -255,8 +269,6 @@
 		function init() {
 
 			setupPager();
-
-			console.log(options);
 
 			// Check Breakpoints
 			updateBreakpoints();
@@ -366,7 +378,9 @@
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
-			removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			if(typeof settings.pager !== "undefined") {
+				removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			}
 
 			settings.currentSlide -= 1;
 			if(settings.currentSlide < 0) {
@@ -394,7 +408,9 @@
 
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
-			addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			if(typeof settings.pager !== "undefined") {
+				addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			}
 
 			// Trigger event fire-slider-prev
 			triggerEvent(slider, 'fire-slider-prev');
@@ -410,7 +426,9 @@
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
-			removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			if(typeof settings.pager !== "undefined") {
+				removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			}
 
 			settings.currentSlide += 1;
 			if(settings.currentSlide > (slides.length - 1)) {
@@ -438,7 +456,9 @@
 
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
-			addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			if(typeof settings.pager !== "undefined") {
+				addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+			}
 
 			// Trigger event fire-slider-prev
 			triggerEvent(slider, 'fire-slider-prev');
@@ -530,20 +550,26 @@
 		init();
 
 		// Click events
-		settings.next.addEventListener('click', function(e) {
-			e.preventDefault();
-			next();
-		});
-		settings.prev.addEventListener('click', function(e) {
-			e.preventDefault();
-			prev();
-		});
-		settings.pager.addEventListener('click', function(e) {
-			e.preventDefault();
-			if(e.target.tagName === "SPAN") {
-				pagerTransition(getIndex(e.target));
-			}
-		});
+		if(typeof settings.next !== "undefined") {
+			settings.next.addEventListener('click', function(e) {
+				e.preventDefault();
+				next();
+			});
+		}
+		if(typeof settings.prev !== "undefined") {
+			settings.prev.addEventListener('click', function(e) {
+				e.preventDefault();
+				prev();
+			});
+		}
+		if(typeof settings.pager !== "undefined") {
+			settings.pager.addEventListener('click', function(e) {
+				e.preventDefault();
+				if(e.target.tagName === "SPAN") {
+					pagerTransition(getIndex(e.target));
+				}
+			});
+		}
 
 		// Pause on hover events
 		slider.addEventListener('mouseover', function(e) {
