@@ -1,4 +1,4 @@
-/* fireSlider (0.1.1). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.2). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 (function () {
 
 	fireSlider = function(selector, options, breakpoints) {
@@ -49,12 +49,9 @@
 			settings.pager = document.querySelectorAll(options.pager)[0];
 		}
 
-		// Set up Velocity
-		if(window.jQuery) {
-			var V = $.Velocity;
-		} else {
-			var V = Velocity;
-		}
+		// Set up V
+		var V;
+		if(window.jQuery) { V = $.Velocity; } else { V = Velocity; }
 
 		// Add class to node's classList
 		function addClass(node, newClass) {
@@ -165,28 +162,32 @@
 
 		// Position Slides
 		function positionSlides(array) {
-			var startPostion = Math.ceil(array.length / 2) * -100 + (100 * (settings.active - 1));
+			var startPosition = Math.ceil(array.length / 2) * -100 + (100 * (settings.active - 1));
 			var positionsFirst = [];
 			var positionsSecond = [];
-			settings.minX = startPostion;
-			settings.maxX = startPostion + ((array.length - 1) * 100);
+			settings.minX = startPosition;
+			settings.maxX = startPosition + ((array.length - 1) * 100);
 			for(var i = Math.floor(array.length / 2); i < array.length; i++) {
-				V(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
+				V(array[i], {translateX: (startPosition + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
-				positionsSecond.push(startPostion);
-				startPostion += 100;
+				positionsSecond.push(startPosition);
+				startPosition += 100;
 			}
 			for(i = 0; i < Math.floor(array.length / 2); i++) {
-				V(array[i], {translateX: (startPostion + '%')}, {duration: 0, queue: options.effect});
+				V(array[i], {translateX: (startPosition + '%')}, {duration: 0, queue: options.effect});
 				array[i].style.width = settings.slideWidthPercent + '%';
 				array[i].style.position = 'absolute';
-				positionsFirst.push(startPostion);
-				startPostion += 100;
+				positionsFirst.push(startPosition);
+				startPosition += 100;
 			}
 
 			positions = positionsFirst.concat(positionsSecond);
-			V.Utilities.dequeue(array, options.effect);
+			if(window.jQuery) {
+				$(array).dequeue(options.effect);
+			} else {
+				V.Utilities.dequeue(array, options.effect);
+			}
 		}
 
 		// Calculates positions for revolution amount
@@ -325,7 +326,11 @@
 
 					// Get new positions
 					calculatePositions(slider, Math.abs(difference));
-					V.Utilities.dequeue(slides, options.effect);
+					if(window.jQuery) {
+						$(slides).dequeue(options.effect);
+					} else {
+						V.Utilities.dequeue(slides, options.effect);
+					}
 				}
 
 				// Re-add active class
@@ -334,7 +339,11 @@
 			} else {
 				positionSlides(slides);
 				calculatePositions(slider, settings.currentSlide);
-				V.Utilities.dequeue(slides, options.effect);
+				if(window.jQuery) {
+					$(slides).dequeue(options.effect);
+				} else {
+					V.Utilities.dequeue(slides, options.effect);
+				}
 			}
 
 			// Play Transitions
@@ -402,7 +411,11 @@
 				positions.push(newPosition);
 			}
 
-			V.Utilities.dequeue(slides, options.effect);
+			if(window.jQuery) {
+				$(slides).dequeue(options.effect);
+			} else {
+				V.Utilities.dequeue(slides, options.effect);
+			}
 
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -450,7 +463,11 @@
 				positions.push(newPosition);
 			}
 
-			V.Utilities.dequeue(slides, options.effect);
+			if(window.jQuery) {
+				$(slides).dequeue(options.effect);
+			} else {
+				V.Utilities.dequeue(slides, options.effect);
+			}
 
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -531,7 +548,11 @@
 				}
 
 				// Perform transitions
-				V.Utilities.dequeue(slides, options.effect);
+				if(window.jQuery) {
+					$(slides).dequeue(options.effect);
+				} else {
+					V.Utilities.dequeue(slides, options.effect);
+				}
 
 				// Set current slide
 				settings.currentSlide = (settings.currentSlide + difference) % slides.length;

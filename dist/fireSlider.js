@@ -1,4 +1,4 @@
-/* fireSlider (0.1.1). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.0). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 !function() {
     fireSlider = function(e, t, i) {
         // Add class to node's classList
@@ -50,28 +50,28 @@
         function c(e) {
             var i = -100 * Math.ceil(e.length / 2) + 100 * (N.active - 1), n = [], r = [];
             N.minX = i, N.maxX = i + 100 * (e.length - 1);
-            for (var a = Math.floor(e.length / 2); a < e.length; a++) A(e[a], {
+            for (var a = Math.floor(e.length / 2); a < e.length; a++) j(e[a], {
                 translateX: i + "%"
             }, {
                 duration: 0,
                 queue: t.effect
             }), e[a].style.width = N.slideWidthPercent + "%", e[a].style.position = "absolute", 
             r.push(i), i += 100;
-            for (a = 0; a < Math.floor(e.length / 2); a++) A(e[a], {
+            for (a = 0; a < Math.floor(e.length / 2); a++) j(e[a], {
                 translateX: i + "%"
             }, {
                 duration: 0,
                 queue: t.effect
             }), e[a].style.width = N.slideWidthPercent + "%", e[a].style.position = "absolute", 
             n.push(i), i += 100;
-            k = n.concat(r), A.Utilities.dequeue(e, t.effect);
+            k = n.concat(r), window.jQuery ? $(e).dequeue(t.effect) : j.Utilities.dequeue(e, t.effect);
         }
         // Calculates positions for revolution amount
-        function f(e, i) {
+        function u(e, i) {
             for (var n = 0; n < L.length; n++) {
                 for (var r = k.shift(), a = r, d = 0; i > d; d++) a -= 100, a < N.minX && (a = N.maxX), 
                 a > N.maxX && (a = N.minX);
-                A(L[n], {
+                j(L[n], {
                     translateX: a + "%"
                 }, {
                     duration: 0,
@@ -80,7 +80,7 @@
             }
         }
         // Create and trigger an event
-        function u(e, t) {
+        function f(e, t) {
             var i = {};
             document.createEvent ? (i = document.createEvent("HTMLEvents"), i.initEvent(t, !0, !1)) : (i = document.createEventObject(), 
             i.eventType = t), i.eventName = t, document.createEvent ? e.dispatchEvent(i) : e.fireEvent("on" + i.eventType, i);
@@ -116,10 +116,10 @@
             var e = s();
             l(L, e), // Set the first active slide
             N.currentSlide = 0, n(L[N.currentSlide], "fire-slider-active"), // position the elements of the array
-            d(), c(L), u(E, "fire-slider-init"), h();
+            d(), c(L), f(E, "fire-slider-init"), h();
         }
         // Refresh positions, breakpoints and slide count
-        function m() {
+        function w() {
             // Pause transitions
             S(), // Update breakpoints and width settings
             N.windowWidth = window.innerWidth, N.sliderWidth = E.offsetWidth, o(), N.slideWidthPercent = 1 / N.show * 100, 
@@ -134,26 +134,27 @@
                 d(), // Position slides
                 c(L), N.currentSlide > L.length && (// Calculate current slide
                 N.currentSlide = N.currentSlide % L.length, // Get new positions
-                f(E, Math.abs(i)), A.Utilities.dequeue(L, t.effect)), // Re-add active class
+                u(E, Math.abs(i)), window.jQuery ? $(L).dequeue(t.effect) : j.Utilities.dequeue(L, t.effect)), 
+                // Re-add active class
                 n(L[N.currentSlide], "fire-slider-active");
-            } else c(L), f(E, N.currentSlide), A.Utilities.dequeue(L, t.effect);
+            } else c(L), u(E, N.currentSlide), window.jQuery ? $(L).dequeue(t.effect) : j.Utilities.dequeue(L, t.effect);
             // Play Transitions
             h();
         }
         // Basic slide transition effect
-        function w(e, i) {
+        function m(e, i) {
             var n = 0;
-            i.multiplier && (n = 100 * i.multiplier), A(e, {
+            i.multiplier && (n = 100 * i.multiplier), j(e, {
                 translateX: i.oldPosition + "%"
             }, {
                 duration: 0,
                 queue: t.effect
-            }), i.snapping ? A(e, {
+            }), i.snapping ? j(e, {
                 translateX: i.newPosition + "%"
             }, {
                 duration: 0,
                 queue: t.effect
-            }) : A(e, {
+            }) : j(e, {
                 translateX: i.newPosition + "%"
             }, {
                 duration: t.speed,
@@ -164,11 +165,11 @@
         function y(e, i) {
             switch (t.effect) {
               case "slideInOut":
-                w(e, i);
+                m(e, i);
                 break;
 
               default:
-                w(e, i);
+                m(e, i);
             }
         }
         // Go to previous slide
@@ -186,10 +187,10 @@
                     snapping: d
                 }), k.push(a);
             }
-            A.Utilities.dequeue(L, t.effect), // Add active classes
+            window.jQuery ? $(L).dequeue(t.effect) : j.Utilities.dequeue(L, t.effect), // Add active classes
             n(L[N.currentSlide], "fire-slider-active"), "undefined" != typeof N.pager && n(N.pagerSpans[N.currentSlide % N.totalSlides], "fire-pager-active"), 
             // Trigger event fire-slider-prev
-            u(E, "fire-slider-prev"), // Restart timer
+            f(E, "fire-slider-prev"), // Restart timer
             h();
         }
         // Go to next slide
@@ -207,14 +208,14 @@
                     snapping: d
                 }), k.push(a);
             }
-            A.Utilities.dequeue(L, t.effect), // Add active classes
+            window.jQuery ? $(L).dequeue(t.effect) : j.Utilities.dequeue(L, t.effect), // Add active classes
             n(L[N.currentSlide], "fire-slider-active"), "undefined" != typeof N.pager && n(N.pagerSpans[N.currentSlide % N.totalSlides], "fire-pager-active"), 
             // Trigger event fire-slider-prev
-            u(E, "fire-slider-prev"), // Restart timer
+            f(E, "fire-slider-prev"), // Restart timer
             h();
         }
         // Go to the slide relative to the index of a pager span
-        function P(e) {
+        function q(e) {
             var i = N.currentSlide % N.totalSlides, a = e - i;
             if (0 !== a) {
                 // Using the difference, determine where the slides' next position will be and send to transition manager
@@ -224,7 +225,7 @@
                 r(L[N.currentSlide], "fire-slider-active"), r(N.pagerSpans[N.currentSlide % N.totalSlides], "fire-pager-active"), 
                 0 > a) // Previous Direction
                 for (var l = 0; l < L.length; l++) {
-                    for (var o = k.shift(), s = o, c = !1, f = 0; f < Math.abs(a); f++) s += 100, s < N.minX && (s = N.maxX, 
+                    for (var o = k.shift(), s = o, c = !1, u = 0; u < Math.abs(a); u++) s += 100, s < N.minX && (s = N.maxX, 
                     c = !0), s > N.maxX && (s = N.minX, c = !0);
                     y(L[l], {
                         oldPosition: o,
@@ -232,24 +233,24 @@
                         snapping: c
                     }), k.push(s);
                 } else // Next Direction
-                for (var u = 0; u < L.length; u++) {
-                    for (var p = k.shift(), v = p, g = !1, m = 0; m < Math.abs(a); m++) v -= 100, v < N.minX && (v = N.maxX, 
+                for (var f = 0; f < L.length; f++) {
+                    for (var p = k.shift(), v = p, g = !1, w = 0; w < Math.abs(a); w++) v -= 100, v < N.minX && (v = N.maxX, 
                     g = !0), v > N.maxX && (v = N.minX, g = !0);
-                    y(L[u], {
+                    y(L[f], {
                         oldPosition: p,
                         newPosition: v,
                         snapping: g
                     }), k.push(v);
                 }
                 // Perform transitions
-                A.Utilities.dequeue(L, t.effect), // Set current slide
+                window.jQuery ? $(L).dequeue(t.effect) : j.Utilities.dequeue(L, t.effect), // Set current slide
                 N.currentSlide = (N.currentSlide + a) % L.length, // Add new active classes
                 n(L[N.currentSlide], "fire-slider-active"), n(N.pagerSpans[N.currentSlide % N.totalSlides], "fire-pager-active"), 
                 // Restart timer
                 h();
             }
         }
-        var q = {
+        var P = {
             slide: "li",
             show: 1,
             active: 1,
@@ -261,7 +262,7 @@
         };
         // Merge defaults with options
         t = t || {};
-        for (var x in q) q.hasOwnProperty(x) && !t.hasOwnProperty(x) && (t[x] = q[x]);
+        for (var x in P) P.hasOwnProperty(x) && !t.hasOwnProperty(x) && (t[x] = P[x]);
         var E = document.querySelectorAll(e)[0], L = E.querySelectorAll(":scope > " + t.slide), b = {}, k = [], N = {
             show: t.show,
             active: t.active,
@@ -275,18 +276,18 @@
             minX: 0,
             maxX: 0
         };
-        // Set up Velocity
-        if ("undefined" != typeof t.prev && (N.prev = document.querySelectorAll(t.prev)[0]), 
+        "undefined" != typeof t.prev && (N.prev = document.querySelectorAll(t.prev)[0]), 
         "undefined" != typeof t.next && (N.next = document.querySelectorAll(t.next)[0]), 
-        "undefined" != typeof t.pager && (N.pager = document.querySelectorAll(t.pager)[0]), 
-        window.jQuery) var A = $.Velocity; else var A = Velocity;
-        g(), // Click events
+        "undefined" != typeof t.pager && (N.pager = document.querySelectorAll(t.pager)[0]);
+        // Set up V
+        var j;
+        j = window.jQuery ? $.Velocity : Velocity, g(), // Click events
         "undefined" != typeof N.next && N.next.addEventListener("click", function(e) {
             e.preventDefault(), W();
         }), "undefined" != typeof N.prev && N.prev.addEventListener("click", function(e) {
             e.preventDefault(), X();
         }), "undefined" != typeof N.pager && N.pager.addEventListener("click", function(e) {
-            e.preventDefault(), "SPAN" === e.target.tagName && P(v(e.target));
+            e.preventDefault(), "SPAN" === e.target.tagName && q(v(e.target));
         }), // Pause on hover events
         E.addEventListener("mouseover", function() {
             t.hoverPause && S();
@@ -297,7 +298,7 @@
             "A" === e.target.tagName && (a(e.target.parentNode, "fire-slider-active") || e.preventDefault());
         }), // Window resize event
         window.addEventListener("resize", function() {
-            m();
+            w();
         });
     };
 }(), // Example listeners
