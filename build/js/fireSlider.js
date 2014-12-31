@@ -1,4 +1,4 @@
-/* fireSlider (0.1.0). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.1). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 (function () {
 
 	fireSlider = function(selector, options, breakpoints) {
@@ -50,7 +50,11 @@
 		}
 
 		// Set up Velocity
-		if(window.jQuery) { var V = $.Velocity; } else { var V = Velocity; }
+		if(window.jQuery) {
+			var V = $.Velocity;
+		} else {
+			var V = Velocity;
+		}
 
 		// Add class to node's classList
 		function addClass(node, newClass) {
