@@ -102,11 +102,11 @@
         }
         // Starts the timer
         function h() {
-            b = setInterval(W, t.delay);
+            0 !== t.delay && (b = setInterval(W, t.delay));
         }
         // Stops the timer
         function S() {
-            clearInterval(b);
+            0 !== t.delay && clearInterval(b);
         }
         // Set up the inital state of fireSlider
         function g() {

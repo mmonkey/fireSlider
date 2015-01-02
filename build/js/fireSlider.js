@@ -256,12 +256,16 @@
 
 		// Starts the timer
 		function play() {
-			timer = setInterval(next, options.delay);
+			if(options.delay !== 0) {
+				timer = setInterval(next, options.delay);
+			}
 		}
 
 		// Stops the timer
 		function pause() {
-			clearInterval(timer);
+			if(options.delay !== 0) {
+				clearInterval(timer);
+			}
 		}
 
 		// Set up the inital state of fireSlider
@@ -620,7 +624,7 @@
 
 	};
 
-}());
+})();
 
 // Example listeners
 document.addEventListener('fire-slider-init', function(e) {
