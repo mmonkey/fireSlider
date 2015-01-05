@@ -1,4 +1,4 @@
-/* fireSlider (0.1.3). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.4). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 (function () {
 
 	fireSlider = function(selector, options, breakpoints) {
@@ -21,8 +21,20 @@
 			}
 		}
 
+		function getDirectChildren(elm, sel){
+			ret = [];
+			for (var i =0; i < elm.childNodes.length; ++i){
+				if(typeof elm.childNodes[i].tagName !== "undefined") {
+					if(elm.childNodes[i].tagName.toLowerCase() === sel.toLowerCase()) {
+						ret.push(elm.childNodes[i]);
+					}
+				}
+			}
+			return ret;
+		}
+
 		var slider = document.querySelectorAll(selector)[0];
-		var slides = slider.querySelectorAll(':scope > ' + options.slide);
+		var slides = getDirectChildren(slider, options.slide);
 		var timer = {};
 		var positions = [];
 		var isTransitioning = false;
@@ -83,7 +95,7 @@
 		}
 
 		function reloadSlider() {
-			slides = slider.querySelectorAll(':scope > ' + options.slide);
+			slides = getDirectChildren(slider, options.slide);
 		}
 
 		// Duplicates slides based on the multiplier, returns new array
@@ -237,7 +249,7 @@
 					var span = document.createElement('span');
 					settings.pager.appendChild(span);
 				}
-				settings.pagerSpans = settings.pager.querySelectorAll(':scope > span');
+				settings.pagerSpans = getDirectChildren(settings.pager, 'span');
 				addClass(settings.pagerSpans[0], 'fire-pager-active');
 			}
 		}
