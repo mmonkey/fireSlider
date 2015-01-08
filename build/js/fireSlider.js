@@ -223,22 +223,70 @@
 			}
 		}
 
+ 		// Custom events will bind to these htmlEvents in ie < 9
+		var htmlEvents = {
+			onload:1,
+			onunload:1,
+			onblur:1,
+			onchange:1,
+			onfocus:1,
+			onreset:1,
+			onselect:1,
+			onsubmit:1,
+			onabort:1,
+			onkeydown:1,
+			onkeypress:1,
+			onkeyup:1,
+			onclick:1,
+			ondblclick:1,
+			onmousedown:1,
+			onmousemove:1,
+			onmouseout:1,
+			onmouseover:1,
+			onmouseup:1
+		};
+
 		// Create and trigger an event
-		function triggerEvent(element, eventName) {
-			var e = {};
-			if(document.createEvent) {
-				e = document.createEvent('HTMLEvents');
-				e.initEvent(eventName, true, false);
-			} else {
-				e = document.createEventObject();
-				e.eventType = eventName;
+		function trigger(el, eventName){
+			var event;
+			if(document.createEvent){
+				event = document.createEvent('HTMLEvents');
+				event.initEvent(eventName,true,true);
+			}else if(document.createEventObject){// IE < 9
+				event = document.createEventObject();
+				event.eventType = eventName;
 			}
-			e.eventName = eventName;
-			
-			if(document.createEvent) {
-				element.dispatchEvent(e);
-			} else {
-				element.fireEvent('on' + e.eventType, e);
+			event.eventName = eventName;
+			if(el.dispatchEvent){
+				el.dispatchEvent(event);
+			}else if(el.fireEvent && htmlEvents['on'+eventName]){// IE < 9
+				el.fireEvent('on'+event.eventType,event); // can trigger only real event (e.g. 'click')
+			}else if(el[eventName]){
+				el[eventName]();
+			}else if(el['on'+eventName]){
+				el['on'+eventName]();
+			}
+		}
+
+		// Event listener for built-in and custom events
+		function listen(el, type, handler){
+			if(el.listenListener){
+				el.listenListener(type,handler,false);
+			}else if(el.attachEvent && htmlEvents['on'+type]){// IE < 9
+				el.attachEvent('on'+type,handler);
+			}else{
+				el['on'+type]=handler;
+			}
+		}
+
+		// Remove event listener for built-in and custom events
+		function removeEvent(el, type, handler){
+			if(el.removeventListener){
+				el.removeEventListener(type,handler,false);
+			}else if(el.detachEvent && htmlEvents['on'+type]){// IE < 9
+				el.detachEvent('on'+type,handler);
+			}else{
+				el['on'+type]=null;
 			}
 		}
 
@@ -302,7 +350,7 @@
 			reloadSlider();
 			positionSlides(slides);
 
-			triggerEvent(slider, 'fire-slider-init');
+			trigger(slider, 'fire-slider-init');
 			play();
 		}
 
@@ -440,7 +488,7 @@
 			}
 
 			// Trigger event fire-slider-prev
-			triggerEvent(slider, 'fire-slider-prev');
+			trigger(slider, 'fire-slider-prev');
 
 			// Restart timer
 			play();
@@ -492,7 +540,7 @@
 			}
 
 			// Trigger event fire-slider-prev
-			triggerEvent(slider, 'fire-slider-prev');
+			trigger(slider, 'fire-slider-prev');
 
 			// Restart timer
 			play();
@@ -586,33 +634,37 @@
 
 		// Click events
 		if(typeof settings.next !== "undefined") {
-			settings.next.addEventListener('click', function(e) {
-				e.preventDefault();
+			listen(settings.next, 'click', function(e) {
+				if (e.preventDefault) e.preventDefault();
+				else e.returnValue = false;
 				next();
 			});
 		}
 		if(typeof settings.prev !== "undefined") {
-			settings.prev.addEventListener('click', function(e) {
-				e.preventDefault();
+			listen(settings.prev, 'click', function(e) {
+				if (e.preventDefault) e.preventDefault();
+				else e.returnValue = false;
 				prev();
 			});
 		}
 		if(typeof settings.pager !== "undefined") {
-			settings.pager.addEventListener('click', function(e) {
-				e.preventDefault();
-				if(e.target.tagName === "SPAN") {
-					pagerTransition(getIndex(e.target));
+			listen(settings.pager, 'click', function(e) {
+				if (e.preventDefault) e.preventDefault();
+				else e.returnValue = false;
+				var target = (e.target) ? e.target : e.srcElement;
+				if(target.tagName === "SPAN") {
+					pagerTransition(getIndex(target));
 				}
 			});
 		}
 
 		// Pause on hover events
-		slider.addEventListener('mouseover', function(e) {
+		listen(slider, 'mouseover', function(e) {
 			if(options.hoverPause) {
 				pause();
 			}
 		});
-		slider.addEventListener('mouseout', function(e) {
+		listen(slider, 'mouseout', function(e) {
 			if(options.hoverPause) {
 				play();
 			}
@@ -620,29 +672,31 @@
 
 		// Disable link interaction if slide is not active slide
 		if(options.disableLinks) {
-			slider.addEventListener('click', function(e) {
-				if(e.target.tagName === "A") {
-					if(!hasClass(e.target.parentNode, 'fire-slider-active')) {
-						e.preventDefault();
+			listen(slider, 'click', function(e) {
+				var target = (e.target) ? e.target : e.srcElement;
+				if(target.tagName === "A") {
+					if(!hasClass(target.parentNode, 'fire-slider-active')) {
+						if (e.preventDefault) e.preventDefault();
+						else e.returnValue = false;
 					}
 				}
 			});
 		}
 
 		// Window resize event
-		window.addEventListener('resize', function() {
+		listen(window, 'resize', function() {
 			refresh();
+		});
+
+		// Example listeners
+		listen(document, 'fire-slider-init', function(e) {
+			// Do stuff when initialized
+		});
+
+		listen(document, 'fire-slider-next', function(e) {
+			// Do stuff when next
 		});
 
 	};
 
 })();
-
-// Example listeners
-document.addEventListener('fire-slider-init', function(e) {
-	// Do stuff when initialized
-});
-
-document.addEventListener('fire-slider-next', function(e) {
-	// Do stuff when next
-});
