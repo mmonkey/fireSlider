@@ -1,4 +1,4 @@
-/* fireSlider (0.1.5). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.6). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 (function () {
 
 	fireSlider = function(selector, options, breakpoints) {
@@ -10,7 +10,8 @@
 			delay: 5000,
 			effect: 'slideInOut',
 			hoverPause: false,
-			disableLinks: true
+			disableLinks: true,
+			thumbnails: false
 		};
 
 		// Merge defaults with options
@@ -41,7 +42,7 @@
 		var settings = {
 			show: options.show,
 			active: options.active,
-			pagerSpans: [],
+			pagerElems: [],
 			totalSlides: slides.length,
 			windowWidth: window.innerWidth,
 			sliderWidth: slider.offsetWidth,
@@ -290,15 +291,31 @@
 			}
 		}
 
-		// Fills pager with empty spans based on total slides, adds active class to the first slide
+		// Fills pager with elements based on total slides, adds active class to the first slide
 		function setupPager() {
 			if(typeof settings.pager !== "undefined") {
 				for(var i = 0; i < settings.totalSlides; i++) {
-					var span = document.createElement('span');
-					settings.pager.appendChild(span);
+					if(options.thumbnails) {
+						var thumb = slides[i].cloneNode(true);
+						settings.pager.appendChild(thumb);
+					} else {
+						var span = document.createElement('span');
+						settings.pager.appendChild(span);
+					}
 				}
-				settings.pagerSpans = getDirectChildren(settings.pager, 'span');
-				addClass(settings.pagerSpans[0], 'fire-pager-active');
+				settings.pagerElems = (options.thumbnails) ? getDirectChildren(settings.pager, options.slide) : getDirectChildren(settings.pager, 'span');
+				addClass(settings.pagerElems[0], 'fire-pager-active');
+			}
+		}
+
+		function setupThumbnails() {
+			if(settings.thumbnails) {
+				var div = document.createElement('DIV');
+				div.id = "fire-slider-thumbnails";
+				for(var i = 0; i < settings.totalSlides; i++) {
+					var thumb = slides[i].clone();
+					div.appendChild(thumb);
+				}
 			}
 		}
 
@@ -450,7 +467,7 @@
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
 			if(typeof settings.pager !== "undefined") {
-				removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
 			settings.currentSlide -= 1;
@@ -484,7 +501,7 @@
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
 			if(typeof settings.pager !== "undefined") {
-				addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
 			// Trigger event fire-slider-prev
@@ -502,7 +519,7 @@
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
 			if(typeof settings.pager !== "undefined") {
-				removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
 			settings.currentSlide += 1;
@@ -536,7 +553,7 @@
 			// Add active classes
 			addClass(slides[settings.currentSlide], 'fire-slider-active');
 			if(typeof settings.pager !== "undefined") {
-				addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
 			// Trigger event fire-slider-prev
@@ -546,7 +563,7 @@
 			play();
 		}
 
-		// Go to the slide relative to the index of a pager span
+		// Go to the slide relative to the index of a pager elements
 		function pagerTransition(index) {
 			var currentPosition = settings.currentSlide % settings.totalSlides;
 			var difference = index - currentPosition;
@@ -561,7 +578,7 @@
 
 				// Remove active classes
 				removeClass(slides[settings.currentSlide], 'fire-slider-active');
-				removeClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
 				// Using the difference, determine where the slides' next position will be and send to transition manager
 				if(difference < 0) {
@@ -623,7 +640,7 @@
 
 				// Add new active classes
 				addClass(slides[settings.currentSlide], 'fire-slider-active');
-				addClass(settings.pagerSpans[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
+				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
 				// Restart timer
 				play();
@@ -652,7 +669,9 @@
 				if (e.preventDefault) e.preventDefault();
 				else e.returnValue = false;
 				var target = (e.target) ? e.target : e.srcElement;
-				if(target.tagName === "SPAN") {
+				var tag = (options.thumbnails) ? options.slide : "span";
+				console.log(tag);
+				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
 					pagerTransition(getIndex(target));
 				}
 			});

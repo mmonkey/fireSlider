@@ -39,6 +39,7 @@
 	<a id="prev" href="">Prev</a>
 	<a id="next" href="">Next</a>
 
+	<h2>Slider with Thumbnail Pager</h2>
 
 	<div class="section">
 		<ul id="fireSlider2">
@@ -56,10 +57,9 @@
 			<li class="slide-4">4</li>
 			<li class="slide-5">5</li>
 		</ul>
-
-		<div id="pager2"></div>
 	</div>
 
+	<ul id="thumbnailPager"></ul>
 	<a id="prev2" href="">Prev</a>
 	<a id="next2" href="">Next</a>
 
@@ -88,7 +88,8 @@
 				active: 3,
 				prev: '#prev2',
 				next: '#next2',
-				pager: '#pager2',
+				pager: '#thumbnailPager',
+				thumbnails: true,
 				speed: 300,
 				delay: 0
 			},
