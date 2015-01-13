@@ -7,8 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
 
 	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-	<script src="vendor/js/velocity.min.js"></script>
-	<script src="js/fireSlider.js"></script>
+	<script src="../build/js/fireSlider.dev.js"></script>
 
 
 </head>
@@ -81,6 +80,8 @@
 			]
 		);
 
+		slider.init();
+
 		var slider2 = new fireSlider(
 			'#fireSlider2',
 			{
@@ -100,6 +101,8 @@
 				{breakpoint: 860, show: 4, active: 2}
 			]
 		);
+
+		slider2.init();
 	</script>
 	
 </body>

@@ -5,6 +5,7 @@ var gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	notify = require('gulp-notify'),
 	util = require('gulp-util'),
+	browserify = require('gulp-browserify'),
 	browserSync = require('browser-sync');
 
 gulp.task('sass', function() {
@@ -28,24 +29,21 @@ gulp.task('doc-sass', function() {
 });
 
 gulp.task('lint', function() {
-	return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', 'docs/js/*.js', '!docs/js/**/*.min.js'])
+	return gulp.src(['build/js/fireSlider.js', '!build/js/**/*.min.js', 'docs/js/*.js', '!docs/js/**/*.min.js', '!build/js/**/*.dev.js'])
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
 
-gulp.task('beautify', function() {
-	gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
-		.pipe(uglify({
-			output: {
-				beautify: true,
-				comments: true
-			}
-		}))
-		.pipe(gulp.dest('dist'));
+gulp.task('browserify', function() {
+	gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
+		.pipe(browserify({insertGlobals: true}))
+		.pipe(rename({suffix: '.dev'}))
+		.pipe(gulp.dest('build/js'));
 });
 
 gulp.task('compress', function() {
-	gulp.src(['build/js/*.js', '!build/js/**/*.min.js'])
+	gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
+		.pipe(browserify({insertGlobals: true}))
 		.pipe(uglify().on('error', util.log))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('dist'));
@@ -64,5 +62,5 @@ gulp.task('default', ['browser-sync'], function() {
 	gulp.watch('build/scss/**/*.scss', ['sass']);
 	gulp.watch('docs/scss/**/*.scss', ['doc-sass']);
 	gulp.watch('**/*.html', browserSync.reload);
-	gulp.watch('build/js/*.js', ['lint', 'beautify', 'compress', browserSync.reload]);
+	gulp.watch(['build/js/*.js', '!build/js/**/*.dev.js'], ['lint', 'browserify', 'compress', browserSync.reload]);
 });

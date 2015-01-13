@@ -1,5 +1,11 @@
-/* fireSlider (0.1.6). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.7). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+var Velocity = require('velocity-animate');
+
 (function () {
+
+	// Set up V
+	var V;
+	if(window.jQuery) { V = $.Velocity; } else { V = Velocity; }
 
 	fireSlider = function(selector, options, breakpoints) {
 		var defaults = {
@@ -61,10 +67,6 @@
 		if(typeof options.pager !== "undefined") {
 			settings.pager = document.querySelectorAll(options.pager)[0];
 		}
-
-		// Set up V
-		var V;
-		if(window.jQuery) { V = $.Velocity; } else { V = Velocity; }
 
 		// Add class to node's classList
 		function addClass(node, newClass) {
@@ -346,7 +348,7 @@
 		}
 
 		// Set up the inital state of fireSlider
-		function init() {
+		this.init = function() {
 
 			setupPager();
 
@@ -369,7 +371,7 @@
 
 			trigger(slider, 'fire-slider-init');
 			play();
-		}
+		};
 
 		// Refresh positions, breakpoints and slide count
 		function refresh() {
@@ -647,8 +649,6 @@
 			}
 		}
 
-		init();
-
 		// Click events
 		if(typeof settings.next !== "undefined") {
 			listen(settings.next, 'click', function(e) {
@@ -670,7 +670,6 @@
 				else e.returnValue = false;
 				var target = (e.target) ? e.target : e.srcElement;
 				var tag = (options.thumbnails) ? options.slide : "span";
-				console.log(tag);
 				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
 					pagerTransition(getIndex(target));
 				}
@@ -717,5 +716,7 @@
 		});
 
 	};
+
+	window.fireSlider = fireSlider;
 
 })();
