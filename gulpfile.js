@@ -1,12 +1,12 @@
 var gulp = require('gulp'),
-	sass = require('gulp-ruby-sass'),
+	browserify = require('browserify'),
+	browserSync = require('browser-sync'),
 	jshint = require('gulp-jshint'),
 	rename = require('gulp-rename'),
+	sass = require('gulp-ruby-sass'),
+	transform = require('vinyl-transform'),
 	uglify = require('gulp-uglify'),
-	notify = require('gulp-notify'),
-	util = require('gulp-util'),
-	browserify = require('gulp-browserify'),
-	browserSync = require('browser-sync');
+	util = require('gulp-util');
 
 gulp.task('sass', function() {
 	return gulp.src(['build/scss/*.scss', '!build/scss/_*.scss'])
@@ -34,27 +34,34 @@ gulp.task('lint', function() {
 		.pipe(jshint.reporter('default'));
 });
 
-gulp.task('browserify', function() {
-	gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
-		.pipe(browserify({insertGlobals: true}))
-		.pipe(rename({suffix: '.dev'}))
-		.pipe(gulp.dest('build/js'));
+gulp.task('browserify', function () {
+  var browserified = transform(function(filename) {
+    var b = browserify(filename);
+    return b.bundle();
+  });
+
+  return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
+    .pipe(browserified)
+    .pipe(uglify())
+    .pipe(rename({suffix: '.min'}))
+    .pipe(gulp.dest('dist'));
 });
 
-gulp.task('compress', function() {
-	gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
-		.pipe(browserify({insertGlobals: true}))
-		.pipe(uglify().on('error', util.log))
-		.pipe(rename({suffix: '.min'}))
-		.pipe(gulp.dest('dist'));
+gulp.task('dev', function () {
+  var browserified = transform(function(filename) {
+    var b = browserify(filename);
+    return b.bundle();
+  });
+
+  return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
+    .pipe(browserified)
+    .pipe(rename({suffix: '.dev'}))
+    .pipe(gulp.dest('build/js'));
 });
 
 gulp.task('browser-sync', function() {
 	browserSync.init(null, {
-		server: {
-			baseDir: "./",
-			directory: true
-		}
+		server: { baseDir: "./", directory: true }
 	});
 });
 
@@ -62,5 +69,5 @@ gulp.task('default', ['browser-sync'], function() {
 	gulp.watch('build/scss/**/*.scss', ['sass']);
 	gulp.watch('docs/scss/**/*.scss', ['doc-sass']);
 	gulp.watch('**/*.html', browserSync.reload);
-	gulp.watch(['build/js/*.js', '!build/js/**/*.dev.js'], ['lint', 'browserify', 'compress', browserSync.reload]);
+	gulp.watch(['build/js/*.js', '!build/js/**/*.dev.js'], ['lint', 'browserify', 'dev', browserSync.reload]);
 });
