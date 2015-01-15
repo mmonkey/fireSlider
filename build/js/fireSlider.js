@@ -1,4 +1,4 @@
-/* fireSlider (0.1.7). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.8). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var Velocity = require('velocity-animate');
 
 (function () {
@@ -293,6 +293,21 @@ var Velocity = require('velocity-animate');
 			}
 		}
 
+		// Add click event to pager node
+		function addPagerListener(node) {
+			listen(node, 'click', function(e) {
+				if (e.preventDefault) e.preventDefault();
+				else e.returnValue = false;
+
+				var target = this;
+				var tag = (options.thumbnails) ? options.slide : "span";
+
+				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
+					pagerTransition(getIndex(target));
+				}
+			});
+		}
+
 		// Fills pager with elements based on total slides, adds active class to the first slide
 		function setupPager() {
 			if(typeof settings.pager !== "undefined") {
@@ -300,9 +315,11 @@ var Velocity = require('velocity-animate');
 					if(options.thumbnails) {
 						var thumb = slides[i].cloneNode(true);
 						settings.pager.appendChild(thumb);
+						addPagerListener(thumb);
 					} else {
 						var span = document.createElement('span');
 						settings.pager.appendChild(span);
+						addPagerListener(span);
 					}
 				}
 				settings.pagerElems = (options.thumbnails) ? getDirectChildren(settings.pager, options.slide) : getDirectChildren(settings.pager, 'span');
@@ -662,17 +679,6 @@ var Velocity = require('velocity-animate');
 				if (e.preventDefault) e.preventDefault();
 				else e.returnValue = false;
 				prev();
-			});
-		}
-		if(typeof settings.pager !== "undefined") {
-			listen(settings.pager, 'click', function(e) {
-				if (e.preventDefault) e.preventDefault();
-				else e.returnValue = false;
-				var target = (e.target) ? e.target : e.srcElement;
-				var tag = (options.thumbnails) ? options.slide : "span";
-				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
-					pagerTransition(getIndex(target));
-				}
 			});
 		}
 

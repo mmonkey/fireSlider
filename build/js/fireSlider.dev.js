@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-/* fireSlider (0.1.6). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/* fireSlider (0.1.8). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var Velocity = require('velocity-animate');
 
 (function () {
@@ -295,6 +295,21 @@ var Velocity = require('velocity-animate');
 			}
 		}
 
+		// Add click event to pager node
+		function addPagerListener(node) {
+			listen(node, 'click', function(e) {
+				if (e.preventDefault) e.preventDefault();
+				else e.returnValue = false;
+
+				var target = this;
+				var tag = (options.thumbnails) ? options.slide : "span";
+
+				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
+					pagerTransition(getIndex(target));
+				}
+			});
+		}
+
 		// Fills pager with elements based on total slides, adds active class to the first slide
 		function setupPager() {
 			if(typeof settings.pager !== "undefined") {
@@ -302,9 +317,11 @@ var Velocity = require('velocity-animate');
 					if(options.thumbnails) {
 						var thumb = slides[i].cloneNode(true);
 						settings.pager.appendChild(thumb);
+						addPagerListener(thumb);
 					} else {
 						var span = document.createElement('span');
 						settings.pager.appendChild(span);
+						addPagerListener(span);
 					}
 				}
 				settings.pagerElems = (options.thumbnails) ? getDirectChildren(settings.pager, options.slide) : getDirectChildren(settings.pager, 'span');
@@ -666,17 +683,6 @@ var Velocity = require('velocity-animate');
 				prev();
 			});
 		}
-		if(typeof settings.pager !== "undefined") {
-			listen(settings.pager, 'click', function(e) {
-				if (e.preventDefault) e.preventDefault();
-				else e.returnValue = false;
-				var target = (e.target) ? e.target : e.srcElement;
-				var tag = (options.thumbnails) ? options.slide : "span";
-				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
-					pagerTransition(getIndex(target));
-				}
-			});
-		}
 
 		// Pause on hover events
 		listen(slider, 'mouseover', function(e) {
@@ -722,7 +728,7 @@ var Velocity = require('velocity-animate');
 	window.fireSlider = fireSlider;
 
 })();
-}).call(this,require("ngpmcQ"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_cf888909.js","/")
+}).call(this,require("ngpmcQ"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_a55a8315.js","/")
 },{"buffer":2,"ngpmcQ":5,"velocity-animate":6}],2:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 /*!
