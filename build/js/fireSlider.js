@@ -1,4 +1,4 @@
-/* fireSlider (0.1.8). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (0.1.8). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var Velocity = require('velocity-animate');
 
 (function () {

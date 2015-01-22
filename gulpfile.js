@@ -42,7 +42,11 @@ gulp.task('browserify', function () {
 
   return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
     .pipe(browserified)
-    .pipe(uglify())
+    .pipe(uglify({
+    	preserveComments: function (node, comment) {
+				return comment.value.charAt(0) === '!';
+    	}
+    }))
     .pipe(rename({suffix: '.min'}))
     .pipe(gulp.dest('dist'));
 });
