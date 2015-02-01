@@ -29,13 +29,19 @@ var Velocity = require('velocity-animate');
 			}
 		}
 
+		function matchesSel(elm, sel){
+			var matches = (elm.document || elm.ownerDocument).querySelectorAll(sel);
+			var i = 0;
+			while (matches[i] && matches[i] !== elm) { i++; }
+		  return matches[i] ? true : false;
+		}
+
 		function getDirectChildren(elm, sel){
-			ret = [];
-			for (var i =0; i < elm.childNodes.length; ++i){
-				if(typeof elm.childNodes[i].tagName !== "undefined") {
-					if(elm.childNodes[i].tagName.toLowerCase() === sel.toLowerCase()) {
-						ret.push(elm.childNodes[i]);
-					}
+			var ret = [];
+			var children = elm.childNodes;
+			for (var i =0; i < children.length; ++i){
+				if(matchesSel(children[i], sel)) {
+					ret.push(children[i]);
 				}
 			}
 			return ret;
