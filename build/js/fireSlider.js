@@ -1,4 +1,7 @@
-/*! fireSlider (0.1.8). (C) 2014 CJ O'Hara amd Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*!
+ * fireSlider (0.1.9) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * MIT @license: en.wikipedia.org/wiki/MIT_License
+ **/
 var Velocity = require('velocity-animate');
 
 (function () {
@@ -472,15 +475,47 @@ var Velocity = require('velocity-animate');
 			}
 		}
 
+		// Fade in / out transition effect
+		function fadeInOut(element, opts) {
+			var offset = 0;
+			if(opts.multiplier) {
+				offset = opts.multiplier * 100;
+			}
+
+			if(!opts.delay) {
+				V(element, {translateX: (opts.newPosition + '%'), opacity: 1.0, zIndex: 0}, {duration: 0, queue: options.effect});
+			} else {
+				V(element, {translateX: (opts.oldPosition + '%'), opacity: 1.0, zIndex: 1}, {duration: 0, queue: options.effect});
+				V(element, {opacity: 0.0}, {duration: options.speed, queue: options.effect});
+				V(element, {translateX: (opts.newPosition + '%'), opacity: 1.0, zIndex: 0}, {duration: 0, queue: options.effect, delay: options.speed});
+			}
+		}
+
 		// Routes slide to correct transition
 		function transitionManager(element, opts) {
-			switch(options.effect) {
-				case 'slideInOut':
-					slideInOut(element, opts);
-					break;
-				default:
-					slideInOut(element, opts);
-					break;
+			// Single slide transitions with default: fadeInOut
+			if(settings.show === 1) {
+				switch(options.effect) {
+					case 'slideInOut':
+						slideInOut(element, opts);
+						break;
+					case 'fadeInOut':
+						fadeInOut(element, opts);
+						break;
+					default:
+						fadeInOut(element, opts);
+						break;
+				}
+			// Multiple slide transitions with default: slideInOut
+			} else {
+				switch(options.effect) {
+					case 'slideInOut':
+						slideInOut(element, opts);
+						break;
+					default:
+						slideInOut(element, opts);
+						break;
+				}
 			}
 		}
 
@@ -495,6 +530,8 @@ var Velocity = require('velocity-animate');
 				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
+			var delayIndex = settings.currentSlide;
+
 			settings.currentSlide -= 1;
 			if(settings.currentSlide < 0) {
 				settings.currentSlide = (slides.length - 1);
@@ -505,6 +542,7 @@ var Velocity = require('velocity-animate');
 				var oldPosition = positions.shift();
 				var newPosition = oldPosition + 100;
 				var snapping = false;
+				var delay = false;
 				if(newPosition < settings.minX) {
 					newPosition = settings.maxX;
 					snapping = true;
@@ -513,7 +551,10 @@ var Velocity = require('velocity-animate');
 					newPosition = settings.minX;
 					snapping = true;
 				}
-				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping});
+				if(i === delayIndex) {
+					delay = true;
+				}
+				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping, delay: delay});
 				positions.push(newPosition);
 			}
 
@@ -546,6 +587,8 @@ var Velocity = require('velocity-animate');
 			if(typeof settings.pager !== "undefined") {
 				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
+			
+			var delayIndex = settings.currentSlide;
 
 			settings.currentSlide += 1;
 			if(settings.currentSlide > (slides.length - 1)) {
@@ -557,6 +600,7 @@ var Velocity = require('velocity-animate');
 				var oldPosition = positions.shift();
 				var newPosition = oldPosition - 100;
 				var snapping = false;
+				var delay = false;
 				if(newPosition < settings.minX) {
 					newPosition = settings.maxX;
 					snapping = true;
@@ -565,7 +609,10 @@ var Velocity = require('velocity-animate');
 					newPosition = settings.minX;
 					snapping = true;
 				}
-				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping});
+				if(i === delayIndex) {
+					delay = true;
+				}
+				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping, delay: delay});
 				positions.push(newPosition);
 			}
 
@@ -601,6 +648,8 @@ var Velocity = require('velocity-animate');
 				// Re-load slides
 				reloadSlider();
 
+				var delayIndex = settings.currentSlide;
+
 				// Remove active classes
 				removeClass(slides[settings.currentSlide], 'fire-slider-active');
 				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
@@ -613,6 +662,7 @@ var Velocity = require('velocity-animate');
 						var oldPositionPrev = positions.shift();
 						var newPositionPrev = oldPositionPrev;
 						var snappingPrev = false;
+						var delay = false;
 
 						for(var j = 0; j < Math.abs(difference); j++) {
 							newPositionPrev = newPositionPrev + 100;
@@ -625,7 +675,11 @@ var Velocity = require('velocity-animate');
 								snappingPrev = true;
 							}
 						}
-						transitionManager(slides[i], {oldPosition: oldPositionPrev, newPosition: newPositionPrev, snapping: snappingPrev});
+
+						if(i === delayIndex) {
+							delay = true;
+						}
+						transitionManager(slides[i], {oldPosition: oldPositionPrev, newPosition: newPositionPrev, snapping: snappingPrev, delay: delay});
 						positions.push(newPositionPrev);
 					}
 
@@ -636,6 +690,7 @@ var Velocity = require('velocity-animate');
 						var oldPositionNext = positions.shift();
 						var newPositionNext = oldPositionNext;
 						var snappingNext = false;
+						var delay2 = false;
 
 						for(var l = 0; l < Math.abs(difference); l++) {
 							newPositionNext = newPositionNext - 100;
@@ -648,7 +703,10 @@ var Velocity = require('velocity-animate');
 								snappingNext = true;
 							}
 						}
-						transitionManager(slides[k], {oldPosition: oldPositionNext, newPosition: newPositionNext, snapping: snappingNext});
+						if(k === delayIndex) {
+							delay2 = true;
+						}
+						transitionManager(slides[k], {oldPosition: oldPositionNext, newPosition: newPositionNext, snapping: snappingNext, delay: delay2});
 						positions.push(newPositionNext);
 					}
 				}
