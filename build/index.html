@@ -16,7 +16,7 @@
 	<h1>FireSlider - Development</h1>
 
 	<div class="section">
-		<ul id="fireSlider">
+		<ul id="fireSlider" data-slider-prev="#prev" data-slider-next="#next" data-slider-pager="#pager" data-slider-delay="4000" data-slider-effect="fadeInOut">
 			<li class="slide-1">1
 				<ul>
 					<li>1</li>
@@ -63,27 +63,11 @@
 	<a id="next2" href="">Next</a>
 
 	<script type="text/javascript">
-		var slider = new fireSlider(
-			'#fireSlider',
-			{
-				show: 1,
-				active: 1,
-				prev: '#prev',
-				next: '#next',
-				pager: '#pager',
-				speed: 500,
-				delay: 4000,
-				effect: 'fadeInOut'
-			},
-			[
-				{breakpoint: 520, show: 1, active: 1},
-				{breakpoint: 960, show: 3, active: 2}
-			]
-		);
+		var slider = new FireSlider('#fireSlider');
 
 		slider.init();
 
-		var slider2 = new fireSlider(
+		var slider2 = new FireSlider(
 			'#fireSlider2',
 			{
 				show: 5,

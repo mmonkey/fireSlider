@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*!
- * fireSlider (0.1.9) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (0.2.0) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -11,50 +11,112 @@ var Velocity = require('velocity-animate');
 	var V;
 	if(window.jQuery) { V = $.Velocity; } else { V = Velocity; }
 
-	fireSlider = function(selector, options, breakpoints) {
-		var defaults = {
-			slide: 'li',
-			show: 1,
-			active: 1,
-			speed: 500,
-			delay: 5000,
-			effect: 'slideInOut',
-			hoverPause: false,
-			disableLinks: true,
-			thumbnails: false
-		};
+	// Add class to node's classList
+	function addClass(node, newClass) {
+		if (node.classList) {
+				node.classList.add(newClass);
+		} else {
+				node.className += ' ' + newClass;
+		}
+	}
 
-		// Merge defaults with options
-		options = options || {};
+	// Remove class from node's classList
+	function removeClass(node, rmClass) {
+		if (node.classList) {
+				node.classList.remove(rmClass);
+		} else {
+			node.className = node.className.replace(new RegExp('(^|\\b)' + rmClass.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+		}
+	}
+
+	// Returns true if node has className
+	function hasClass(node, className) {
+		var result = false;
+		if (node.classList) {
+			if(node.classList.contains(className)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	// Shim for element.dataset
+	function getData(node){
+		if(node.dataset) {
+			return node.dataset;
+		} else {
+			var attributes = node.attributes;
+			var simulatedDataset = {};
+			for (var i = attributes.length; i--; ){
+				if (/^data-.*/.test(attributes[i].name)) {
+					var key = attributes[i].name.replace('data-', '');
+					var value = node.getAttribute(attributes[i].name);
+					simulatedDataset[key] = value;
+				}
+			}
+			return simulatedDataset;
+		}
+	}
+
+	// Returns true if element matches selector
+	function matchesSel(elm, sel){
+		var matches = (elm.document || elm.ownerDocument).querySelectorAll(sel);
+		var i = 0;
+		while (matches[i] && matches[i] !== elm) { i++; }
+	  return matches[i] ? true : false;
+	}
+
+	// Get direct children of element matching a selector
+	function getDirectChildren(elm, sel){
+		var ret = [];
+		var children = elm.childNodes;
+		for (var i =0; i < children.length; ++i){
+			if(matchesSel(children[i], sel)) {
+				ret.push(children[i]);
+			}
+		}
+		return ret;
+	}
+
+	// Extend defaults into opts, returns options
+	function extend(opts, defaults) {
+		var options = opts || {};
 		for (var opt in defaults) {
 			if (defaults.hasOwnProperty(opt) && !options.hasOwnProperty(opt)) {
 				options[opt] = defaults[opt];
 			}
 		}
+		return options;
+	}
 
-		function matchesSel(elm, sel){
-			var matches = (elm.document || elm.ownerDocument).querySelectorAll(sel);
-			var i = 0;
-			while (matches[i] && matches[i] !== elm) { i++; }
-		  return matches[i] ? true : false;
-		}
+	// Returns boolean from string
+	function getBoolean(string) {
+		return (string.toLowerCase() === 'true') ? true : false;
+	}
 
-		function getDirectChildren(elm, sel){
-			var ret = [];
-			var children = elm.childNodes;
-			for (var i =0; i < children.length; ++i){
-				if(matchesSel(children[i], sel)) {
-					ret.push(children[i]);
-				}
-			}
-			return ret;
-		}
-
-		var slider = document.querySelectorAll(selector)[0];
-		var slides = getDirectChildren(slider, options.slide);
+	FireSlider = function(selector, options, breakpoints) {
 		var timer = {};
 		var positions = [];
 		var isTransitioning = false;
+		var slider = document.querySelectorAll(selector)[0];
+
+		var slideData = getData(slider);
+		var defaults = {
+			slide: (typeof slideData.sliderSlide !== "undefined") ? slideData.sliderSlide : 'li',
+			show: (typeof slideData.sliderShow !== "undefined") ? parseInt(slideData.sliderShow) : 1,
+			active: (typeof slideData.sliderActive !== "undefined") ? parseInt(slideData.sliderActive) : 1,
+			speed: (typeof slideData.sliderSpeed !== "undefined") ? parseInt(slideData.sliderSpeed) : 500,
+			delay: (typeof slideData.sliderDelay !== "undefined") ? parseInt(slideData.sliderDelay) : 5000,
+			effect: (typeof slideData.sliderEffect !== "undefined") ? slideData.sliderEffect : 'slideInOut',
+			hoverPause: (typeof slideData.sliderHoverPause !== "undefined") ?  getBoolean(slideData.sliderHoverPause) : false,
+			disableLinks: (typeof slideData.sliderDisableLinks !== "undefined") ?  getBoolean(slideData.sliderDisableLinks) : true,
+			thumbnails: (typeof slideData.sliderThumbnails !== "undefined") ?  getBoolean(slideData.sliderThumbnails) : false,
+		};
+
+		// Merge dataset with options
+		options = extend(options, defaults);
+
+		var slides = getDirectChildren(slider, options.slide);
 		var settings = {
 			show: options.show,
 			active: options.active,
@@ -68,43 +130,14 @@ var Velocity = require('velocity-animate');
 			minX: 0,
 			maxX: 0
 		};
-		if(typeof options.prev !== "undefined") {
-			settings.prev = document.querySelectorAll(options.prev)[0];
+		if(typeof options.prev !== "undefined" || typeof slideData.sliderPrev !== "undefined") {
+			settings.prev = (typeof options.prev !== "undefined") ? document.querySelectorAll(options.prev)[0] : document.querySelectorAll(slideData.sliderPrev)[0];
 		}
-		if(typeof options.next !== "undefined") {
-			settings.next = document.querySelectorAll(options.next)[0];
+		if(typeof options.next !== "undefined" || typeof slideData.sliderNext !== "undefined") {
+			settings.next = (typeof options.next !== "undefined") ? document.querySelectorAll(options.next)[0] : document.querySelectorAll(slideData.sliderNext)[0];
 		}
-		if(typeof options.pager !== "undefined") {
-			settings.pager = document.querySelectorAll(options.pager)[0];
-		}
-
-		// Add class to node's classList
-		function addClass(node, newClass) {
-			if (node.classList) {
-					node.classList.add(newClass);
-			} else {
-					node.className += ' ' + newClass;
-			}
-		}
-
-		// Remove class from node's classList
-		function removeClass(node, rmClass) {
-			if (node.classList) {
-					node.classList.remove(rmClass);
-			} else {
-				node.className = node.className.replace(new RegExp('(^|\\b)' + rmClass.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-			}
-		}
-
-		// Returns true if node has className
-		function hasClass(node, className) {
-			var result = false;
-			if (node.classList) {
-				if(node.classList.contains(className)) {
-					result = true;
-				}
-			}
-			return result;
+		if(typeof options.pager !== "undefined" || typeof slideData.sliderPager !== "undefined") {
+			settings.pager = (typeof options.pager !== "undefined") ? document.querySelectorAll(options.pager)[0] : document.querySelectorAll(slideData.sliderPager)[0];
 		}
 
 		function reloadSlider() {
@@ -788,7 +821,7 @@ var Velocity = require('velocity-animate');
 
 	};
 
-	window.fireSlider = fireSlider;
+	window.FireSlider = FireSlider;
 
 })();
 },{"velocity-animate":2}],2:[function(require,module,exports){
