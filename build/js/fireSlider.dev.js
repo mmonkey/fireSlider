@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*!
- * fireSlider (0.2.0) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (0.2.1) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -100,7 +100,7 @@ var Velocity = require('velocity-animate');
 		var isTransitioning = false;
 		var slider = document.querySelectorAll(selector)[0];
 
-		var slideData = getData(slider);
+		var slideData = (typeof slider !== 'undefined') ? getData(slider) : {};
 		var defaults = {
 			slide: (typeof slideData.sliderSlide !== "undefined") ? slideData.sliderSlide : 'li',
 			show: (typeof slideData.sliderShow !== "undefined") ? parseInt(slideData.sliderShow) : 1,
@@ -116,20 +116,23 @@ var Velocity = require('velocity-animate');
 		// Merge dataset with options
 		options = extend(options, defaults);
 
-		var slides = getDirectChildren(slider, options.slide);
-		var settings = {
-			show: options.show,
-			active: options.active,
-			pagerElems: [],
-			totalSlides: slides.length,
-			windowWidth: window.innerWidth,
-			sliderWidth: slider.offsetWidth,
-			slideWidth: slider.offsetWidth / options.show,
-			slideWidthPercent: 1 / options.show * 100,
-			currentSlide: 0,
-			minX: 0,
-			maxX: 0
-		};
+		var slides = (typeof slider !== 'undefined') ? getDirectChildren(slider, options.slide) : [];
+		var settings = {};
+		if(typeof slider !== 'undefined') {
+			settings = {
+				show: options.show,
+				active: options.active,
+				pagerElems: [],
+				totalSlides: slides.length,
+				windowWidth: window.innerWidth,
+				sliderWidth: slider.offsetWidth,
+				slideWidth: slider.offsetWidth / options.show,
+				slideWidthPercent: 1 / options.show * 100,
+				currentSlide: 0,
+				minX: 0,
+				maxX: 0
+			};
+		}
 		if(typeof options.prev !== "undefined" || typeof slideData.sliderPrev !== "undefined") {
 			settings.prev = (typeof options.prev !== "undefined") ? document.querySelectorAll(options.prev)[0] : document.querySelectorAll(slideData.sliderPrev)[0];
 		}
@@ -409,7 +412,12 @@ var Velocity = require('velocity-animate');
 
 		// Set up the inital state of fireSlider
 		this.init = function() {
+			if(typeof slider !== 'undefined') {
+				initialize();
+			}
+		};
 
+		function initialize() {
 			setupPager();
 
 			// Check Breakpoints
@@ -431,7 +439,7 @@ var Velocity = require('velocity-animate');
 
 			trigger(slider, 'fire-slider-init');
 			play();
-		};
+		}
 
 		// Refresh positions, breakpoints and slide count
 		function refresh() {
@@ -781,19 +789,20 @@ var Velocity = require('velocity-animate');
 		}
 
 		// Pause on hover events
-		listen(slider, 'mouseover', function(e) {
-			if(options.hoverPause) {
+		if(options.hoverPause) {
+			listen(slider, 'mouseover', function(e) {
 				pause();
-			}
-		});
-		listen(slider, 'mouseout', function(e) {
-			if(options.hoverPause) {
+			});
+		}
+
+		if(options.hoverPause) {
+			listen(slider, 'mouseout', function(e) {
 				play();
-			}
-		});
+			});
+		}
 
 		// Disable link interaction if slide is not active slide
-		if(options.disableLinks) {
+		if(options.disableLinks && typeof slider !== 'undefined') {
 			listen(slider, 'click', function(e) {
 				var target = (e.target) ? e.target : e.srcElement;
 				if(target.tagName === "A") {
