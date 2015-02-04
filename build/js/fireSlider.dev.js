@@ -208,12 +208,12 @@ var Velocity = require('velocity-animate');
 			var addSlides = 0;
 
 			settings.windowWidth = window.innerWidth;
-			var neededWidth = settings.windowWidth + (settings.slideWidth * 3);
-			var totalSlideWidth = settings.slideWidth * settings.totalSlides;
 
-			if(totalSlideWidth < neededWidth) {
-				addSlides = Math.ceil((neededWidth - totalSlideWidth) / settings.slideWidth);
+			// How many additional slides do we need to cover the width of the screen plus 2 more for the next transition
+			if(settings.slideWidth * settings.totalSlides < settings.windowWidth) {
+				addSlides = Math.ceil((settings.windowWidth - (settings.slideWidth * settings.totalSlides)) / settings.slideWidth);
 			}
+			addSlides += settings.totalSlides * 2;
 
 			// Create a multiply based on the number of additional slides needed
 			if(addSlides > 0) {
@@ -832,8 +832,16 @@ var Velocity = require('velocity-animate');
 	};
 
 	window.FireSlider = FireSlider;
-
 })();
+
+if(window.jQuery) {
+	(function (window) {
+		$.fn.fireSlider = function(options, breakpoints) {
+			var selector = this.selector;
+			return new FireSlider(selector, options, breakpoints).init();
+		};
+	})(window.jQuery);
+}
 },{"velocity-animate":2}],2:[function(require,module,exports){
 /*! VelocityJS.org (1.2.1). (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */
 
