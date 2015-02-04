@@ -1,12 +1,12 @@
 var gulp = require('gulp'),
-	browserify = require('browserify'),
-	browserSync = require('browser-sync'),
-	jshint = require('gulp-jshint'),
-	rename = require('gulp-rename'),
-	sass = require('gulp-ruby-sass'),
-	transform = require('vinyl-transform'),
-	uglify = require('gulp-uglify'),
-	util = require('gulp-util');
+		browserify = require('browserify'),
+		browserSync = require('browser-sync'),
+		jshint = require('gulp-jshint'),
+		rename = require('gulp-rename'),
+		sass = require('gulp-ruby-sass'),
+		transform = require('vinyl-transform'),
+		uglify = require('gulp-uglify'),
+		util = require('gulp-util');
 
 gulp.task('sass', function() {
 	return gulp.src(['build/scss/*.scss', '!build/scss/_*.scss'])
@@ -35,32 +35,32 @@ gulp.task('lint', function() {
 });
 
 gulp.task('browserify', function () {
-  var browserified = transform(function(filename) {
-    var b = browserify(filename);
-    return b.bundle();
-  });
+	var browserified = transform(function(filename) {
+		var b = browserify(filename);
+		return b.bundle();
+	});
 
-  return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
-    .pipe(browserified)
-    .pipe(uglify({
-    	preserveComments: function (node, comment) {
+	return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
+		.pipe(browserified)
+		.pipe(uglify({
+			preserveComments: function (node, comment) {
 				return comment.value.charAt(0) === '!';
-    	}
-    }))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(gulp.dest('dist'));
+			}
+		}))
+		.pipe(rename({suffix: '.min'}))
+		.pipe(gulp.dest('dist'));
 });
 
 gulp.task('dev', function () {
-  var browserified = transform(function(filename) {
-    var b = browserify(filename);
-    return b.bundle();
-  });
+	var browserified = transform(function(filename) {
+		var b = browserify(filename);
+		return b.bundle();
+	});
 
-  return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
-    .pipe(browserified)
-    .pipe(rename({suffix: '.dev'}))
-    .pipe(gulp.dest('build/js'));
+	return gulp.src(['build/js/*.js', '!build/js/**/*.min.js', '!build/js/**/*.dev.js'])
+		.pipe(browserified)
+		.pipe(rename({suffix: '.dev'}))
+		.pipe(gulp.dest('build/js'));
 });
 
 gulp.task('browser-sync', function() {

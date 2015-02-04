@@ -1,12 +1,12 @@
 /*!
- * fireSlider (0.2.1) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (0.2.2) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
 
 (function () {
 
-	// Set up V
+	// Set up Velocity
 	var V;
 	if(window.jQuery) { V = $.Velocity; } else { V = Velocity; }
 
@@ -132,6 +132,7 @@ var Velocity = require('velocity-animate');
 				maxX: 0
 			};
 		}
+
 		if(typeof options.prev !== "undefined" || typeof slideData.sliderPrev !== "undefined") {
 			settings.prev = (typeof options.prev !== "undefined") ? document.querySelectorAll(options.prev)[0] : document.querySelectorAll(slideData.sliderPrev)[0];
 		}
@@ -206,12 +207,12 @@ var Velocity = require('velocity-animate');
 			var addSlides = 0;
 
 			settings.windowWidth = window.innerWidth;
+			var neededWidth = settings.windowWidth + (settings.slideWidth * 3);
+			var totalSlideWidth = settings.slideWidth * settings.totalSlides;
 
-			// How many additional slides do we need to cover the width of the screen plus 2 more for the next transition
-			if(settings.slideWidth * settings.totalSlides < settings.windowWidth) {
-				addSlides = Math.ceil((settings.windowWidth - (settings.slideWidth * settings.totalSlides)) / settings.slideWidth);
+			if(totalSlideWidth < neededWidth) {
+				addSlides = Math.ceil((neededWidth - totalSlideWidth) / settings.slideWidth);
 			}
-			addSlides += settings.totalSlides * 2;
 
 			// Create a multiply based on the number of additional slides needed
 			if(addSlides > 0) {
