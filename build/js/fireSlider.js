@@ -833,11 +833,11 @@ var Velocity = require('velocity-animate');
 	window.FireSlider = FireSlider;
 })();
 
+// Add jQuery compatibility. Usage: $('.slider').fireSlider({ options }, [{ breakpoints }])
 if(window.jQuery) {
 	(function (window) {
 		$.fn.fireSlider = function(options, breakpoints) {
-			var selector = this.selector;
-			return new FireSlider(selector, options, breakpoints).init();
+			return new FireSlider(this.selector, options, breakpoints).init();
 		};
 	})(window.jQuery);
 }
