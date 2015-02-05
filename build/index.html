@@ -66,7 +66,7 @@
 
 		$('#fireSlider').fireSlider({speed: 600});
 
-		var slider2 = new FireSlider(
+		var slider2 = new FireSlider.slider(
 			'#fireSlider2',
 			{
 				show: 5,
@@ -76,7 +76,7 @@
 				pager: '#thumbnailPager',
 				thumbnails: true,
 				speed: 300,
-				delay: 0
+				delay: 4000
 			},
 			[
 				{breakpoint: 360, show: 1, active: 1},
@@ -86,7 +86,6 @@
 			]
 		);
 
-		slider2.init();
 	</script>
 	
 </body>

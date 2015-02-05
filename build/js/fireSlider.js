@@ -1,14 +1,13 @@
 /*!
- * fireSlider (0.2.2) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (1.0.0) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
 
-(function () {
+(function (FireSlider, undefined) {
 
 	// Set up Velocity
-	var V;
-	if(window.jQuery) { V = $.Velocity; } else { V = Velocity; }
+	var V = (window.jQuery) ? $.Velocity : Velocity;
 
 	// Add class to node's classList
 	function addClass(node, newClass) {
@@ -93,10 +92,77 @@ var Velocity = require('velocity-animate');
 		return (string.toLowerCase() === 'true') ? true : false;
 	}
 
-	FireSlider = function(selector, options, breakpoints) {
+	// Custom events will bind to these htmlEvents in ie < 9
+	var htmlEvents = {
+		onload:1,
+		onunload:1,
+		onblur:1,
+		onchange:1,
+		onfocus:1,
+		onreset:1,
+		onselect:1,
+		onsubmit:1,
+		onabort:1,
+		onkeydown:1,
+		onkeypress:1,
+		onkeyup:1,
+		onclick:1,
+		ondblclick:1,
+		onmousedown:1,
+		onmousemove:1,
+		onmouseout:1,
+		onmouseover:1,
+		onmouseup:1
+	};
+
+	// Create and trigger an event
+	function trigger(el, eventName){
+		var event;
+		if(document.createEvent){
+			event = document.createEvent('HTMLEvents');
+			event.initEvent(eventName,true,true);
+		}else if(document.createEventObject){// IE < 9
+			event = document.createEventObject();
+			event.eventType = eventName;
+		}
+		event.eventName = eventName;
+		if(el.dispatchEvent){
+			el.dispatchEvent(event);
+		}else if(el.fireEvent && htmlEvents['on'+eventName]){// IE < 9
+			el.fireEvent('on'+event.eventType,event); // can trigger only real event (e.g. 'click')
+		}else if(el[eventName]){
+			el[eventName]();
+		}else if(el['on'+eventName]){
+			el['on'+eventName]();
+		}
+	}
+
+	// Event listener for built-in and custom events
+	function listen(el, type, handler){
+		if(el.listenListener){
+			el.listenListener(type,handler,false);
+		}else if(el.attachEvent && htmlEvents['on'+type]){// IE < 9
+			el.attachEvent('on'+type,handler);
+		}else{
+			el['on'+type]=handler;
+		}
+	}
+
+	// Remove event listener for built-in and custom events
+	function removeEvent(el, type, handler){
+		if(el.removeventListener){
+			el.removeEventListener(type,handler,false);
+		}else if(el.detachEvent && htmlEvents['on'+type]){// IE < 9
+			el.detachEvent('on'+type,handler);
+		}else{
+			el['on'+type]=null;
+		}
+	}
+
+	FireSlider.slider = function(selector, options, breakpoints) {
 		var timer = {};
 		var positions = [];
-		var isTransitioning = false;
+		var isPaused = false;
 		var slider = document.querySelectorAll(selector)[0];
 
 		var slideData = (typeof slider !== 'undefined') ? getData(slider) : {};
@@ -110,6 +176,7 @@ var Velocity = require('velocity-animate');
 			hoverPause: (typeof slideData.sliderHoverPause !== "undefined") ?  getBoolean(slideData.sliderHoverPause) : false,
 			disableLinks: (typeof slideData.sliderDisableLinks !== "undefined") ?  getBoolean(slideData.sliderDisableLinks) : true,
 			thumbnails: (typeof slideData.sliderThumbnails !== "undefined") ?  getBoolean(slideData.sliderThumbnails) : false,
+			direction: (typeof slideData.direction !== "undefined") ?  getBoolean(slideData.direction) : 'forward'
 		};
 
 		// Merge dataset with options
@@ -272,73 +339,6 @@ var Velocity = require('velocity-animate');
 			}
 		}
 
- 		// Custom events will bind to these htmlEvents in ie < 9
-		var htmlEvents = {
-			onload:1,
-			onunload:1,
-			onblur:1,
-			onchange:1,
-			onfocus:1,
-			onreset:1,
-			onselect:1,
-			onsubmit:1,
-			onabort:1,
-			onkeydown:1,
-			onkeypress:1,
-			onkeyup:1,
-			onclick:1,
-			ondblclick:1,
-			onmousedown:1,
-			onmousemove:1,
-			onmouseout:1,
-			onmouseover:1,
-			onmouseup:1
-		};
-
-		// Create and trigger an event
-		function trigger(el, eventName){
-			var event;
-			if(document.createEvent){
-				event = document.createEvent('HTMLEvents');
-				event.initEvent(eventName,true,true);
-			}else if(document.createEventObject){// IE < 9
-				event = document.createEventObject();
-				event.eventType = eventName;
-			}
-			event.eventName = eventName;
-			if(el.dispatchEvent){
-				el.dispatchEvent(event);
-			}else if(el.fireEvent && htmlEvents['on'+eventName]){// IE < 9
-				el.fireEvent('on'+event.eventType,event); // can trigger only real event (e.g. 'click')
-			}else if(el[eventName]){
-				el[eventName]();
-			}else if(el['on'+eventName]){
-				el['on'+eventName]();
-			}
-		}
-
-		// Event listener for built-in and custom events
-		function listen(el, type, handler){
-			if(el.listenListener){
-				el.listenListener(type,handler,false);
-			}else if(el.attachEvent && htmlEvents['on'+type]){// IE < 9
-				el.attachEvent('on'+type,handler);
-			}else{
-				el['on'+type]=handler;
-			}
-		}
-
-		// Remove event listener for built-in and custom events
-		function removeEvent(el, type, handler){
-			if(el.removeventListener){
-				el.removeEventListener(type,handler,false);
-			}else if(el.detachEvent && htmlEvents['on'+type]){// IE < 9
-				el.detachEvent('on'+type,handler);
-			}else{
-				el['on'+type]=null;
-			}
-		}
-
 		// Add click event to pager node
 		function addPagerListener(node) {
 			listen(node, 'click', function(e) {
@@ -397,54 +397,22 @@ var Velocity = require('velocity-animate');
 		}
 
 		// Starts the timer
-		function play() {
-			if(options.delay !== 0) {
-				timer = setInterval(next, options.delay);
+		function startTimer(direction) {
+			if(options.delay !== 0 && !isPaused) {
+				timer = (direction === 'backward') ? setInterval(prevSlide, options.delay) : setInterval(nextSlide, options.delay);
+
 			}
 		}
 
 		// Stops the timer
-		function pause() {
-			if(options.delay !== 0) {
-				clearInterval(timer);
-			}
-		}
-
-		// Set up the inital state of fireSlider
-		this.init = function() {
-			if(typeof slider !== 'undefined') {
-				initialize();
-			}
-		};
-
-		function initialize() {
-			setupPager();
-
-			// Check Breakpoints
-			updateBreakpoints();
-			settings.slideWidthPercent = 1 / settings.show * 100;
-			settings.slideWidth = settings.sliderWidth / settings.show;
-
-			// Caluculate the multiplyer
-			var multiplier = calculateMultiplier();
-			multiplySlides(slides, multiplier);
-
-			// Set the first active slide
-			settings.currentSlide = 0;
-			addClass(slides[settings.currentSlide], 'fire-slider-active');
-
-			// position the elements of the array
-			reloadSlider();
-			positionSlides(slides);
-
-			trigger(slider, 'fire-slider-init');
-			play();
+		function stopTimer() {
+			clearInterval(timer);
 		}
 
 		// Refresh positions, breakpoints and slide count
 		function refresh() {
 			// Pause transitions
-			pause();
+			stopTimer();
 
 			// Update breakpoints and width settings
 			settings.windowWidth = window.innerWidth;
@@ -497,8 +465,11 @@ var Velocity = require('velocity-animate');
 				}
 			}
 
+			// Trigger event fire-slider-refreshed
+			trigger(document.querySelectorAll(selector), 'fire-slider-refreshed');
+
 			// Play Transitions
-			play();
+			startTimer(settings.direction);
 		}
 
 		// Basic slide transition effect
@@ -562,9 +533,9 @@ var Velocity = require('velocity-animate');
 		}
 
 		// Go to previous slide
-		function prev() {
+		function prevSlide() {
 			// Stop timer
-			pause();
+			stopTimer();
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -600,6 +571,9 @@ var Velocity = require('velocity-animate');
 				positions.push(newPosition);
 			}
 
+			// Trigger event fire-slider-before-transition
+			trigger(document.querySelectorAll(selector), 'fire-slider-before-transition');
+
 			if(window.jQuery) {
 				$(slides).dequeue(options.effect);
 			} else {
@@ -612,17 +586,17 @@ var Velocity = require('velocity-animate');
 				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
-			// Trigger event fire-slider-prev
-			trigger(slider, 'fire-slider-prev');
+			// Trigger event fire-slider-after-transition
+			trigger(document.querySelectorAll(selector), 'fire-slider-after-transition');
 
 			// Restart timer
-			play();
+			startTimer(settings.direction);
 		}
 
 		// Go to next slide
-		function next() {
+		function nextSlide() {
 			// Stop timer
-			pause();
+			stopTimer();
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
@@ -658,6 +632,9 @@ var Velocity = require('velocity-animate');
 				positions.push(newPosition);
 			}
 
+			// Trigger event fire-slider-before-transition
+			trigger(document.querySelectorAll(selector), 'fire-slider-before-transition');
+
 			if(window.jQuery) {
 				$(slides).dequeue(options.effect);
 			} else {
@@ -670,11 +647,11 @@ var Velocity = require('velocity-animate');
 				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 			}
 
-			// Trigger event fire-slider-prev
-			trigger(slider, 'fire-slider-prev');
+			// Trigger event fire-slider-after-transition
+			trigger(document.querySelectorAll(selector), 'fire-slider-after-transition');
 
 			// Restart timer
-			play();
+			startTimer(settings.direction);
 		}
 
 		// Go to the slide relative to the index of a pager elements
@@ -685,7 +662,7 @@ var Velocity = require('velocity-animate');
 			if(difference !== 0) {
 
 				// Stop Timer
-				pause();
+				stopTimer();
 
 				// Re-load slides
 				reloadSlider();
@@ -753,6 +730,9 @@ var Velocity = require('velocity-animate');
 					}
 				}
 
+				// Trigger event fire-slider-before-transition
+				trigger(document.querySelectorAll(selector), 'fire-slider-before-transition');
+
 				// Perform transitions
 				if(window.jQuery) {
 					$(slides).dequeue(options.effect);
@@ -767,77 +747,149 @@ var Velocity = require('velocity-animate');
 				addClass(slides[settings.currentSlide], 'fire-slider-active');
 				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
+				// Trigger event fire-slider-after-transition
+				trigger(document.querySelectorAll(selector), 'fire-slider-after-transition');
+
 				// Restart timer
-				play();
+				startTimer(settings.direction);
 			}
 		}
 
-		// Click events
-		if(typeof settings.next !== "undefined") {
-			listen(settings.next, 'click', function(e) {
-				if (e.preventDefault) e.preventDefault();
-				else e.returnValue = false;
-				next();
-			});
-		}
-		if(typeof settings.prev !== "undefined") {
-			listen(settings.prev, 'click', function(e) {
-				if (e.preventDefault) e.preventDefault();
-				else e.returnValue = false;
-				prev();
-			});
-		}
+		// Add all necesary event listeners
+		function addSliderEventListeners() {
 
-		// Pause on hover events
-		if(options.hoverPause) {
-			listen(slider, 'mouseover', function(e) {
-				pause();
-			});
-		}
+			if(typeof settings.next !== "undefined") {
+				listen(settings.next, 'click', function(e) {
+					if (e.preventDefault) e.preventDefault();
+					else e.returnValue = false;
+					nextSlide();
+					return false;
+				});
+			}
 
-		if(options.hoverPause) {
-			listen(slider, 'mouseout', function(e) {
-				play();
-			});
-		}
+			if(typeof settings.prev !== "undefined") {
+				listen(settings.prev, 'click', function(e) {
+					if (e.preventDefault) e.preventDefault();
+					else e.returnValue = false;
+					prevSlide();
+					return false;
+				});
+			}
 
-		// Disable link interaction if slide is not active slide
-		if(options.disableLinks && typeof slider !== 'undefined') {
-			listen(slider, 'click', function(e) {
-				var target = (e.target) ? e.target : e.srcElement;
-				if(target.tagName === "A") {
-					if(!hasClass(target.parentNode, 'fire-slider-active')) {
-						if (e.preventDefault) e.preventDefault();
-						else e.returnValue = false;
+			if(options.hoverPause) {
+				listen(slider, 'mouseover', function(e) {
+					stopTimer();
+					return false;
+				});
+			}
+
+			if(options.hoverPause) {
+				listen(slider, 'mouseout', function(e) {
+					startTimer(settings.direction);
+					return false;
+				});
+			}
+
+			// Disable link interaction if slide is not active slide
+			if(options.disableLinks && typeof slider !== 'undefined') {
+				listen(slider, 'click', function(e) {
+					var target = (e.target) ? e.target : e.srcElement;
+					if(target.tagName === "A") {
+						if(!hasClass(target.parentNode, 'fire-slider-active')) {
+							if (e.preventDefault) e.preventDefault();
+							else e.returnValue = false;
+						}
 					}
-				}
+					return false;
+				});
+			}
+
+			listen(window, 'resize', function() {
+				refresh();
+				return false;
 			});
 		}
 
-		// Window resize event
-		listen(window, 'resize', function() {
-			refresh();
-		});
+		// Set up the inital state of FireSlider.slider
+		function init() {
+			if(typeof slider !== 'undefined') {
+				setupPager();
 
-		// Example listeners
-		listen(document, 'fire-slider-init', function(e) {
-			// Do stuff when initialized
-		});
+				// Check Breakpoints
+				updateBreakpoints();
+				settings.slideWidthPercent = 1 / settings.show * 100;
+				settings.slideWidth = settings.sliderWidth / settings.show;
 
-		listen(document, 'fire-slider-next', function(e) {
-			// Do stuff when next
-		});
+				// Caluculate the multiplyer
+				var multiplier = calculateMultiplier();
+				multiplySlides(slides, multiplier);
 
+				// Set the first active slide
+				settings.currentSlide = 0;
+				addClass(slides[settings.currentSlide], 'fire-slider-active');
+
+				// position the elements of the array
+				reloadSlider();
+				positionSlides(slides);
+
+				addSliderEventListeners();
+
+				trigger(document.querySelectorAll(selector), 'fire-slider-init');
+				startTimer(settings.direction);
+			}
+		}
+
+		this.next = function() {
+			nextSlide();
+		};
+
+		this.prev = function() {
+			prevSlide();
+		};
+
+		this.pause = function() {
+			isPaused = true;
+			stopTimer();
+		};
+
+		this.play = function() {
+			isPaused = false;
+			stopTimer();
+			settings.direction = 'forward';
+			startTimer(settings.direction);
+		};
+
+		this.reverse = function() {
+			isPaused = false;
+			stopTimer();
+			settings.direction = 'backward';
+			startTimer(settings.direction);
+		};
+
+		init();
+
+		var sliderObject = {
+			selector: selector,
+			settings: settings,
+			options: options,
+			slides: slides,
+			data: slideData,
+			isPaused: isPaused
+		};
+		sliderObject = extend(sliderObject, this);
+		sliderObject = extend(sliderObject, document.querySelectorAll(selector)) || {};
+
+		return sliderObject;
 	};
+	
+})(window.FireSlider = window.FireSlider || {});
 
-	window.FireSlider = FireSlider;
-})();
-
-// Add jQuery compatibility. Usage: $('.slider').fireSlider({ options }, [{ breakpoints }])
+// If jQuery return new FireSlider object with options, wrapped as a jQuery object (for chaining)
 if(window.jQuery) {
 	(function (window) {
 		$.fn.fireSlider = function(options, breakpoints) {
-			return new FireSlider(this.selector, options, breakpoints).init();
+			var slider = new FireSlider.slider(this.selector, options, breakpoints);
+			return $(slider);
 		};
 	})(window.jQuery);
 }
