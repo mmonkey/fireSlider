@@ -196,6 +196,7 @@ var Velocity = require('velocity-animate');
 				slideWidth: slider.offsetWidth / options.show,
 				slideWidthPercent: 1 / options.show * 100,
 				currentSlide: 0,
+				direction: options.direction,
 				minX: 0,
 				maxX: 0
 			};
@@ -882,7 +883,7 @@ var Velocity = require('velocity-animate');
 
 		return sliderObject;
 	};
-	
+
 })(window.FireSlider = window.FireSlider || {});
 
 // If jQuery return new FireSlider object with options, wrapped as a jQuery object (for chaining)
