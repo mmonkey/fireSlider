@@ -11,16 +11,18 @@ Getting Started
 
 fireSlider doesn't depend on any outside plugins, just plug-in and go.
 
-    <script src="path/to/fireSlider.min.js"></script>
-
+```html
+<script src="path/to/fireSlider.min.js"></script>
+```
 
 **Use with jQuery**
 
 You can take advantage of jQuery, if you choose to do so.
 
-    <script src="path/to/jQuery.min.js"></script>
-    <script src="path/to/fireSlider.min.js"></script>
-
+```html
+<script src="path/to/jQuery.min.js"></script>
+<script src="path/to/fireSlider.min.js"></script>
+```
 
 Examples
 --------
@@ -32,26 +34,30 @@ Setup
 
 **Create the slider / carousel:**
 
-    <ul class="slider">
-    	<li><img src="path/to/image1.jpg"></li>
-    	<li><img src="path/to/image2.jpg"></li>
-    	<li><img src="path/to/image3.jpg"></li>
-    </ul>
+```html
+<ul class="slider">
+	<li><img src="path/to/image1.jpg"></li>
+	<li><img src="path/to/image2.jpg"></li>
+	<li><img src="path/to/image3.jpg"></li>
+</ul>
+```
 
 This is just an example, your slider can be any HTML with child elements inside. In general, an unordered list is a semantic option.
 
 **Add controls:**
 
-    <ul class="slider">
-        <li><img src="path/to/image1.jpg"></li>
-        <li><img src="path/to/image2.jpg"></li>
-        <li><img src="path/to/image3.jpg"></li>
-    </ul>
-    
-    <a id="prev" href=""></a>
-    <a id="next" href=""></a>
-    
-    <div id="pager"></div>
+```html
+<ul class="slider">
+	<li><img src="path/to/image1.jpg"></li>
+	<li><img src="path/to/image2.jpg"></li>
+	<li><img src="path/to/image3.jpg"></li>
+</ul>
+
+<a id="prev" href=""></a>
+<a id="next" href=""></a>
+
+<div id="pager"></div>
+```
 
 fireSlider supports previous and next slide controls as well as a pager. These controls are not required.
 
@@ -60,51 +66,65 @@ Configure
 
 **JavaScript**
 
-    FireSlider.slider(".slider", {
-    	show: 5,
-    	active: 3,
-    	prev: "#prev",
-    	next: "#next",
-    	pager: "#pager",
-    	effect: "slideInOut",
-    	speed: 500,
-    	delay: 4500,
-    }, [
-    	{breakpoint: 840, show: 3, active: 2},
-    	{breakpoint: 460, show: 1, active: 1}
-    ]);
+```javascript
+FireSlider.slider(".slider", {
+	show: 5,
+	active: 3,
+	prev: "#prev",
+	next: "#next",
+	pager: "#pager",
+	effect: "slideInOut",
+	speed: 500,
+	delay: 4500,
+}, [
+	{breakpoint: 840, show: 3, active: 2},
+	{breakpoint: 460, show: 1, active: 1}
+]);
+```
 
 fireSlider only has one required option, and that is the selector of your slider. If you just want to use the default options:
 
-    FireSlider.slider(".slider");
+```javascript
+FireSlider.slider(".slider");
+```
 
 See all of fireSlider's default options with descriptions down below.
 
 **jQuery**
 
-    $(".slider").fireSlider({
-    	prev: "#prev",
-    	next: "#next",
-    	pager: "#pager"
-    });
+```javascript
+$(".slider").fireSlider({
+	prev: "#prev",
+	next: "#next",
+	pager: "#pager"
+});
+```
 
 To use just the default options with jQuery:
 
-    $(".slider").fireSlider();
+```javascript
+$(".slider").fireSlider();
+```
 
 You may also want to leverage other jQuery functions:
 
-    $(".slider").fireSlider().addClass("myClass");
+```javascript
+$(".slider").fireSlider().addClass("myClass");
+```
 
 **Arguments**
 
 JavaScript:
 
-    FireSlider.slider(selector, options, breakpoints);
+```javascript
+FireSlider.slider(selector, options, breakpoints);
+```
 
 jQuery:
 
-    $(selector).fireSlider(options, breakpoints);
+```javascript
+$(selector).fireSlider(options, breakpoints);
+```
 
 Argument | Description | Type
 ------------- | ------------- | -------------
@@ -133,11 +153,13 @@ thumbnails | Duplicate slides for the pager elements? | boolean | false
 
 All of fireSlider's options may also be setup with data-attributes on the slider element:
 
-    <ul class="slider" data-slider-speed="300" data-slider-pager="#pager">
-        <li><img src="path/to/image1.jpg"></li>
-        <li><img src="path/to/image2.jpg"></li>
-        <li><img src="path/to/image3.jpg"></li>
-    </ul>
+```html
+<ul class="slider" data-slider-speed="300" data-slider-pager="#pager">
+	<li><img src="path/to/image1.jpg"></li>
+	<li><img src="path/to/image2.jpg"></li>
+	<li><img src="path/to/image3.jpg"></li>
+</ul>
+```
 
 All data-attributes are named the same as the options, except prepended by `data-slider-`. Two word options, like hoverPause, are instead `data-slider-hover-pause`.
 
@@ -154,13 +176,15 @@ active | The position of the active slide. | int | 1
 
 Setting up breakpoint options is a breeze:
 
-	var breakpoints = [
-    	{breakpoint: 1200, show: 5, active: 3},
-       	{breakpoint: 840, show: 3, active: 2},
-       	{breakpoint: 460, show: 1, active: 1}
-    ];
+```javascript
+var breakpoints = [
+	{breakpoint: 1200, show: 5, active: 3},
+	{breakpoint: 840, show: 3, active: 2},
+	{breakpoint: 460, show: 1, active: 1}
+];
 
-    FireSlider.slider(".slider", { effect: "fadeInOut" }, breakpoints);
+FireSlider.slider(".slider", { effect: "fadeInOut" }, breakpoints);
+```
 
 There is no limit to the number of breakpoints you set!
 
@@ -177,11 +201,13 @@ Event | Description
 
 You can listen for events like this:
 
-    var slider = FireSlider.slider(".my_slider");
-    
-    slider.addEventListener("fire-slider-init", function() {
-    	console.log("My slider is ready!");
-    });
+```javascript
+var slider = FireSlider.slider(".my_slider");
+
+slider.addEventListener("fire-slider-init", function() {
+	console.log("My slider is ready!");
+});
+```
 
 Download
 --------
@@ -193,11 +219,15 @@ Contribute
 
 Install the project dependencies:
 
-    $ npm update
+```
+$ npm update
+```
 
 Start gulp:
 
-    $ gulp
+```
+$ gulp
+```
 
 **Issues**
 
