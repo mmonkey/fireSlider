@@ -185,7 +185,7 @@ You can listen for events like this:
 
 Download
 --------
-Get the latest version of fireSlider [here.](releases/latest)
+Get the latest version of fireSlider [here.](https://github.com/mmonkey/fireSlider/releases/latest)
 
 Contribute
 ----------
@@ -201,7 +201,7 @@ Start gulp:
 
 **Issues**
 
-You can submit issues [here.](issues)
+You can submit issues [here.](https://github.com/mmonkey/fireSlider/issues)
 
 
 ----------
