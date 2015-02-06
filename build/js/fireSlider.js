@@ -1,5 +1,5 @@
 /*!
- * fireSlider (1.0.0) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (1.1.0) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -175,8 +175,8 @@ var Velocity = require('velocity-animate');
 			effect: (typeof slideData.sliderEffect !== "undefined") ? slideData.sliderEffect : 'slideInOut',
 			hoverPause: (typeof slideData.sliderHoverPause !== "undefined") ?  getBoolean(slideData.sliderHoverPause) : false,
 			disableLinks: (typeof slideData.sliderDisableLinks !== "undefined") ?  getBoolean(slideData.sliderDisableLinks) : true,
-			thumbnails: (typeof slideData.sliderThumbnails !== "undefined") ?  getBoolean(slideData.sliderThumbnails) : false,
-			direction: (typeof slideData.direction !== "undefined") ?  getBoolean(slideData.direction) : 'forward'
+			direction: (typeof slideData.direction !== "undefined") ?  getBoolean(slideData.direction) : 'forward',
+			pagerTemplate: (typeof slideData.pagerTemplate !== "undefined") ? slideData.pagerTemplate : ''
 		};
 
 		// Merge dataset with options
@@ -341,13 +341,12 @@ var Velocity = require('velocity-animate');
 		}
 
 		// Add click event to pager node
-		function addPagerListener(node) {
+		function addPagerListener(node, tag) {
 			listen(node, 'click', function(e) {
 				if (e.preventDefault) e.preventDefault();
 				else e.returnValue = false;
 
 				var target = this;
-				var tag = (options.thumbnails) ? options.slide : "span";
 
 				if(target.tagName.toLowerCase() === tag.toLowerCase()) {
 					pagerTransition(getIndex(target));
@@ -355,23 +354,91 @@ var Velocity = require('velocity-animate');
 			});
 		}
 
+		// Clone slides as pager elements
+		function createClonedPager() {
+			for(var i = 0; i < settings.totalSlides; i++) {
+				var clone = slides[i].cloneNode(true);
+				settings.pager.appendChild(clone);
+				addPagerListener(clone, options.slide);
+				settings.pagerElems.push(clone);
+			}
+		}
+
+		// Create node from markup
+		function createNodeFromMarkup(markup) {
+			var node = document.createDocumentFragment();
+			var tmp = document.createElement('body'), child;
+			tmp.innerHTML = markup;
+			while (child === tmp.firstChild) {
+				node.appendChild(child);
+			}
+			return node;
+		}
+
+		// Parse tags from pager template
+		function parsePagerTemplate(slide, template, index) {
+			var result = template;
+
+			if (result.indexOf('{{num}}') !== -1) {
+				result = result.replace(/{{num}}/g, (index + 1).toString());
+			}
+
+			if (result.indexOf('{{src}}') !== -1) {
+				var img = slide.querySelectorAll('img')[0];
+				var src = (typeof img !== "undefined") ? img.src : '';
+				result = result.replace(/{{src}}/g, src);
+			}
+
+			if (result.indexOf('{{description}}') !== -1) {
+				var des = (typeof getData(slide).sliderPagerDescription !== "undefined") ? getData(slide).sliderPagerDescription : '';
+				result = result.replace(/{{description}}/g, des);
+			}
+
+			return result;
+		}
+
+		// Create a dom element from HTML markup
+		function getDomElementFromString(markup) {
+			var d = document.createElement('div');
+			d.innerHTML = markup;
+			return d.firstChild;
+		}
+
+		// Setup custom pager elements
+		function createCustomPager() {
+			for(var i = 0; i < settings.totalSlides; i++) {
+				var template = options.pagerTemplate;
+				var markup = parsePagerTemplate(slides[i], template, i);
+				var parser = new DOMParser();
+				var elm = getDomElementFromString(markup);
+				settings.pager.appendChild(elm);
+				addPagerListener(elm, elm.tagName);
+				settings.pagerElems.push(elm);
+			}
+		}
+
+		// Setup pager with span elements
+		function createDefaultPager() {
+			for(var i = 0; i < settings.totalSlides; i++) {
+				var span = document.createElement('span');
+				settings.pager.appendChild(span);
+				addPagerListener(span, 'span');
+				settings.pagerElems.push(span);
+			}
+		}
+
 		// Fills pager with elements based on total slides, adds active class to the first slide
 		function setupPager() {
-			if(typeof settings.pager !== "undefined") {
-				for(var i = 0; i < settings.totalSlides; i++) {
-					if(options.thumbnails) {
-						var thumb = slides[i].cloneNode(true);
-						settings.pager.appendChild(thumb);
-						addPagerListener(thumb);
-					} else {
-						var span = document.createElement('span');
-						settings.pager.appendChild(span);
-						addPagerListener(span);
-					}
-				}
-				settings.pagerElems = (options.thumbnails) ? getDirectChildren(settings.pager, options.slide) : getDirectChildren(settings.pager, 'span');
-				addClass(settings.pagerElems[0], 'fire-pager-active');
+
+			if(options.pagerTemplate.toLowerCase() === 'clone') {
+				createClonedPager();
+			} else if(options.pagerTemplate !== '') {
+				createCustomPager();
+			} else {
+				createDefaultPager();
 			}
+
+			addClass(settings.pagerElems[0], 'fire-pager-active');
 		}
 
 		function setupThumbnails() {
@@ -814,7 +881,8 @@ var Velocity = require('velocity-animate');
 		// Set up the inital state of FireSlider.slider
 		function init() {
 			if(typeof slider !== 'undefined') {
-				setupPager();
+
+				if(typeof settings.pager !== 'undefined') setupPager();
 
 				// Check Breakpoints
 				updateBreakpoints();

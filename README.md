@@ -173,7 +173,7 @@ disableLinks | Disable links on the non-active slides? | boolean | true
 prev | The selector of the previous-slide button. | string | N/A
 next | The selector of the next-slide button. | string | N/A
 pager | The selector of the pager element. | string | N/A
-thumbnails | Duplicate slides for the pager elements? | boolean | false
+pagerTemplate | Template for pager elements | HTML String | "`<span><\span>`"
 
 All of fireSlider's options may also be setup with data-attributes on the slider element:
 
@@ -210,7 +210,60 @@ var breakpoints = [
 FireSlider.slider(".slider", { effect: "fadeInOut" }, breakpoints);
 ```
 
-There is no limit to the number of breakpoints you set!
+There is no limit to the number of breakpoints you can set!
+
+Pager Template
+-------
+
+By default, a pager is filled with empty spans, however you can customize the pager elments with custom markup. Here is how to fill the pager with anchor links:
+
+```javascript
+FireSlider.slider(".slider", {
+	pager: "#pager",
+	pagerTemplate: '<a href="#" class="pager-dot"></a>'
+});
+```
+
+Optionally, you can clone your entire original slide, creating a "thumbnail" by setting `pagerTemplate: "clone"`:
+
+```javascript
+FireSlider.slider(".slider", {
+	pager: "#pager",
+	pagerTemplate: "clone"
+});
+```
+
+**Tags**
+
+You can also further customize the output using tags:
+
+```javascript
+FireSlider.slider(".slider", {
+	pager: "#pager",
+	pagerTemplate: '<a href="#" class="pager-dot-{{num}}">{{description}}</a>'
+});
+```
+
+Tag | Description
+------------- | -------------
+{{num}} | The slide's position.
+{{src}} | The first image's src from the slide.
+{{description}} | See below.
+
+**{{description}} Tag**
+
+You may add an additional data-attribute to your slide element:
+
+```html
+<ul class="slider">
+	<li><img src="path/to/image1.jpg" data-slider-pager-description="Image One"></li>
+	<li><img src="path/to/image2.jpg" data-slider-pager-description="Image Two"></li>
+	<li><img src="path/to/image3.jpg" data-slider-pager-description="Image Three"></li>
+</ul>
+```
+
+The pager will output the `data-slider-pager-description` in place of the `{{description}}` tag.
+
 
 Events
 ------

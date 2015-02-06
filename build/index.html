@@ -42,19 +42,19 @@
 
 	<div class="section">
 		<ul id="fireSlider2">
-			<li class="slide-1">1
+			<li class="slide-1" data-slider-pager-description="One">1
 				<ul>
 					<li>1</li>
 					<li>2</li>
 					<li>3</li>
 				</ul>
 			</li>
-			<li class="slide-2">2
+			<li class="slide-2" data-slider-pager-description="Two">2
 				<a href="">Test Link Clicking</a>
 			</li>
-			<li class="slide-3">3</li>
-			<li class="slide-4">4</li>
-			<li class="slide-5">5</li>
+			<li class="slide-3" data-slider-pager-description="Three">3</li>
+			<li class="slide-4" data-slider-pager-description="Four">4</li>
+			<li class="slide-5" data-slider-pager-description="Five">5</li>
 		</ul>
 	</div>
 
@@ -74,7 +74,7 @@
 				prev: '#prev2',
 				next: '#next2',
 				pager: '#thumbnailPager',
-				thumbnails: true,
+				pagerTemplate: '<li class="slide-{{num}}"><a href="">{{description}}</a></li>',
 				direction: 'backward',
 				speed: 300,
 				delay: 2000
