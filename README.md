@@ -132,6 +132,30 @@ selector | A selector to the slider element | String
 options | Configureable options to customize the slider | Object
 breakpoints | A sub-set of options to update at certain browser widths | Array
 
+Style
+-------
+
+Add these classes to your slider element:
+
+```css
+.slider {
+	position: relative;
+	width: DESIRED WIDTH;
+	height: DESIRED HEIGHT;
+}
+```
+
+Add this to make it a slider instead of a carousel:
+
+```css
+.slider {
+	position: relative;
+	width: DESIRED WIDTH;
+	height: DESIRED HEIGHT;
+	overflow: hidden;
+}
+```
+
 Options
 -------
 
