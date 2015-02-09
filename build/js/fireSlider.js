@@ -173,10 +173,11 @@ var Velocity = require('velocity-animate');
 			speed: (typeof slideData.sliderSpeed !== "undefined") ? parseInt(slideData.sliderSpeed) : 500,
 			delay: (typeof slideData.sliderDelay !== "undefined") ? parseInt(slideData.sliderDelay) : 5000,
 			effect: (typeof slideData.sliderEffect !== "undefined") ? slideData.sliderEffect : 'slideInOut',
+			easing: (typeof slideData.sliderEasing !== "undefined") ? slideData.sliderEasing : 'swing',
 			hoverPause: (typeof slideData.sliderHoverPause !== "undefined") ?  getBoolean(slideData.sliderHoverPause) : false,
 			disableLinks: (typeof slideData.sliderDisableLinks !== "undefined") ?  getBoolean(slideData.sliderDisableLinks) : true,
-			direction: (typeof slideData.direction !== "undefined") ?  getBoolean(slideData.direction) : 'forward',
-			pagerTemplate: (typeof slideData.pagerTemplate !== "undefined") ? slideData.pagerTemplate : ''
+			direction: (typeof slideData.sliderDirection !== "undefined") ?  getBoolean(slideData.sliderDirection) : 'forward',
+			pagerTemplate: (typeof slideData.sliderPagerTemplate !== "undefined") ? slideData.sliderPagerTemplate : ''
 		};
 
 		// Merge dataset with options
@@ -441,17 +442,6 @@ var Velocity = require('velocity-animate');
 			addClass(settings.pagerElems[0], 'fire-pager-active');
 		}
 
-		function setupThumbnails() {
-			if(settings.thumbnails) {
-				var div = document.createElement('DIV');
-				div.id = "fire-slider-thumbnails";
-				for(var i = 0; i < settings.totalSlides; i++) {
-					var thumb = slides[i].clone();
-					div.appendChild(thumb);
-				}
-			}
-		}
-
 		// Gets the index of a DOM element relative to it's parent element
 		function getIndex(node) {
 			var result = -1;
@@ -542,34 +532,21 @@ var Velocity = require('velocity-animate');
 
 		// Basic slide transition effect
 		function slideInOut(element, opts) {
-			var offset = 0;
-			if(opts.multiplier) {
-				offset = opts.multiplier * 100;
-			}
-			
-			V(element, {translateX: (opts.oldPosition + '%')}, {duration: 0, queue: options.effect});
-
-			if(opts.snapping) {
-				V(element, {translateX: (opts.newPosition + '%')}, {duration: 0, queue: options.effect});
-			} else {
-				V(element, {translateX: (opts.newPosition + '%')}, {duration: options.speed, queue: options.effect});
-			}
+			var duration = (opts.snapping) ? 0 : options.speed;
+			V(element, {translateX: [(opts.newPosition + '%'), (opts.oldPosition + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
 		}
 
 		// Fade in / out transition effect
 		function fadeInOut(element, opts) {
-			var offset = 0;
-			if(opts.multiplier) {
-				offset = opts.multiplier * 100;
-			}
+			var elemClone = element.cloneNode(true);
+			element.parentNode.appendChild(elemClone);
 
-			if(!opts.delay) {
-				V(element, {translateX: (opts.newPosition + '%'), opacity: 1.0, zIndex: 0}, {duration: 0, queue: options.effect});
-			} else {
-				V(element, {translateX: (opts.oldPosition + '%'), opacity: 1.0, zIndex: 1}, {duration: 0, queue: options.effect});
-				V(element, {opacity: 0.0}, {duration: options.speed, queue: options.effect});
-				V(element, {translateX: (opts.newPosition + '%'), opacity: 1.0, zIndex: 0}, {duration: 0, queue: options.effect, delay: options.speed});
-			}
+			V(element, {translateX: [(opts.newPosition + '%'), (opts.newPosition + '%')]}, {duration: options.speed , queue: options.effect,
+				begin: function() {
+					V(elemClone, {opacity: [0.0, 1.0], zIndex: [1, 1]}, {duration: options.speed, easing: options.easing});
+				},
+				complete: function() { elemClone.parentNode.removeChild(elemClone); }
+			});
 		}
 
 		// Routes slide to correct transition
