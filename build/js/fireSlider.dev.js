@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*!
- * fireSlider (1.1.0) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (1.1.1) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -323,22 +323,14 @@ var Velocity = require('velocity-animate');
 
 		// Calculates positions for revolution amount
 		function calculatePositions(array, revolutions) {
-			for(var i = 0; i < slides.length; i++) {
-				var oldPosition = positions.shift();
-				var newPosition = oldPosition;
+			var currentPositions = positions.slice(0);
+			
+			for(var i = 0; i < revolutions; i++) {
+				cyclePositions(direction);
+			}
 
-				for(var j = 0; j < revolutions; j++) {
-					newPosition = newPosition - 100;
-					if(newPosition < settings.minX) {
-						newPosition = settings.maxX;
-					}
-					if(newPosition > settings.maxX) {
-						newPosition = settings.minX;
-					}
-				}
-
-				V(slides[i], {translateX: (newPosition + '%')}, {duration: 0, queue: options.effect});
-				positions.push(newPosition);
+			for(var j = 0; j < slides.length; j++) {
+				V(slides[i], {translateX: (positions[i] + '%')}, {duration: 0, queue: options.effect});
 			}
 		}
 
@@ -512,6 +504,7 @@ var Velocity = require('velocity-animate');
 
 					// Get new positions
 					calculatePositions(slider, Math.abs(difference));
+
 					if(window.jQuery) {
 						$(slides).dequeue(options.effect);
 					} else {
@@ -523,8 +516,11 @@ var Velocity = require('velocity-animate');
 				addClass(slides[settings.currentSlide], 'fire-slider-active');
 
 			} else {
+				
 				positionSlides(slides);
+				
 				calculatePositions(slider, settings.currentSlide);
+
 				if(window.jQuery) {
 					$(slides).dequeue(options.effect);
 				} else {
