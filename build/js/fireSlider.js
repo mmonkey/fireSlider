@@ -1,5 +1,5 @@
 /*!
- * fireSlider (1.1.0) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (1.1.1) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -503,7 +503,7 @@ var Velocity = require('velocity-animate');
 
 					// Get new positions
 					calculatePositions(slider, Math.abs(difference));
-					
+
 					if(window.jQuery) {
 						$(slides).dequeue(options.effect);
 					} else {
