@@ -4,7 +4,7 @@
  **/
 var Velocity = require('velocity-animate');
 
-(function (FireSlider, undefined) {
+(function (FireSlider, window, document, undefined) {
 
 	// Set up Velocity
 	var V = (window.jQuery) ? $.Velocity : Velocity;
@@ -212,6 +212,22 @@ var Velocity = require('velocity-animate');
 			settings.pager = (typeof options.pager !== "undefined") ? document.querySelectorAll(options.pager)[0] : document.querySelectorAll(slideData.sliderPager)[0];
 		}
 
+		function getState() {
+			var state = {
+				selector: selector,
+				settings: settings,
+				options: options,
+				slides: slides,
+				data: slideData,
+				isPaused: isPaused,
+				positions: positions
+			};
+			state = extend(state, this);
+			state = extend(state, document.querySelectorAll(selector)) || {};
+
+			return state;
+		}
+
 		function reloadSlider() {
 			slides = getDirectChildren(slider, options.slide);
 		}
@@ -325,7 +341,7 @@ var Velocity = require('velocity-animate');
 			var currentPositions = positions.slice(0);
 			
 			for(var i = 0; i < revolutions; i++) {
-				cyclePositions(direction);
+				cyclePositions('next');
 			}
 
 			for(var j = 0; j < slides.length; j++) {
@@ -824,21 +840,10 @@ var Velocity = require('velocity-animate');
 
 		init();
 
-		var sliderObject = {
-			selector: selector,
-			settings: settings,
-			options: options,
-			slides: slides,
-			data: slideData,
-			isPaused: isPaused
-		};
-		sliderObject = extend(sliderObject, this);
-		sliderObject = extend(sliderObject, document.querySelectorAll(selector)) || {};
-
-		return sliderObject;
+		return getState();
 	};
 
-})(window.FireSlider = window.FireSlider || {});
+})((window.FireSlider = window.FireSlider || {}), window, document);
 
 // If jQuery return new FireSlider object with options, wrapped as a jQuery object (for chaining)
 if(window.jQuery) {
