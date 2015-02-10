@@ -322,22 +322,14 @@ var Velocity = require('velocity-animate');
 
 		// Calculates positions for revolution amount
 		function calculatePositions(array, revolutions) {
-			for(var i = 0; i < slides.length; i++) {
-				var oldPosition = positions.shift();
-				var newPosition = oldPosition;
+			var currentPositions = positions.slice(0);
+			
+			for(var i = 0; i < revolutions; i++) {
+				cyclePositions(direction);
+			}
 
-				for(var j = 0; j < revolutions; j++) {
-					newPosition = newPosition - 100;
-					if(newPosition < settings.minX) {
-						newPosition = settings.maxX;
-					}
-					if(newPosition > settings.maxX) {
-						newPosition = settings.minX;
-					}
-				}
-
-				V(slides[i], {translateX: (newPosition + '%')}, {duration: 0, queue: options.effect});
-				positions.push(newPosition);
+			for(var j = 0; j < slides.length; j++) {
+				V(slides[i], {translateX: (positions[i] + '%')}, {duration: 0, queue: options.effect});
 			}
 		}
 
@@ -511,6 +503,7 @@ var Velocity = require('velocity-animate');
 
 					// Get new positions
 					calculatePositions(slider, Math.abs(difference));
+					
 					if(window.jQuery) {
 						$(slides).dequeue(options.effect);
 					} else {
@@ -522,8 +515,11 @@ var Velocity = require('velocity-animate');
 				addClass(slides[settings.currentSlide], 'fire-slider-active');
 
 			} else {
+				
 				positionSlides(slides);
+				
 				calculatePositions(slider, settings.currentSlide);
+
 				if(window.jQuery) {
 					$(slides).dequeue(options.effect);
 				} else {
