@@ -454,6 +454,14 @@ var Velocity = require('velocity-animate');
 			return result;
 		}
 
+		function prevSlide() {
+			transitionSlides('prev');
+		}
+
+		function nextSlide() {
+			transitionSlides('next');
+		}
+
 		// Starts the timer
 		function startTimer(direction) {
 			if(options.delay !== 0 && !isPaused) {
@@ -533,7 +541,7 @@ var Velocity = require('velocity-animate');
 		// Basic slide transition effect
 		function slideInOut(element, opts) {
 			var duration = (opts.snapping) ? 0 : options.speed;
-			V(element, {translateX: [(opts.newPosition + '%'), (opts.oldPosition + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
+			V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
 		}
 
 		// Fade in / out transition effect
@@ -541,7 +549,7 @@ var Velocity = require('velocity-animate');
 			var elemClone = element.cloneNode(true);
 			element.parentNode.appendChild(elemClone);
 
-			V(element, {translateX: [(opts.newPosition + '%'), (opts.newPosition + '%')]}, {duration: options.speed , queue: options.effect,
+			V(element, {translateX: [(opts.nextPos + '%'), (opts.nextPos + '%')]}, {duration: options.speed , queue: options.effect,
 				begin: function() {
 					V(elemClone, {opacity: [0.0, 1.0], zIndex: [1, 1]}, {duration: options.speed, easing: options.easing});
 				},
@@ -577,104 +585,46 @@ var Velocity = require('velocity-animate');
 			}
 		}
 
+		function cyclePositions(direction) {
+			if(direction === 'prev') {
+				var prev = positions.shift();
+				positions.push(prev);
+			} else {
+				var next = positions.pop();
+				positions.unshift(next);
+			}
+		}
+
+		function updateCurrentSlide(direction) {
+			if(direction === 'prev') {
+				settings.currentSlide = (settings.currentSlide === 0) ? (slides.length - 1) : settings.currentSlide -= 1;
+			} else {
+				settings.currentSlide = (settings.currentSlide === (slides.length - 1)) ? 0 : settings.currentSlide += 1;
+			}
+		}
+
 		// Go to previous slide
-		function prevSlide() {
+		function transitionSlides(direction) {
+			
 			// Stop timer
 			stopTimer();
 
 			// Remove active classes
 			removeClass(slides[settings.currentSlide], 'fire-slider-active');
-			if(typeof settings.pager !== "undefined") {
-				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
-			}
+			if(typeof settings.pager !== "undefined") removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
-			var delayIndex = settings.currentSlide;
+			updateCurrentSlide(direction);
 
-			settings.currentSlide -= 1;
-			if(settings.currentSlide < 0) {
-				settings.currentSlide = (slides.length - 1);
-			}
+			var currentPositions = positions.slice(0);
+			cyclePositions(direction);
 
 			// Calculate New Position
 			for(var i = 0; i < slides.length; i++) {
-				var oldPosition = positions.shift();
-				var newPosition = oldPosition + 100;
-				var snapping = false;
-				var delay = false;
-				if(newPosition < settings.minX) {
-					newPosition = settings.maxX;
-					snapping = true;
-				}
-				if(newPosition > settings.maxX) {
-					newPosition = settings.minX;
-					snapping = true;
-				}
-				if(i === delayIndex) {
-					delay = true;
-				}
-				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping, delay: delay});
-				positions.push(newPosition);
-			}
-
-			// Trigger event fire-slider-before-transition
-			trigger(document.querySelectorAll(selector), 'fire-slider-before-transition');
-
-			if(window.jQuery) {
-				$(slides).dequeue(options.effect);
-			} else {
-				V.Utilities.dequeue(slides, options.effect);
-			}
-
-			// Add active classes
-			addClass(slides[settings.currentSlide], 'fire-slider-active');
-			if(typeof settings.pager !== "undefined") {
-				addClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
-			}
-
-			// Trigger event fire-slider-after-transition
-			trigger(document.querySelectorAll(selector), 'fire-slider-after-transition');
-
-			// Restart timer
-			startTimer(settings.direction);
-		}
-
-		// Go to next slide
-		function nextSlide() {
-			// Stop timer
-			stopTimer();
-
-			// Remove active classes
-			removeClass(slides[settings.currentSlide], 'fire-slider-active');
-			if(typeof settings.pager !== "undefined") {
-				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
-			}
-			
-			var delayIndex = settings.currentSlide;
-
-			settings.currentSlide += 1;
-			if(settings.currentSlide > (slides.length - 1)) {
-				settings.currentSlide = 0;
-			}
-
-			// Calculate next position
-			for(var i = 0; i < slides.length; i++) {
-				var oldPosition = positions.shift();
-				var newPosition = oldPosition - 100;
-				var snapping = false;
-				var delay = false;
-				if(newPosition < settings.minX) {
-					newPosition = settings.maxX;
-					snapping = true;
-				}
-				if(newPosition > settings.maxX) {
-					newPosition = settings.minX;
-					snapping = true;
-				}
-				if(i === delayIndex) {
-					delay = true;
-				}
-				transitionManager(slides[i], {oldPosition: oldPosition, newPosition: newPosition, snapping: snapping, delay: delay});
-				positions.push(newPosition);
+				transitionManager(slides[i], {
+					currPos: currentPositions[i],
+					nextPos: positions[i],
+					snapping: (positions[i] === settings.minX || positions[i] === settings.maxX) ? true : false
+				});
 			}
 
 			// Trigger event fire-slider-before-transition
@@ -701,8 +651,8 @@ var Velocity = require('velocity-animate');
 
 		// Go to the slide relative to the index of a pager elements
 		function pagerTransition(index) {
-			var currentPosition = settings.currentSlide % settings.totalSlides;
-			var difference = index - currentPosition;
+
+			var difference = index - (settings.currentSlide % settings.totalSlides);
 
 			if(difference !== 0) {
 
@@ -718,61 +668,25 @@ var Velocity = require('velocity-animate');
 				removeClass(slides[settings.currentSlide], 'fire-slider-active');
 				removeClass(settings.pagerElems[settings.currentSlide % settings.totalSlides], 'fire-pager-active');
 
-				// Using the difference, determine where the slides' next position will be and send to transition manager
+				var currentPositions = positions.slice(0);
+
 				if(difference < 0) {
-					
-					// Previous Direction
-					for(var i = 0; i < slides.length; i++) {
-						var oldPositionPrev = positions.shift();
-						var newPositionPrev = oldPositionPrev;
-						var snappingPrev = false;
-						var delay = false;
-
-						for(var j = 0; j < Math.abs(difference); j++) {
-							newPositionPrev = newPositionPrev + 100;
-							if(newPositionPrev < settings.minX) {
-								newPositionPrev = settings.maxX;
-								snappingPrev = true;
-							}
-							if(newPositionPrev > settings.maxX) {
-								newPositionPrev = settings.minX;
-								snappingPrev = true;
-							}
-						}
-
-						if(i === delayIndex) {
-							delay = true;
-						}
-						transitionManager(slides[i], {oldPosition: oldPositionPrev, newPosition: newPositionPrev, snapping: snappingPrev, delay: delay});
-						positions.push(newPositionPrev);
+					for(var i = 0; i < Math.abs(difference); i++) {
+						cyclePositions('prev');
 					}
-
 				} else {
-					
-					// Next Direction
-					for(var k = 0; k < slides.length; k++) {
-						var oldPositionNext = positions.shift();
-						var newPositionNext = oldPositionNext;
-						var snappingNext = false;
-						var delay2 = false;
-
-						for(var l = 0; l < Math.abs(difference); l++) {
-							newPositionNext = newPositionNext - 100;
-							if(newPositionNext < settings.minX) {
-								newPositionNext = settings.maxX;
-								snappingNext = true;
-							}
-							if(newPositionNext > settings.maxX) {
-								newPositionNext = settings.minX;
-								snappingNext = true;
-							}
-						}
-						if(k === delayIndex) {
-							delay2 = true;
-						}
-						transitionManager(slides[k], {oldPosition: oldPositionNext, newPosition: newPositionNext, snapping: snappingNext, delay: delay2});
-						positions.push(newPositionNext);
+					for(var j = 0; j < Math.abs(difference); j++) {
+						cyclePositions('next');
 					}
+				}
+
+				var snappingRange = 100 * Math.abs(difference);
+				for(var k = 0; k < slides.length; k++) {
+					transitionManager(slides[k], {
+						currPos: currentPositions[k],
+						nextPos: positions[k],
+						snapping: (positions[k] <= (settings.minX + snappingRange) || positions[k] >= (settings.maxX - snappingRange)) ? true : false
+					});
 				}
 
 				// Trigger event fire-slider-before-transition
@@ -803,20 +717,20 @@ var Velocity = require('velocity-animate');
 		// Add all necesary event listeners
 		function addSliderEventListeners() {
 
-			if(typeof settings.next !== "undefined") {
-				listen(settings.next, 'click', function(e) {
-					if (e.preventDefault) e.preventDefault();
-					else e.returnValue = false;
-					nextSlide();
-					return false;
-				});
-			}
-
 			if(typeof settings.prev !== "undefined") {
 				listen(settings.prev, 'click', function(e) {
 					if (e.preventDefault) e.preventDefault();
 					else e.returnValue = false;
 					prevSlide();
+					return false;
+				});
+			}
+
+			if(typeof settings.next !== "undefined") {
+				listen(settings.next, 'click', function(e) {
+					if (e.preventDefault) e.preventDefault();
+					else e.returnValue = false;
+					nextSlide();
 					return false;
 				});
 			}
@@ -886,11 +800,11 @@ var Velocity = require('velocity-animate');
 		}
 
 		this.next = function() {
-			nextSlide();
+			prevSlide();
 		};
 
 		this.prev = function() {
-			prevSlide();
+			nextSlide();
 		};
 
 		this.pause = function() {
