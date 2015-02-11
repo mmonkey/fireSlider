@@ -376,23 +376,32 @@ var Velocity = require('velocity-animate');
 			return node;
 		}
 
+		// Create a regex string for parsing a template tag
+		function getTemplateTagRegex(tag) {
+			return new RegExp('{{\\s*'' + tag + '\\s*}}', 'g');
+		}
+
 		// Parse tags from pager template
 		function parsePagerTemplate(slide, template, index) {
 			var result = template;
 
-			if (result.indexOf('{{num}}') !== -1) {
-				result = result.replace(/{{num}}/g, (index + 1).toString());
+			console.log(getTemplateTagRegex('num'));
+			var numTag = getTemplateTagRegex('num');
+			if (result.search(numTag) !== -1) {
+				result = result.replace(numTag, (index + 1).toString());
 			}
 
-			if (result.indexOf('{{src}}') !== -1) {
+			var srcTag = getTemplateTagRegex('src');
+			if (result.search(srcTag) !== -1) {
 				var img = slide.querySelectorAll('img')[0];
 				var src = (typeof img !== "undefined") ? img.src : '';
-				result = result.replace(/{{src}}/g, src);
+				result = result.replace(numTag, src);
 			}
 
-			if (result.indexOf('{{description}}') !== -1) {
+			var descriptionTag = getTemplateTagRegex('description')
+			if (result.search(descriptionTag) !== -1) {
 				var des = (typeof getData(slide).sliderPagerDescription !== "undefined") ? getData(slide).sliderPagerDescription : '';
-				result = result.replace(/{{description}}/g, des);
+				result = result.replace(descriptionTag, des);
 			}
 
 			return result;
