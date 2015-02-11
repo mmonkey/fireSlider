@@ -1,5 +1,5 @@
 /*!
- * fireSlider (1.1.1) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (1.1.2) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -393,7 +393,6 @@ var Velocity = require('velocity-animate');
 		function parsePagerTemplate(slide, template, index) {
 			var result = template;
 
-			console.log(getTemplateTagRegex('num'));
 			var numTag = getTemplateTagRegex('num');
 			if (result.search(numTag) !== -1) {
 				result = result.replace(numTag, (index + 1).toString());
