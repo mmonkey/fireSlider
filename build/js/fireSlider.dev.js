@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*!
- * fireSlider (1.2.0) (C) 2014 CJ O'Hara and Tyler Fowle.
+ * fireSlider (1.2.1) (C) 2014 CJ O'Hara and Tyler Fowle.
  * MIT @license: en.wikipedia.org/wiki/MIT_License
  **/
 var Velocity = require('velocity-animate');
@@ -9,9 +9,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 (function (FireSlider, window, undefined) {
 
 	var fireSlider = {
-		breakpoints: {},
+		length: 0,
 		nextSlide: {},
-		options: {},
 		pause: {},
 		play: {},
 		prevSlide: {},
@@ -24,10 +23,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			var elements = document.querySelectorAll(sel);
 			if(elements.length === 0) return;
 
-			this.selector = sel;
-			this.options = opts;
-			this.breakpoints = breakpoints;
 			this.length = elements.length;
+			this.selector = sel;
 			this.sliders = [];
 
 			// Initialize each slider independently that match the selector
@@ -99,12 +96,11 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			// Load element
 			fs.slider = elem;
 
-			// Load breakpoints
-			fs.breakpoints = breakpoints || {};
-
 			// Setup default option values
 			var defaults = {
 				active: 1,
+				activePagerClass: 'fire-pager-active',
+				activeSlideClass: 'fire-slider-active',
 				delay: 5000,
 				direction: 'forward',
 				disableLinks: true,
@@ -123,10 +119,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			// Convert data to option values
 			fs.data = {
 				active: (data.firesliderActive) ? parseInt(data.firesliderActive) : undefined,
+				activePagerClass: data.firesliderActivePagerClass,
+				activeSlideClass: data.firesliderActiveSlideClass,
 				delay: (data.firesliderDelay) ? parseInt(data.firesliderDelay) : undefined,
 				direction: data.firesliderDirection,
 				disableLinks: data.firesliderDisableLinks,
-				easing: data.firesliderEasing,
+				easing: (data.firesliderEasing) ? fireSlider._utilities.parseJson(data.firesliderEasing) : undefined,
 				effect: data.firesliderEffect,
 				hoverPause: data.firesliderHoverPause,
 				next: data.firesliderNext,
@@ -137,6 +135,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				slide: data.firesliderSlide,
 				speed: (data.firesliderSpeed) ? parseInt(data.firesliderSpeed) : undefined
 			};
+
+			fs.breakpoints = (data.firesliderBreakpoints) ? fireSlider._utilities.parseJson(data.firesliderBreakpoints) : [];
 
 			// Remove undefined data properties
 			fireSlider._utilities.removeUndefined(fs.data);
@@ -190,8 +190,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				if(difference > 0) {
 					for(var i = 0; i < difference; i++) {
 						var temp = array[i % fs.settings.totalSlides].cloneNode(true);
-						if(fireSlider._utilities.hasClass(temp, 'fire-slider-active')) {
-							fireSlider._utilities.removeClass(temp, 'fire-slider-active');
+						if(fireSlider._utilities.hasClass(temp, fs.options.activeSlideClass)) {
+							fireSlider._utilities.removeClass(temp, fs.options.activeSlideClass);
 						}
 						fs.slider.appendChild(temp);
 					}
@@ -230,7 +230,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 							fs.settings.show = fs.breakpoints[index].show;
 						}
 						if(fs.breakpoints[index].active) {
-							fs.settings.active = breakpoints[index].active;
+							fs.settings.active = fs.breakpoints[index].active;
 						}
 					}
 				}
@@ -416,7 +416,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					createDefaultPager();
 				}
 
-				fireSlider._utilities.addClass(fs.settings.pagerElems[0], 'fire-pager-active');
+				fireSlider._utilities.addClass(fs.settings.pagerElems[0], fs.options.activePagerClass);
 			}
 
 			function prevSlide() {
@@ -458,7 +458,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				if(fs.slides.length !== (multiplier * fs.settings.totalSlides)) {
 
 					// Remove active class
-					fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
+					fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
 
 					// Multipy slides and calculate difference
 					var difference = multiplySlides(fs.slides, multiplier);
@@ -485,7 +485,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					}
 
 					// Re-add active class
-					fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
+					fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
 
 				} else {
 					
@@ -569,8 +569,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				stopTimer();
 
 				// Remove active classes
-				fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
-				if(typeof fs.settings.pager !== "undefined") fireSlider._utilities.removeClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], 'fire-pager-active');
+				fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
+				if(typeof fs.settings.pager !== "undefined") fireSlider._utilities.removeClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
 
 				updateCurrentSlide(direction);
 
@@ -596,9 +596,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 
 				// Add active classes
-				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
+				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
 				if(typeof fs.settings.pager !== "undefined") {
-					fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], 'fire-pager-active');
+					fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
 				}
 
 				// Trigger event fire-slider-after-transition
@@ -624,8 +624,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					var delayIndex = fs.settings.currentSlide;
 
 					// Remove active classes
-					fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
-					fireSlider._utilities.removeClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], 'fire-pager-active');
+					fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
+					fireSlider._utilities.removeClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
 
 					var currentPositions = fs.positions.slice(0);
 
@@ -662,8 +662,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					fs.settings.currentSlide = (fs.settings.currentSlide + difference) % fs.slides.length;
 
 					// Add new active classes
-					fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
-					fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], 'fire-pager-active');
+					fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
+					fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
 
 					// Trigger event fire-slider-after-transition
 					fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-after-transition');
@@ -713,7 +713,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					fireSlider._utilities.listen(fs.slider, 'click', function(e) {
 						var target = (e.target) ? e.target : e.srcElement;
 						if(target.tagName === "A") {
-							if(!fireSlider._utilities.hasClass(target.parentNode, 'fire-slider-active')) {
+							if(!fireSlider._utilities.hasClass(target.parentNode, fs.options.activeSlideClass)) {
 								if (e.preventDefault) e.preventDefault();
 								else e.returnValue = false;
 							}
@@ -746,7 +746,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 				// Set the first active slide
 				fs.settings.currentSlide = 0;
-				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], 'fire-slider-active');
+				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
 
 				// position the elements of the array
 				reloadSlider();
@@ -960,6 +960,17 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			}else{
 				el['on'+type]=null;
 			}
+		},
+
+		parseJson: function(string) {
+			var result;
+			try {
+				result = JSON.parse(string);
+			}
+			catch (e) {
+				result = string;
+			}
+			return result;
 		}
 	};
 
@@ -967,6 +978,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 })((window.FireSlider = window.FireSlider || {}), window);
 
+// If jQuery is available, create fireSlider() function
 if(window.jQuery) {
 	(function (window) {
 		$.fn.fireSlider = function(opts, breakpoints) {

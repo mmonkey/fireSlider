@@ -41,7 +41,7 @@
 	<h2>Slider with Thumbnail Pager</h2>
 
 	<div class="section fireslider js-fireslider">
-		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-prev="#prev2" data-fireslider-next="#next2" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward">
+		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-prev="#prev2" data-fireslider-next="#next2" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward" data-fireslider-easing="[200, 18]" data-fireslider-breakpoints='[{"breakpoint": 360, "show": 1, "active": 1},{"breakpoint": 580, "show": 2, "active": 1},{"breakpoint": 720, "show": 3, "active": 2},{"breakpoint": 860, "show": 4, "active": 2}]'>
 			<li class="slide-1" data-fireslider-pager-description="One">1
 				<ul>
 					<li>1</li>
@@ -64,9 +64,9 @@
 
 	<script type="text/javascript">
 
-		$('.js-fireslider > ul').fireSlider({speed: 600});
+		//$('.js-fireslider > ul').fireSlider({speed: 600});
 
-		//FireSlider.slider('.js-fireslider > ul').pause();
+		var slider = FireSlider.slider('.js-fireslider > ul');
 
 	</script>
 	

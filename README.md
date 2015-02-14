@@ -167,7 +167,10 @@ active | The position of the active slide. | int | 1
 speed | The speed of the transition (milliseconds). | int | 500
 delay | The amount of time in between transitions (milliseconds). | int | 5000
 direction | The direction of the slide transitions. | string | "forward"
+activeSlideClass | The class to be added to the current active slide. | string | "fire-slider-active"
+activePagerClass | The class to be added to the current active pager element. | string | "fire-pager-active"
 effect | The transition effect to use. | string | "slideInOut", "fadeInOut"
+easing | The easing effect for the transition. | string or array | "swing"
 hoverPause | Pause transitions when mouse hovers? | boolean | false
 disableLinks | Disable links on the non-active slides? | boolean | true
 prev | The selector of the previous-slide button. | string | N/A
@@ -178,14 +181,14 @@ pagerTemplate | Template for pager elements | HTML String | "`<span><\span>`"
 All of fireSlider's options may also be setup with data-attributes on the slider element:
 
 ```html
-<ul class="slider" data-slider-speed="300" data-slider-pager="#pager">
+<ul class="slider" data-fireslider-speed="300" data-fireslider-pager="#pager">
 	<li><img src="path/to/image1.jpg"></li>
 	<li><img src="path/to/image2.jpg"></li>
 	<li><img src="path/to/image3.jpg"></li>
 </ul>
 ```
 
-All data-attributes are named the same as the options, except prepended by `data-slider-`. Two word options, like hoverPause, are instead `data-slider-hover-pause`.
+All data-attributes are named the same as the options, except prepended by `data-fireslider-`. Two word options, like hoverPause, are instead `data-fireslider-hover-pause`.
 
 Breakpoints
 -----------
@@ -208,6 +211,16 @@ var breakpoints = [
 ];
 
 FireSlider.slider(".slider", { effect: "fadeInOut" }, breakpoints);
+```
+
+You can also pass breakpoints via data-attribues, however, **they have to be formatted as valid JSON:**
+
+```html
+<ul class="slider" data-fireslider-breakpoints='[{"breakpoint": 360, "show": 1, "active": 1},{"breakpoint": 580, "show": 2, "active": 1},{"breakpoint": 720, "show": 3, "active": 2},{"breakpoint": 860, "show": 4, "active": 2}]'>
+	<li><img src="path/to/image1.jpg"></li>
+	<li><img src="path/to/image2.jpg"></li>
+	<li><img src="path/to/image3.jpg"></li>
+</ul>
 ```
 
 There is no limit to the number of breakpoints you can set!
@@ -256,16 +269,16 @@ You may add an additional data-attribute to your slide element:
 
 ```html
 <ul class="slider">
-	<li><img src="path/to/image1.jpg" data-slider-pager-description="Image One"></li>
-	<li><img src="path/to/image2.jpg" data-slider-pager-description="Image Two"></li>
-	<li><img src="path/to/image3.jpg" data-slider-pager-description="Image Three"></li>
+	<li><img src="path/to/image1.jpg" data-fireslider-pager-description="Image One"></li>
+	<li><img src="path/to/image2.jpg" data-fireslider-pager-description="Image Two"></li>
+	<li><img src="path/to/image3.jpg" data-fireslider-pager-description="Image Three"></li>
 </ul>
 ```
 
-The pager will output the `data-slider-pager-description` in place of the `{{description}}` tag.
+The pager will output the `data-fireslider-pager-description` in place of the `{{description}}` tag.
 
 
-Events
+Events - Currently not working!
 ------
 fireSlider will trigger custom events that can be hooked into:
 
