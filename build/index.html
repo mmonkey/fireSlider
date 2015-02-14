@@ -15,8 +15,8 @@
 
 	<h1>FireSlider - Development</h1>
 
-	<div class="section">
-		<ul id="fireSlider" data-slider-prev="#prev" data-slider-next="#next" data-slider-pager="#pager" data-slider-delay="4000" data-slider-effect="fadeInOut">
+	<div class="section fireslider js-fireslider">
+		<ul id="fireSlider" data-fireslider-prev="#prev" data-fireslider-next="#next" data-fireslider-pager="#pager" data-fireslider-delay="4000" data-fireslider-effect="fadeInOut">
 			<li class="slide-1">1
 				<ul>
 					<li>1</li>
@@ -40,8 +40,8 @@
 
 	<h2>Slider with Thumbnail Pager</h2>
 
-	<div class="section">
-		<ul id="fireSlider2">
+	<div class="section fireslider js-fireslider">
+		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-prev="#prev2" data-fireslider-next="#next2" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward">
 			<li class="slide-1" data-slider-pager-description="One">1
 				<ul>
 					<li>1</li>
@@ -49,12 +49,12 @@
 					<li>3</li>
 				</ul>
 			</li>
-			<li class="slide-2" data-slider-pager-description="Two">2
+			<li class="slide-2" data-fireslider-pager-description="Two">2
 				<a href="">Test Link Clicking</a>
 			</li>
-			<li class="slide-3" data-slider-pager-description="Three">3</li>
-			<li class="slide-4" data-slider-pager-description="Four">4</li>
-			<li class="slide-5" data-slider-pager-description="Five">5</li>
+			<li class="slide-3" data-fireslider-pager-description="Three">3</li>
+			<li class="slide-4" data-fireslider-pager-description="Four">4</li>
+			<li class="slide-5" data-fireslider-pager-description="Five">5</li>
 		</ul>
 	</div>
 
@@ -64,29 +64,28 @@
 
 	<script type="text/javascript">
 
-		$('#fireSlider').fireSlider({speed: 600});
+		$('.js-fireslider > ul').fireSlider({speed: 600});
 
-		var slider2 = new FireSlider.slider(
-			'#fireSlider2',
-			{
-				show: 5,
-				active: 3,
-				prev: '#prev2',
-				next: '#next2',
-				pager: '#thumbnailPager',
-				pagerTemplate: '<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>',
-				direction: 'backward',
-				speed: 400,
-				delay: 2000,
-				easing: [200, 18]
-			},
-			[
-				{breakpoint: 360, show: 1, active: 1},
-				{breakpoint: 580, show: 2, active: 1},
-				{breakpoint: 720, show: 3, active: 2},
-				{breakpoint: 860, show: 4, active: 2}
-			]
-		);
+		// $('#fireSlider2').fireSlider(
+		// 	{
+		// 		show: 5,
+		// 		active: 3,
+		// 		prev: '#prev2',
+		// 		next: '#next2',
+		// 		pager: '#thumbnailPager',
+		// 		pagerTemplate: '<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>',
+		// 		direction: 'backward',
+		// 		speed: 400,
+		// 		delay: 2000,
+		// 		easing: [200, 18]
+		// 	},
+		// 	[
+		// 		{breakpoint: 360, show: 1, active: 1},
+		// 		{breakpoint: 580, show: 2, active: 1},
+		// 		{breakpoint: 720, show: 3, active: 2},
+		// 		{breakpoint: 860, show: 4, active: 2}
+		// 	]
+		// );
 
 	</script>
 	
