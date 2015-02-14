@@ -966,6 +966,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 })((window.FireSlider = window.FireSlider || {}), window);
 
+// If jQuery is available, create fireSlider() function
 if(window.jQuery) {
 	(function (window) {
 		$.fn.fireSlider = function(opts, breakpoints) {
