@@ -1,8 +1,4 @@
-/*!
- * fireSlider (1.2.1) (C) 2014 CJ O'Hara and Tyler Fowle.
- * MIT @license: en.wikipedia.org/wiki/MIT_License
- **/
-var Velocity = require('velocity-animate');
+/*! fireSlider (1.2.2) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -73,6 +69,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 		},
 
 		init: function(elem, opts, breakpoints) {
+
+			// Log error if velocity is not found.
+			if(typeof V === 'undefined') {
+				console.log('%cWARNING: fireSlider requires velocity.js to run correctly.', 'background: #E82C0C; color: white; padding: 0 12px;');
+				return;
+			}
 
 			// fs object holds all of the slider's information
 			var fs = {

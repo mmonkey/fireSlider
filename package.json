@@ -1,6 +1,6 @@
 {
   "name": "fireSlider.js",
-  "version": "v1.2.1",
+  "version": "v1.2.2",
   "description": "A responsive javascript slider and carousel plugin, with breakpoints",
   "repository": {
     "type": "git",
@@ -10,6 +10,7 @@
     "browser-sync": "^2.0.0",
     "browserify": "^8.1.0",
     "gulp": "^3.8.10",
+    "gulp-inject-string": "0.0.2",
     "gulp-jshint": "^1.9.0",
     "gulp-rename": "^1.2.0",
     "gulp-ruby-sass": "^0.7.1",
