@@ -92,6 +92,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				slider: null,
 				slides: [],
 				timer: {},
+				windowTimer: {},
 			};
 
 			// Load element
@@ -216,12 +217,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 				if(fs.breakpoints.length > 0) {
 					var index = -1;
-					var min = -1;
+					var max = -1;
 					for(var i = 0; i < fs.breakpoints.length; i++) {
 						if(fs.breakpoints[i].breakpoint) {
-							if(fs.breakpoints[i].breakpoint >= fs.settings.windowWidth && (fs.breakpoints[i].breakpoint < min || min === -1)) {
+							if(fs.breakpoints[i].breakpoint <= fs.settings.windowWidth && (fs.breakpoints[i].breakpoint > max)) {
 								index = i;
-								min = fs.breakpoints[i].breakpoint;
+								max = fs.breakpoints[i].breakpoint;
 							}
 						}
 					}
@@ -681,8 +682,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 
 				fireSlider._utilities.listen(window, 'resize', function() {
-					refresh();
-					return false;
+					clearTimeout(fs.windowTimer);
+					fs.windowTimer = setTimeout(refresh, 10);
 				});
 			}
 
