@@ -4,16 +4,26 @@ fireSlider.js is a responsive slider and carousel plugin. It is content-agnostic
 
 fireSlider.js supports breakpoints out-of-the-box. You can set up completely different options based on the width of the browser window.
 
+Download
+--------
+Get the latest version of fireSlider [here.](https://github.com/mmonkey/fireSlider/releases/latest)
+
 Getting Started
 ---------------
 
 **Use by itself:**
+fireSlider has one dependency, Velocity.js, and it comes in two versions:
 
-fireSlider doesn't depend on any outside plugins, just plug-in and go.
+**Includes Velocity.js:**
+```html
+<script src="path/to/fireSlider.velocity.js"></script>
+```
 
+**Does not include Velocity.js:**
 ```html
 <script src="path/to/fireSlider.min.js"></script>
 ```
+Using this version of fireSlider will require you to include velocity elsewhere on the page, prior to this script tag.
 
 **Use with jQuery**
 
@@ -343,10 +353,6 @@ slider.addEventListener("fire-slider-init", function() {
 	console.log("My slider is ready!");
 });
 ```
-
-Download
---------
-Get the latest version of fireSlider [here.](https://github.com/mmonkey/fireSlider/releases/latest)
 
 Contribute
 ----------
