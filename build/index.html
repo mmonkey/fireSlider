@@ -64,9 +64,19 @@
 
 	<script type="text/javascript">
 
-		//$('.js-fireslider > ul').fireSlider({speed: 600});
+		// How to register a new tranistion effect:
+		// var slideInOut = function(element, opts) {
+		// 	var duration = (opts.snapping) ? 0 : opts.speed;
+		// 	V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
+		// };
 
+		// FireSlider.effect.register('slideInOut', slideInOut);
+
+		// Calling fireSlider with only JS
 		var slider = FireSlider.slider('.js-fireslider > ul');
+
+		// Calling fireSlider with jQuery
+		//$('.js-fireslider > ul').fireSlider({speed: 600});
 
 	</script>
 	

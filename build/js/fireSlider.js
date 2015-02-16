@@ -508,40 +508,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				startTimer(fs.settings.direction);
 			}
 
-			// Basic slide transition effect
-			function slideInOut(element, opts) {
-				var duration = (opts.snapping) ? 0 : fs.options.speed;
-				V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: fs.options.effect, easing: fs.options.easing});
-			}
-
-			// Fade in / out transition effect
-			function fadeInOut(element, opts) {
-				var elemClone = element.cloneNode(true);
-				element.parentNode.appendChild(elemClone);
-
-				V(element, {translateX: [(opts.nextPos + '%'), (opts.nextPos + '%')]}, {duration: fs.options.speed , queue: fs.options.effect,
-					begin: function() {
-						V(elemClone, {opacity: [0.0, 1.0], zIndex: [1, 1]}, {duration: fs.options.speed, easing: fs.options.easing});
-					},
-					complete: function() { elemClone.parentNode.removeChild(elemClone); }
-				});
-			}
-
-			// Routes slide to correct transition
-			function transitionManager(element, opts) {
-				switch(fs.options.effect) {
-					case 'fadeInOut':
-						fadeInOut(element, opts);
-						break;
-					case 'slideInOut':
-						slideInOut(element, opts);
-						break;
-					default:
-						slideInOut(element, opts);
-						break;
-				}
-			}
-
 			function updateCurrentSlide(direction) {
 				if(direction === 'prev') {
 					fs.settings.currentSlide = (fs.settings.currentSlide === 0) ? (fs.slides.length - 1) : fs.settings.currentSlide -= 1;
@@ -567,7 +533,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 				// Calculate New Position
 				for(var i = 0; i < fs.slides.length; i++) {
-					transitionManager(fs.slides[i], {
+					fireSlider.effect.route(fs.slides[i], {
+						speed: fs.options.speed,
+						effect: fs.options.effect,
+						easing: fs.options.easing,
 						currPos: currentPositions[i],
 						nextPos: fs.positions[i],
 						snapping: (fs.positions[i] === fs.settings.minX || fs.positions[i] === fs.settings.maxX) ? true : false
@@ -629,7 +598,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 					var snappingRange = 100 * Math.abs(difference);
 					for(var k = 0; k < fs.slides.length; k++) {
-						transitionManager(fs.slides[k], {
+						fireSlider.effect.route(fs.slides[k], {
+							speed: fs.options.speed,
+							effect: fs.options.effect,
+							easing: fs.options.easing,
 							currPos: currentPositions[k],
 							nextPos: fs.positions[k],
 							snapping: (fs.positions[k] <= (fs.settings.minX + snappingRange) || fs.positions[k] >= (fs.settings.maxX - snappingRange)) ? true : false
@@ -776,6 +748,46 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			};
 
 			return fs;
+		}
+	};
+
+	fireSlider.effect = {
+
+		transitions: {
+			slideInOut: 'slideInOut',
+			fadeInOut: 'fadeInOut'
+		},
+
+		register: function(effectName, fn) {
+			fireSlider.effect.transitions[effectName] = effectName;
+			fireSlider.effect[effectName] = fn;
+		},
+
+		// Basic slide transition effect
+		slideInOut: function(element, opts) {
+			var duration = (opts.snapping) ? 0 : opts.speed;
+			V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
+		},
+
+		// Fade in / out transition effect
+		fadeInOut: function(element, opts) {
+			var elemClone = element.cloneNode(true);
+			element.parentNode.appendChild(elemClone);
+
+			V(element, {translateX: [(opts.nextPos + '%'), (opts.nextPos + '%')]}, {duration: opts.speed , queue: opts.effect,
+				begin: function() {
+					V(elemClone, {opacity: [0.0, 1.0], zIndex: [1, 1]}, {duration: opts.speed, easing: opts.easing});
+				},
+				complete: function() { elemClone.parentNode.removeChild(elemClone); }
+			});
+		},
+
+		// Routes slide to correct transition effect
+		route: function(element, opts) {
+			var effectName = opts.effect;
+			if(typeof fireSlider.effect.transitions[effectName] !== 'undefined' && typeof (fireSlider.effect[effectName]) === 'function') {
+				fireSlider.effect[effectName](element, opts);
+			}
 		}
 	};
 
