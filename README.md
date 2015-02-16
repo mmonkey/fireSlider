@@ -277,6 +277,51 @@ You may add an additional data-attribute to your slide element:
 
 The pager will output the `data-fireslider-pager-description` in place of the `{{description}}` tag.
 
+Custom Transition Effects
+--------
+You can add your own transition effects to fireSlider. Transition effects are written using velocity.js.
+
+**Create a new transition effect:**
+```javascript
+var slideInOut = function(element, opts) {
+	var duration = (opts.snapping) ? 0 : opts.speed;
+	V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
+};
+```
+As you can see, we refer to `Velocity` as `V`. For more examples, see the source code (fireSlider.effect object).
+
+**Register new transition effect:**
+```javascript
+FireSlider.effect.register('slideInOut', slideInOut);
+```
+To register the new tranistion effect, we pass fireSlider's register function the transition's name, and function.
+
+**Now you can call the transition effect like normal:**
+```html
+<ul class="slider" data-fireslider-speed="300" data-fireslider-pager="#pager" data-fireslider-effect="slideInOut">
+	<li><img src="path/to/image1.jpg"></li>
+	<li><img src="path/to/image2.jpg"></li>
+	<li><img src="path/to/image3.jpg"></li>
+</ul>
+```
+You can also pass this as an option in the javascript function call to fireSlider.
+
+**Arguments passed to transition effects:**
+```javascript
+var transitionName = function(element, options) { ... }
+```
+The `element` is an individual slide, the options object contains:
+
+Option | Description | Type
+------------- | ------------- | -------------
+effect | The name of the effect (we pass this to Velocity for queueing). | String
+easing | The desired easing to be used (see Velocity.js easing). | String, Array
+speed | The desired speed of the transition (Velocity refers to this as 'duration'). | int
+snapping | This will be true if the slide is tranistion from the end of the slider. | boolean
+currPos | The slides position before transitioning (This is a translateX position). | int
+nextPos | The slides position after transitioning (This is a translateX position). | int
+
+It is best to set `duration: 0` if snapping is true, this will prevent seen slides "jump" from one end to the other.
 
 Events - Currently not working!
 ------
