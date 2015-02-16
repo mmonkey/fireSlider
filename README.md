@@ -321,7 +321,7 @@ snapping | This will be true if the slide is tranistion from the end of the slid
 currPos | The slides position before transitioning (This is a translateX position). | int
 nextPos | The slides position after transitioning (This is a translateX position). | int
 
-It is best to set `duration: 0` if snapping is true, this will prevent seen slides "jump" from one end to the other.
+It is best to set `duration: 0` if snapping is true, this will prevent slides to "jump" from one end to the other.
 
 Events - Currently not working!
 ------
