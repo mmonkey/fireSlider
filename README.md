@@ -10,8 +10,6 @@ Get the latest version of fireSlider [here.](https://github.com/mmonkey/fireSlid
 
 Getting Started
 ---------------
-
-**Use by itself:**
 fireSlider has one dependency, Velocity.js, and it comes in two versions:
 
 **Includes Velocity.js:**
@@ -21,9 +19,10 @@ fireSlider has one dependency, Velocity.js, and it comes in two versions:
 
 **Does not include Velocity.js:**
 ```html
+<script src="path/to/velocity.min.js"></script>
 <script src="path/to/fireSlider.min.js"></script>
 ```
-Using this version of fireSlider will require you to include velocity elsewhere on the page, prior to this script tag.
+Using this version of fireSlider will require you to include velocity also. This is good if you are already using Velocity.js elsewhere.
 
 **Use with jQuery**
 
