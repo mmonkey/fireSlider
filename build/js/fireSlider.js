@@ -529,29 +529,16 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Routes slide to correct transition
 			function transitionManager(element, opts) {
-				// Single slide transitions with default: fadeInOut
-				if(fs.settings.show === 1) {
-					switch(fs.options.effect) {
-						case 'slideInOut':
-							slideInOut(element, opts);
-							break;
-						case 'fadeInOut':
-							fadeInOut(element, opts);
-							break;
-						default:
-							fadeInOut(element, opts);
-							break;
-					}
-				// Multiple slide transitions with default: slideInOut
-				} else {
-					switch(fs.options.effect) {
-						case 'slideInOut':
-							slideInOut(element, opts);
-							break;
-						default:
-							slideInOut(element, opts);
-							break;
-					}
+				switch(fs.options.effect) {
+					case 'fadeInOut':
+						fadeInOut(element, opts);
+						break;
+					case 'slideInOut':
+						slideInOut(element, opts);
+						break;
+					default:
+						slideInOut(element, opts);
+						break;
 				}
 			}
 
