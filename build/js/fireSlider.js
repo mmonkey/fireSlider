@@ -578,8 +578,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					// Re-load slides
 					reloadSlider();
 
-					var delayIndex = fs.settings.currentSlide;
-
 					// Remove active classes
 					fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
 					fireSlider._utilities.removeClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
@@ -596,7 +594,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 						}
 					}
 
-					var snappingRange = 100 * Math.abs(difference);
+					var snappingRange = 100 * Math.abs(difference - 1);
 					for(var k = 0; k < fs.slides.length; k++) {
 						fireSlider.effect.route(fs.slides[k], {
 							speed: fs.options.speed,
@@ -604,7 +602,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 							easing: fs.options.easing,
 							currPos: currentPositions[k],
 							nextPos: fs.positions[k],
-							snapping: (fs.positions[k] <= (fs.settings.minX + snappingRange) || fs.positions[k] >= (fs.settings.maxX - snappingRange)) ? true : false
+							snapping: ((difference < 0 && fs.positions[k] <= (fs.settings.minX + snappingRange)) || (difference > 0 && fs.positions[k] >= (fs.settings.maxX - snappingRange))) ? true : false
 						});
 					}
 
