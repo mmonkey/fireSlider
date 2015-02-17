@@ -1,18 +1,9 @@
-/*! fireSlider (1.2.3) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.2.4) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
 
 	var fireSlider = {
-		length: 0,
-		nextSlide: {},
-		pause: {},
-		play: {},
-		prevSlide: {},
-		reverse: {},
-		selector: null,
-		sliders: [],
-
 		slider: function(sel, opts, breakpoints) {
 
 			var elements = document.querySelectorAll(sel);
@@ -24,7 +15,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Initialize each slider independently that match the selector
 			for(var i = 0; i < elements.length; i++) {
-				var slider = fireSlider.init(elements[i], this.options, this.breakpoints);
+				var slider = fireSlider.init(elements[i], opts, breakpoints);
 
 				elements[i].nextSlide = slider.next;
 				elements[i].pause = slider.pause;
@@ -82,6 +73,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				data: {},
 				isPaused: false,
 				next: {},
+				num: 0,
 				options: {},
 				pause: {},
 				play: {},
@@ -94,6 +86,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				timer: {},
 				windowTimer: {},
 			};
+
+			// Set slider number
+			fs.num = this.sliders.length + 1;
 
 			// Load element
 			fs.slider = elem;
@@ -169,16 +164,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				windowWidth: window.innerWidth
 			};
 
+			fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.num);
+
 			// Load prev, next, and pager elements
-			if(typeof fs.options.prev !== "undefined" || typeof fs.data.firesliderPrev !== "undefined") {
-				fs.settings.prev = (typeof fs.options.prev !== "undefined") ? document.querySelectorAll(fs.options.prev)[0] : document.querySelectorAll(fs.data.firesliderPrev)[0];
-			}
-			if(typeof fs.options.next !== "undefined" || typeof fs.data.firesliderNext !== "undefined") {
-				fs.settings.next = (typeof fs.options.next !== "undefined") ? document.querySelectorAll(fs.options.next)[0] : document.querySelectorAll(fs.data.firesliderNext)[0];
-			}
-			if(typeof fs.options.pager !== "undefined" || typeof fs.data.firesliderPager !== "undefined") {
-				fs.settings.pager = (typeof fs.options.pager !== "undefined") ? document.querySelectorAll(fs.options.pager)[0] : document.querySelectorAll(fs.data.firesliderPager)[0];
-			}
+			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.num) : 'undefined';
+			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.num) : 'undefined';
+			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.num) : 'undefined';
 
 			function reloadSlider() {
 				fs.slides = fireSlider._utilities.getDirectChildren(fs.slider, fs.options.slide);
@@ -668,7 +659,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 
 				// Disable link interaction if slide is not active slide
-				if(fs.options.disableLinks && typeof fs.slider !== 'undefined') {
+				if(fs.options.disableLinks) {
 					fireSlider._utilities.listen(fs.slider, 'click', function(e) {
 						var target = (e.target) ? e.target : e.srcElement;
 						if(target.tagName === "A") {
@@ -677,7 +668,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 								else e.returnValue = false;
 							}
 						}
-						return false;
 					});
 				}
 
@@ -883,6 +873,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			return options;
 		},
 
+		// Removes properties from object that are 'undefined'
 		removeUndefined: function(object) {
 			for(var key in object) {
 				if(typeof object[key] === "undefined") delete object[key];
@@ -892,6 +883,33 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 		// Returns boolean from string
 		getBoolean: function(string) {
 			return (string.toLowerCase() === 'true') ? true : false;
+		},
+
+		// Returns the best matching element relative to the relativeElement or slide number
+		smartElementSearch: function(sel, relativeElem, num) {
+			// If selector ends with an id attribute, return matching element
+			var parts = sel.split(' ');
+			var last = parts[parts.length - 1];
+			if(last.indexOf('#') > -1) {
+				return document.querySelectorAll(sel)[0];
+			}
+
+			// If selector is found in sibling elements, return matching sibling
+			var siblingMatches = fireSlider._utilities.getDirectChildren(relativeElem.parentNode, sel);
+			if(typeof siblingMatches !== 'undefined') {
+				if(siblingMatches.length === 1) {
+					return siblingMatches[0];
+				}
+			}
+
+			// If number of matches is >= this slide's number return matching element of the same index
+			var allMatches = document.querySelectorAll(sel);
+			if(allMatches.length >= num) {
+				return allMatches[num - 1];
+			}
+
+			// Else return first match
+			return document.querySelectorAll(sel)[0];
 		},
 
 		// Custom events will bind to these htmlEvents in ie < 9

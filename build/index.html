@@ -16,7 +16,10 @@
 	<h1>FireSlider - Development</h1>
 
 	<div class="section fireslider js-fireslider">
-		<ul id="fireSlider" data-fireslider-prev="#prev" data-fireslider-next="#next" data-fireslider-pager="#pager" data-fireslider-delay="4000" data-fireslider-effect="fadeInOut">
+		<ul id="fireSlider" 
+			data-fireslider-delay="4000" 
+			data-fireslider-effect="fadeInOut" 
+			data-fireslider-pager="#pager">
 			<li class="slide-1">1
 				<ul>
 					<li>1</li>
@@ -35,13 +38,13 @@
 		<div id="pager"></div>
 	</div>
 
-	<a id="prev" href="">Prev</a>
-	<a id="next" href="">Next</a>
+	<a class="prev" href="">Prev</a>
+	<a class="next" href="">Next</a>
 
 	<h2>Slider with Thumbnail Pager</h2>
 
 	<div class="section fireslider js-fireslider">
-		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-prev="#prev2" data-fireslider-next="#next2" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward" data-fireslider-effect="slideInOut" data-fireslider-easing="[200, 18]" data-fireslider-breakpoints='[
+		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward" data-fireslider-effect="slideInOut" data-fireslider-easing="[200, 18]" data-fireslider-breakpoints='[
 			{"breakpoint": 360, "show": 1, "active": 1},
 			{"breakpoint": 580, "show": 2, "active": 1},
 			{"breakpoint": 720, "show": 3, "active": 2},
@@ -64,8 +67,8 @@
 	</div>
 
 	<ul id="thumbnailPager"></ul>
-	<a id="prev2" href="">Prev</a>
-	<a id="next2" href="">Next</a>
+	<a class="prev" href="">Prev</a>
+	<a class="next" href="">Next</a>
 
 	<script type="text/javascript">
 
@@ -78,7 +81,10 @@
 		// FireSlider.effect.register('slideInOut', slideInOut);
 
 		// Calling fireSlider with only JS
-		var slider = FireSlider.slider('.js-fireslider > ul');
+		var slider = FireSlider.slider('.js-fireslider > ul', {
+			next: ".next",
+			prev: ".prev"
+		});
 
 		// Calling fireSlider with jQuery
 		//$('.js-fireslider > ul').fireSlider({speed: 600});
