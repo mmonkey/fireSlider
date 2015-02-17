@@ -169,9 +169,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			};
 
 			// Load prev, next, and pager elements
-			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.index) : 'undefined';
-			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.index) : 'undefined';
-			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.index) : 'undefined';
+			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.index) : undefined;
+			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.index) : undefined;
+			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.index) : undefined;
 
 			function reloadSlider() {
 				fs.slides = fireSlider._utilities.getDirectChildren(fs.slider, fs.options.slide);
