@@ -1,17 +1,21 @@
-/*! fireSlider (1.2.4) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.2.5) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
 
 	var fireSlider = {
+		length: 0,
+		selector: '',
+		sliders: [],
+
 		slider: function(sel, opts, breakpoints) {
 
 			var elements = document.querySelectorAll(sel);
 			if(elements.length === 0) return;
 
-			this.length = elements.length;
-			this.selector = sel;
-			this.sliders = [];
+			this.length += elements.length;
+			this.selector = (this.selector === '' || this.selector === 'undefined') ? sel : this.selector + ', ' + sel;
+			this.sliders = this.sliders || [];
 
 			// Initialize each slider independently that match the selector
 			for(var i = 0; i < elements.length; i++) {
@@ -73,7 +77,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				data: {},
 				isPaused: false,
 				next: {},
-				num: 0,
+				index: 0,
 				options: {},
 				pause: {},
 				play: {},
@@ -88,7 +92,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			};
 
 			// Set slider number
-			fs.num = this.sliders.length + 1;
+			fs.index = (typeof this.sliders.length !== 'undefined') ? this.sliders.length : 0;
 
 			// Load element
 			fs.slider = elem;
@@ -164,12 +168,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				windowWidth: window.innerWidth
 			};
 
-			fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.num);
-
 			// Load prev, next, and pager elements
-			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.num) : 'undefined';
-			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.num) : 'undefined';
-			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.num) : 'undefined';
+			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.index) : 'undefined';
+			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.index) : 'undefined';
+			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.index) : 'undefined';
 
 			function reloadSlider() {
 				fs.slides = fireSlider._utilities.getDirectChildren(fs.slider, fs.options.slide);
@@ -886,7 +888,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 		},
 
 		// Returns the best matching element relative to the relativeElement or slide number
-		smartElementSearch: function(sel, relativeElem, num) {
+		smartElementSearch: function(sel, relativeElem, index) {
 			// If selector ends with an id attribute, return matching element
 			var parts = sel.split(' ');
 			var last = parts[parts.length - 1];
@@ -902,10 +904,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			}
 
-			// If number of matches is >= this slide's number return matching element of the same index
+			// If length of matches is >= this slide's index return matching element of the same index
 			var allMatches = document.querySelectorAll(sel);
-			if(allMatches.length >= num) {
-				return allMatches[num - 1];
+			if(allMatches.length >= index) {
+				return allMatches[index];
 			}
 
 			// Else return first match
@@ -1001,7 +1003,7 @@ if(window.jQuery) {
 		$.fn.fireSlider = function(opts, breakpoints) {
 
 			// Call FireSlider.slider() with selector and arguments
-			var sliders = new FireSlider.slider(this.selector, opts, breakpoints);
+			var sliders = FireSlider.slider(this.selector, opts, breakpoints);
 
 			// Create jQuery object from sliders
 			var result = $(sliders);
