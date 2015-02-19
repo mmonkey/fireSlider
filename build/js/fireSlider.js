@@ -1,4 +1,4 @@
-/*! fireSlider (1.2.5) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.2.6) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -7,6 +7,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 		length: 0,
 		selector: '',
 		sliders: [],
+		events: {},
 
 		slider: function(sel, opts, breakpoints) {
 
@@ -75,9 +76,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			var fs = {
 				breakpoints: {},
 				data: {},
+				index: 0,
 				isPaused: false,
 				next: {},
-				index: 0,
 				options: {},
 				pause: {},
 				play: {},
@@ -495,11 +496,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					}
 				}
 
-				// Trigger event fire-slider-refreshed
-				fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-refreshed');
-
 				// Play Transitions
 				startTimer(fs.settings.direction);
+
+				fireSlider.eventManager.trigger('fireslider-refreshed', fs);
 			}
 
 			function updateCurrentSlide(direction) {
@@ -512,6 +512,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Go to previous slide
 			function transitionSlides(direction) {
+
+				fireSlider.eventManager.trigger('fireslider-before-transition', fs);
 				
 				// Stop timer
 				stopTimer();
@@ -537,9 +539,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					});
 				}
 
-				// Trigger event fire-slider-before-transition
-				fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-before-transition');
-
 				if(window.jQuery) {
 					$(fs.slides).dequeue(fs.options.effect);
 				} else {
@@ -552,11 +551,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
 				}
 
-				// Trigger event fire-slider-after-transition
-				fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-after-transition');
-
 				// Restart timer
 				startTimer(fs.settings.direction);
+
+				fireSlider.eventManager.trigger('fireslider-after-transition', fs);
 			}
 
 			// Go to the slide relative to the index of a pager elements
@@ -565,6 +563,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				var difference = index - (fs.settings.currentSlide % fs.settings.totalSlides);
 
 				if(difference !== 0) {
+
+					fireSlider.eventManager.trigger('fireslider-before-transition', fs);
+					fireSlider.eventManager.trigger('fireslider-before-pager-transition', fs);
 
 					// Stop Timer
 					stopTimer();
@@ -600,9 +601,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 						});
 					}
 
-					// Trigger event fire-slider-before-transition
-					fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-before-transition');
-
 					// Perform transitions
 					if(window.jQuery) {
 						$(fs.slides).dequeue(fs.options.effect);
@@ -617,11 +615,11 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
 					fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
 
-					// Trigger event fire-slider-after-transition
-					fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-after-transition');
-
 					// Restart timer
 					startTimer(fs.settings.direction);
+
+					fireSlider.eventManager.trigger('fireslider-after-transition', fs);
+					fireSlider.eventManager.trigger('fireslider-after-pager-transition', fs);
 				}
 			}
 
@@ -679,38 +677,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				});
 			}
 
-			// Set up the inital state of the slider
-			function setup() {
-
-				if(typeof fs.settings.pager !== 'undefined') {
-					setupPager();
-				}
-
-				// Check Breakpoints
-				updateBreakpoints();
-				fs.settings.slideWidthPercent = 1 / fs.settings.show * 100;
-				fs.settings.slideWidth = fs.settings.sliderWidth / fs.settings.show;
-
-				// Caluculate the multiplyer
-				var multiplier = calculateMultiplier();
-				multiplySlides(fs.slides, multiplier);
-
-				// Set the first active slide
-				fs.settings.currentSlide = 0;
-				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
-
-				// position the elements of the array
-				reloadSlider();
-				positionSlides(fs.slides);
-
-				addSliderEventListeners();
-
-				fireSlider._utilities.trigger(document.querySelectorAll(fs.selector), 'fire-slider-init');
-				startTimer(fs.settings.direction);
-			}
-
-			setup();
-
 			fs.next = function() {
 				prevSlide();
 			};
@@ -737,6 +703,39 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				fs.settings.direction = 'backward';
 				startTimer(fs.settings.direction);
 			};
+
+			// Set up the inital state of the slider
+			function setup() {
+
+				if(typeof fs.settings.pager !== 'undefined') {
+					setupPager();
+				}
+
+				// Check Breakpoints
+				updateBreakpoints();
+				fs.settings.slideWidthPercent = 1 / fs.settings.show * 100;
+				fs.settings.slideWidth = fs.settings.sliderWidth / fs.settings.show;
+
+				// Caluculate the multiplyer
+				var multiplier = calculateMultiplier();
+				multiplySlides(fs.slides, multiplier);
+
+				// Set the first active slide
+				fs.settings.currentSlide = 0;
+				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
+
+				// position the elements of the array
+				reloadSlider();
+				positionSlides(fs.slides);
+
+				addSliderEventListeners();
+
+				startTimer(fs.settings.direction);
+
+				fireSlider.eventManager.trigger('fireslider-init', fs);
+			}
+
+			setup();
 
 			return fs;
 		}
@@ -779,6 +778,27 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			if(typeof fireSlider.effect.transitions[effectName] !== 'undefined' && typeof (fireSlider.effect[effectName]) === 'function') {
 				fireSlider.effect[effectName](element, opts);
 			}
+		}
+	};
+
+	fireSlider.eventManager = {
+		register: function(eventName) {
+			var e = {
+				name: eventName,
+				callbacks: [],
+				registerCallback: function(callback) {
+					this.callbacks.push(callback);
+				}
+			};
+			fireSlider.events[eventName] = e;
+		},
+		trigger: function(eventName, args) {
+			fireSlider.events[eventName].callbacks.forEach(function(callback) {
+				callback(args);
+			});
+		},
+		listen: function(eventName, callback) {
+			fireSlider.events[eventName].registerCallback(callback);
 		}
 	};
 
@@ -914,51 +934,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			return document.querySelectorAll(sel)[0];
 		},
 
-		// Custom events will bind to these htmlEvents in ie < 9
-		htmlEvents: {
-			onload:1,
-			onunload:1,
-			onblur:1,
-			onchange:1,
-			onfocus:1,
-			onreset:1,
-			onselect:1,
-			onsubmit:1,
-			onabort:1,
-			onkeydown:1,
-			onkeypress:1,
-			onkeyup:1,
-			onclick:1,
-			ondblclick:1,
-			onmousedown:1,
-			onmousemove:1,
-			onmouseout:1,
-			onmouseover:1,
-			onmouseup:1
-		},
-
-		// Create and trigger an event
-		trigger: function(el, eventName){
-			var event;
-			if(document.createEvent){
-				event = document.createEvent('HTMLEvents');
-				event.initEvent(eventName,true,true);
-			}else if(document.createEventObject){// IE < 9
-				event = document.createEventObject();
-				event.eventType = eventName;
-			}
-			event.eventName = eventName;
-			if(el.dispatchEvent){
-				el.dispatchEvent(event);
-			}else if(el.fireEvent && fireSlider._utilities.htmlEvents['on'+eventName]){// IE < 9
-				el.fireEvent('on'+event.eventType,event); // can trigger only real event (e.g. 'click')
-			}else if(el[eventName]){
-				el[eventName]();
-			}else if(el['on'+eventName]){
-				el['on'+eventName]();
-			}
-		},
-
 		// Event listener for built-in and custom events
 		listen: function(el, type, handler){
 			if(el.listenListener){
@@ -967,17 +942,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				el.attachEvent('on'+type,handler);
 			}else{
 				el['on'+type]=handler;
-			}
-		},
-
-		// Remove event listener for built-in and custom events
-		removeEvent: function(el, type, handler){
-			if(el.removeventListener){
-				el.removeEventListener(type,handler,false);
-			}else if(el.detachEvent && fireSlider._utilities.htmlEvents['on'+type]){// IE < 9
-				el.detachEvent('on'+type,handler);
-			}else{
-				el['on'+type]=null;
 			}
 		},
 
@@ -992,6 +956,14 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			return result;
 		}
 	};
+
+	// Register fireSlider events
+	fireSlider.eventManager.register('fireslider-init');
+	fireSlider.eventManager.register('fireslider-before-transition');
+	fireSlider.eventManager.register('fireslider-before-pager-transition');
+	fireSlider.eventManager.register('fireslider-after-transition');
+	fireSlider.eventManager.register('fireslider-after-pager-transition');
+	fireSlider.eventManager.register('fireslider-refreshed');
 
 	window.FireSlider = fireSlider;
 

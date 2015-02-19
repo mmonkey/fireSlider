@@ -19,7 +19,7 @@
 		<ul id="fireSlider" 
 			data-fireslider-delay="4000" 
 			data-fireslider-effect="fadeInOut" 
-			>
+			data-fireslider-pager="#pager">
 			<li class="slide-1">1
 				<ul>
 					<li>1</li>
@@ -72,13 +72,45 @@
 
 	<script type="text/javascript">
 
-		// How to register a new tranistion effect:
+		/* REGISTER NEW TRANSITION EFFECT */
+
 		// var slideInOut = function(element, opts) {
 		// 	var duration = (opts.snapping) ? 0 : opts.speed;
 		// 	V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
 		// };
 
 		// FireSlider.effect.register('slideInOut', slideInOut);
+
+
+		/* SAMPLE EVENT LISTENERS */
+
+		FireSlider.eventManager.listen('fireslider-init', function(e) {
+			console.log('fireSlider ' + e.index + ' initialized');
+			console.log(e);
+		});
+
+		// FireSlider.eventManager.listen('fireslider-before-transition', function(e) {
+		// 	console.log('fireSlider ' + e.index + ' before transition');
+		// });
+
+		// FireSlider.eventManager.listen('fireslider-before-pager-transition', function(e) {
+		// 	console.log('fireSlider ' + e.index + ' before pager transition');
+		// });
+
+		// FireSlider.eventManager.listen('fireslider-after-transition', function(e) {
+		// 	console.log('fireslider ' + e.index + ' after transition');
+		// });
+
+		// FireSlider.eventManager.listen('fireslider-after-pager-transition', function(e) {
+		// 	console.log('fireSlider ' + e.index + ' after pager transition');
+		// });
+
+		// FireSlider.eventManager.listen('fireslider-refreshed', function(e) {
+		// 	console.log('fireSlider ' + e.index + ' refreshed');
+		// });
+
+
+		/* USING FIRESLIDER */
 
 		// Calling fireSlider with only JS
 		var slider = FireSlider.slider('.js-fireslider > ul', {

@@ -332,26 +332,49 @@ nextPos | The slides position after transitioning (This is a translateX position
 
 It is best to set `duration: 0` if snapping is true, this will prevent slides to "jump" from one end to the other.
 
-Events - Currently not working!
+Events
 ------
 fireSlider will trigger custom events that can be hooked into:
 
 Event | Description
 ------------- | -------------
-"fire-slider-init" | Triggered right after the slider is initialized.
-"fire-slider-before-transition" | Triggered right before a slide has transitioned.
-"fire-slider-after-transition" | Triggered right after a slide has transitioned.
-"fire-slider-reloaded" | Triggered whenever the slider gets reloaded like on window resize.
+"fireslider-init" | Triggered right after the slider is initialized.
+"fireslider-before-transition" | Triggered right before a slide has transitioned.
+"fireslider-before-pager-transition" | Same as "fireslider-before-transition", but triggers when pager is used.
+"fireslider-after-transition" | Triggered right after a slide has transitioned.
+"fireslider-after-pager-transition" | Same as "fireslider-after-transition", but triggers when pager is used
+"fireslider-refreshed" | Triggered whenever the slider gets refreshed like on window resize.
 
 You can listen for events like this:
 
 ```javascript
-var slider = FireSlider.slider(".my_slider");
-
-slider.addEventListener("fire-slider-init", function() {
-	console.log("My slider is ready!");
+FireSlider.eventManager.listen('fireslider-init', function(data) {
+	console.log("Slider " + (data.index + 1) + " has initialized!");
 });
+
+var slider = FireSlider.slider(".my_slider");
 ```
+
+**Event Data**
+
+The data available in an event listener:
+
+Property | Description
+------------- | -------------
+breakpoints | Array of breakpoints set for the slider.
+data | The data-attributs set for the slider.
+index | The index of the slider (zero-indexed).
+isPaused | True if slider is paused.
+next | Function that goes to the next slide.
+options | The combined options set on the slider (data-attributes, default options, and javascript options).
+pause | Function that pauses the slider.
+play | Function that plays the slider.
+prev | Functino that goes to the previous slide.
+reverse | Function that plays the slider in reverse.
+positions | Array of integers (translateX position of each slide).
+settings | Various settings used by fireSlider (simular to options, but these are not persistent).
+slider | The slider DOM element object.
+slides | Array of slide DOM element objects that are contained in the slider.
 
 Contribute
 ----------
