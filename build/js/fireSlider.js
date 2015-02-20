@@ -1,4 +1,4 @@
-/*! fireSlider (1.2.61) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.2.62) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -663,7 +663,14 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					fireSlider._utilities.listen(fs.slider, 'click', function(e) {
 						var target = (e.target) ? e.target : e.srcElement;
 						if(target.tagName === "A") {
-							if(!fireSlider._utilities.hasClass(target.parentNode, fs.options.activeSlideClass)) {
+							var parents = fireSlider._utilities.getParents(target);
+							var isActive = false;
+							for(var i = 0; i < parents.length; i++) {
+								if(fireSlider._utilities.hasClass(parents[i], fs.options.activeSlideClass)) {
+									isActive = true;
+								}
+							}
+							if(!isActive) {
 								if (e.preventDefault) e.preventDefault();
 								else e.returnValue = false;
 							}
@@ -869,6 +876,15 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			}
 			return ret;
+		},
+
+		getParents: function(elm) {
+			var results = [];
+			while(elm.parentNode) {
+				results.push(elm.parentNode);
+				elm = elm.parentNode;
+			}
+			return results;
 		},
 
 		// Gets the index of a DOM element relative to it's parent element
