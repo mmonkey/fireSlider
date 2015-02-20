@@ -981,11 +981,13 @@ if(window.jQuery) {
 			var result = $(sliders);
 
 			// Add functions to jQuery object
-			result.nextSlide = sliders.nextSlide;
-			result.pause = sliders.pause;
-			result.play = sliders.play;
-			result.prevSlide = sliders.prevSlide;
-			result.reverse = sliders.reverse;
+			if(typeof sliders === 'object') {
+				result.nextSlide = sliders.nextSlide;
+				result.pause = sliders.pause;
+				result.play = sliders.play;
+				result.prevSlide = sliders.prevSlide;
+				result.reverse = sliders.reverse;
+			}
 
 			// Return jQuery object
 			return result;
