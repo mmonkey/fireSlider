@@ -1,4 +1,4 @@
-/*! fireSlider (1.2.62) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.2.63) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -948,6 +948,29 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Else return first match
 			return document.querySelectorAll(sel)[0];
+		},
+
+		// Custom events will bind to these htmlEvents in ie < 9
+		htmlEvents: {
+			onload:1,
+			onunload:1,
+			onblur:1,
+			onchange:1,
+			onfocus:1,
+			onreset:1,
+			onselect:1,
+			onsubmit:1,
+			onabort:1,
+			onkeydown:1,
+			onkeypress:1,
+			onkeyup:1,
+			onclick:1,
+			ondblclick:1,
+			onmousedown:1,
+			onmousemove:1,
+			onmouseout:1,
+			onmouseover:1,
+			onmouseup:1
 		},
 
 		// Event listener for built-in and custom events
