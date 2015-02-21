@@ -800,9 +800,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			fireSlider.events[eventName] = e;
 		},
 		trigger: function(eventName, args) {
-			fireSlider.events[eventName].callbacks.forEach(function(callback) {
-				callback(args);
-			});
+			for(var i = 0; i < fireSlider.events[eventName].callbacks.length; i++) {
+				fireSlider.events[eventName].callbacks[i](args);
+			}
 		},
 		listen: function(eventName, callback) {
 			fireSlider.events[eventName].registerCallback(callback);
