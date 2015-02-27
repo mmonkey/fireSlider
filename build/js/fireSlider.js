@@ -1,4 +1,4 @@
-/*! fireSlider (1.2.63) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.0) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -312,8 +312,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					if (e.preventDefault) e.preventDefault();
 					else e.returnValue = false;
 
-					var target = this;
-
+					var target = e.srcElement;
 					if(target.tagName.toLowerCase() === tag.toLowerCase()) {
 						pagerTransition(fireSlider._utilities.getIndex(target));
 					}
@@ -383,7 +382,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				for(var i = 0; i < fs.settings.totalSlides; i++) {
 					var template = fs.options.pagerTemplate;
 					var markup = parsePagerTemplate(fs.slides[i], template, i);
-					var parser = new DOMParser();
 					var elm = getDomElementFromString(markup);
 					fs.settings.pager.appendChild(elm);
 					addPagerListener(elm, elm.tagName);
@@ -831,13 +829,19 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 		// Returns true if node has className
 		hasClass: function(node, className) {
-			var result = false;
-			if (node.classList) {
-				if(node.classList.contains(className)) {
-					result = true;
-				}
+			return (node.classList) ? node.classList.contains(className) : new RegExp('(^| )' + className + '( |$)', 'gi').test(node.className);
+		},
+
+		// Format data-attribute key
+		formatDataKey: function(key) {
+			var temp = [];
+			key = key.replace('data-', '');
+			key = key.split('-');
+			temp[0] = key[0];
+			for(var i = 1; i < key.length; i++) {
+				temp.push(key[i].charAt(0).toUpperCase() + key[i].substr(1).toLowerCase());
 			}
-			return result;
+			return temp.join('');
 		},
 
 		// Shim for element.dataset
@@ -849,7 +853,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				var simulatedDataset = {};
 				for (var i = attributes.length; i--; ){
 					if (/^data-.*/.test(attributes[i].name)) {
-						var key = attributes[i].name.replace('data-', '');
+						var key = fireSlider._utilities.formatDataKey(attributes[i].name);
 						var value = node.getAttribute(attributes[i].name);
 						simulatedDataset[key] = value;
 					}
@@ -899,11 +903,13 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			return result;
 		},
 
-		// Extend defaults into opts, returns options
+		// Extend defaults into opts, returns options - comment below prevents warning about hasOwnProperty in gulp
+		/* jshint -W001 */
 		extend: function(opts, def) {
 			var options = opts || {};
 			var defaults = def || {};
 			for (var opt in defaults) {
+				defaults.hasOwnProperty = defaults.hasOwnProperty || Object.prototype.hasOwnProperty;
 				if (defaults.hasOwnProperty(opt) && !options.hasOwnProperty(opt)) {
 					options[opt] = defaults[opt];
 				}

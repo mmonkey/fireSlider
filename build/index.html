@@ -28,7 +28,7 @@
 				</ul>
 			</li>
 			<li class="slide-2">2
-				<a href="">Test Link Clicking</a>
+				<a href="http://www.google.com">Test Link Clicking</a>
 			</li>
 			<li class="slide-3">3</li>
 			<!-- <li class="slide-4">4</li>
@@ -84,29 +84,28 @@
 
 		/* SAMPLE EVENT LISTENERS */
 
-		FireSlider.eventManager.listen('fireslider-init', function(e) {
-			console.log('fireSlider ' + e.index + ' initialized');
-			console.log(e);
+		FireSlider.eventManager.listen('fireslider-init', function(data) {
+			console.log('fireSlider ' + data.index + ' initialized');
 		});
 
-		// FireSlider.eventManager.listen('fireslider-before-transition', function(e) {
-		// 	console.log('fireSlider ' + e.index + ' before transition');
+		// FireSlider.eventManager.listen('fireslider-before-transition', function(data) {
+		// 	console.log('fireSlider ' + data.index + ' before transition');
 		// });
 
-		// FireSlider.eventManager.listen('fireslider-before-pager-transition', function(e) {
-		// 	console.log('fireSlider ' + e.index + ' before pager transition');
+		// FireSlider.eventManager.listen('fireslider-before-pager-transition', function(data) {
+		// 	console.log('fireSlider ' + data.index + ' before pager transition');
 		// });
 
-		// FireSlider.eventManager.listen('fireslider-after-transition', function(e) {
-		// 	console.log('fireslider ' + e.index + ' after transition');
+		// FireSlider.eventManager.listen('fireslider-after-transition', function(data) {
+		// 	console.log('fireslider ' + data.index + ' after transition');
 		// });
 
-		// FireSlider.eventManager.listen('fireslider-after-pager-transition', function(e) {
-		// 	console.log('fireSlider ' + e.index + ' after pager transition');
+		// FireSlider.eventManager.listen('fireslider-after-pager-transition', function(data) {
+		// 	console.log('fireSlider ' + data.index + ' after pager transition');
 		// });
 
-		// FireSlider.eventManager.listen('fireslider-refreshed', function(e) {
-		// 	console.log('fireSlider ' + e.index + ' refreshed');
+		// FireSlider.eventManager.listen('fireslider-refreshed', function(data) {
+		// 	console.log('fireSlider ' + data.index + ' refreshed');
 		// });
 
 
