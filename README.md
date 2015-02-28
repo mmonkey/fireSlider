@@ -33,6 +33,18 @@ You can take advantage of jQuery, if you choose to do so.
 <script src="path/to/fireSlider.min.js"></script>
 ```
 
+Browser Support
+---------------
+fireSlider works out-of-the-box with most all web browsers:
+
+| Chrome* | Firefox* | Opera* | Safari* | IE9+ | Mobile Safari* | Chrome Android |
+| ------- | -------- | ------ | ------- | ---- | -------------- | -------------- |
+| ✓ | ✓ | ✓| ✓ | ✓ | ✓ | Untested |
+
+* Only the latest version tested.
+
+If you find a troublesome browser, please [open an issue](https://github.com/mmonkey/fireSlider/issues). Please note the browser, version and operating system.
+
 Examples
 --------
 

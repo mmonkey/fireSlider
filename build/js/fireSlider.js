@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.0) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.1) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -312,7 +312,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					if (e.preventDefault) e.preventDefault();
 					else e.returnValue = false;
 
-					var target = e.srcElement;
+					var target = (e.target) ? e.target : e.srcElement;
 					if(target.tagName.toLowerCase() === tag.toLowerCase()) {
 						pagerTransition(fireSlider._utilities.getIndex(target));
 					}
