@@ -1,0 +1,2 @@
+fireSlider.js Docs
+==================
