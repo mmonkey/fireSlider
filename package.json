@@ -1,0 +1,19 @@
+{
+  "name": "fireSliderDocs",
+  "version": "0.0.1",
+  "description": "A comprehensive documentation for fireSlider.js.",
+  "main": "index.html",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmonkey/fireSlider"
+  },
+  "author": "CJ O'Hara and Tyler Fowle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mmonkey/fireSlider/issues"
+  },
+  "homepage": "https://github.com/mmonkey/fireSlider"
+}
