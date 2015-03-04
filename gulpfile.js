@@ -24,18 +24,8 @@ gulp.task('sass', function() {
 		.pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('doc-sass', function() {
-	return gulp.src(['docs/scss/*.scss', '!docs/scss/_*.scss'])
-		.pipe(sass({
-			style: 'compressed'
-		}))
-		.on('error', function (err) { console.log(err.message); })
-		.pipe(gulp.dest('docs/css'))
-		.pipe(browserSync.reload({stream: true}));
-});
-
 gulp.task('lint', function() {
-	return gulp.src(['build/js/fireSlider.js', 'docs/js/site.js'])
+	return gulp.src('build/js/fireSlider.js')
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
@@ -82,14 +72,13 @@ gulp.task('browser-sync', function() {
 	browserSync.init({
 		server: {
 			baseDir: "./",
-			directory: true
+			index: "build/index.html"
 		}
 	});
 });
 
 gulp.task('default', ['browser-sync'], function() {
 	gulp.watch('build/scss/**/*.scss', ['sass']);
-	gulp.watch('docs/scss/**/*.scss', ['doc-sass']);
 	gulp.watch('**/*.html', browserSync.reload);
 	gulp.watch('build/js/*.js', ['lint', 'min', 'velocity', 'browserify', 'versionComment', 'velocityComment', browserSync.reload]);
 });
