@@ -1855,7 +1855,6 @@ h3,
 h4,
 h5,
 h6,
-pre,
 form,
 p,
 blockquote,
@@ -1951,16 +1950,6 @@ b {
 small {
   font-size: 60%;
   line-height: inherit; }
-
-code {
-  font-family: Consolas, "Liberation Mono", Courier, monospace;
-  font-weight: normal;
-  color: #333333;
-  background-color: #f8f8f8;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #e0e0e0;
-  padding: 0.125rem 0.3125rem 0.0625rem; }
 
 /* Lists */
 ul,
@@ -3305,7 +3294,6 @@ th.hide-for-touch {
   a[href^="#"]:after {
     content: ""; }
 
-  pre,
   blockquote {
     border: 1px solid #999999;
     page-break-inside: avoid; }

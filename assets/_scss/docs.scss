@@ -34,8 +34,13 @@
 
 	Max Width
 	- 75em
+
+	* Removed references to pre and code
 */
 @import "vendor/foundation";
+
+// Prismjs - Highlighting
+@import "vendor/prism";
 
 @import "components/structure";
 @import "components/header";

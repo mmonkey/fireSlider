@@ -29,7 +29,7 @@ gulp.task('min', ['lint'], function() {
 });
 
 gulp.task('concat', ['min'], function() {
-	return gulp.src(['./assets/_js/vendor/jquery-1.11.2.min.js', './assets/_js/fireSlider.velocity.js', './assets/_js/docs.min.js'])
+	return gulp.src(['./assets/_js/vendor/jquery-1.11.2.min.js', './assets/_js/vendor/prism.js', './assets/_js/fireSlider.velocity.js', './assets/_js/docs.min.js'])
 		.pipe(concat('docs.min.js'))
 		.pipe(gulp.dest('./dist/'));
 });
