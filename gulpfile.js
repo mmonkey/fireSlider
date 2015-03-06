@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+	autoprefixer = require('gulp-autoprefixer'),
 	browserSync = require('browser-sync'),
 	concat = require('gulp-concat'),
 	inject = require('gulp-inject-string'),
@@ -7,9 +8,19 @@ var gulp = require('gulp'),
 	sass = require('gulp-ruby-sass'),
 	uglify = require('gulp-uglify');
 
+var prefixBrowsers = [
+	'> 1%',
+	'last 2 versions',
+	'ie 9',
+	'ie 10',
+	'Firefox ESR',
+	'Opera 12.1'
+];
+
 gulp.task('sass', function() {
 	return sass('./assets/_scss/docs.scss', { style: 'compressed' })
 		.on('error', function(e) { console.log(e.message); })
+		.pipe(autoprefixer({browsers: prefixBrowsers}))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('./dist/'))
 		.pipe(browserSync.reload({stream: true}));
