@@ -18,5 +18,11 @@
     "gulp-util": "^3.0.1",
     "velocity-animate": "^1.2.1",
     "vinyl-transform": "^1.0.0"
-  }
+  },
+  "author": "CJ O'Hara and Tyler Fowle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mmonkey/fireSlider/issues"
+  },
+  "homepage": "https://mmonkey.github.io/fireSlider"
 }
