@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.1) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.2) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -125,10 +125,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				activeSlideClass: data.firesliderActiveSlideClass,
 				delay: (data.firesliderDelay) ? parseInt(data.firesliderDelay) : undefined,
 				direction: data.firesliderDirection,
-				disableLinks: data.firesliderDisableLinks,
+				disableLinks: (data.firesliderDisableLinks) ? fireSlider._utilities.getBoolean(data.firesliderDisableLinks) : undefined,
 				easing: (data.firesliderEasing) ? fireSlider._utilities.parseJson(data.firesliderEasing) : undefined,
 				effect: data.firesliderEffect,
-				hoverPause: data.firesliderHoverPause,
+				hoverPause: (data.firesliderHoverPause) ? fireSlider._utilities.getBoolean(data.firesliderHoverPause) : undefined,
 				next: data.firesliderNext,
 				pager: data.firesliderPager,
 				pagerTemplate: data.firesliderPagerTemplate,
@@ -926,7 +926,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 		// Returns boolean from string
 		getBoolean: function(string) {
-			return (string.toLowerCase() === 'true') ? true : false;
+			return (string.toLowerCase() === 'true');
 		},
 
 		// Returns the best matching element relative to the relativeElement or slide number
@@ -958,25 +958,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 		// Custom events will bind to these htmlEvents in ie < 9
 		htmlEvents: {
-			onload:1,
-			onunload:1,
-			onblur:1,
-			onchange:1,
-			onfocus:1,
-			onreset:1,
-			onselect:1,
-			onsubmit:1,
-			onabort:1,
-			onkeydown:1,
-			onkeypress:1,
-			onkeyup:1,
-			onclick:1,
-			ondblclick:1,
-			onmousedown:1,
-			onmousemove:1,
-			onmouseout:1,
-			onmouseover:1,
-			onmouseup:1
+			onload: 1, onunload: 1, onblur: 1, onchange: 1, onfocus: 1, onreset: 1, onselect: 1,
+			onsubmit: 1, onabort: 1, onkeydown: 1, onkeypress: 1, onkeyup: 1, onclick: 1, ondblclick: 1,
+			onmousedown: 1, onmousemove: 1, onmouseout: 1, onmouseover: 1, onmouseup: 1
 		},
 
 		// Event listener for built-in and custom events
