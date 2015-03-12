@@ -329,17 +329,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			}
 
-			// Create node from markup
-			function createNodeFromMarkup(markup) {
-				var node = document.createDocumentFragment();
-				var tmp = document.createElement('body'), child;
-				tmp.innerHTML = markup;
-				while (child === tmp.firstChild) {
-					node.appendChild(child);
-				}
-				return node;
-			}
-
 			// Create a regex string for parsing a template tag
 			function getTemplateTagRegex(tag) {
 				return new RegExp('{{\\s*' + tag + '\\s*}}', 'g');
