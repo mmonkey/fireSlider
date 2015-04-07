@@ -20,15 +20,17 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Initialize each slider independently that match the selector
 			for(var i = 0; i < elements.length; i++) {
-				var slider = fireSlider.init(elements[i], opts, breakpoints);
+					var slider = fireSlider.init(elements[i], opts, breakpoints);
 
-				elements[i].nextSlide = slider.next;
-				elements[i].pause = slider.pause;
-				elements[i].play = slider.play;
-				elements[i].prevSlide = slider.prev;
-				elements[i].reverse = slider.reverse;
+					if(slider !== null) {
+						elements[i].nextSlide = slider.next;
+						elements[i].pause = slider.pause;
+						elements[i].play = slider.play;
+						elements[i].prevSlide = slider.prev;
+						elements[i].reverse = slider.reverse;
 
-				this.sliders.push(slider);
+						this.sliders.push(slider);
+					}
 			}
 
 			this.nextSlide = function() {
@@ -69,8 +71,11 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			// Log error if velocity is not found.
 			if(typeof V === 'undefined') {
 				console.log('%cWARNING: fireSlider requires velocity.js to run correctly.', 'background: #E82C0C; color: white; padding: 0 12px;');
-				return;
+				return null;
 			}
+
+			// If slider element is hidden (display none), do not contiune.
+			if(elem.clientWidth === 0 && elem.clientHeight === 0 && elem.clientTop === 0 && elem.clientLeft === 0) return null;
 
 			// fs object holds all of the slider's information
 			var fs = {
@@ -111,6 +116,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				hoverPause: false,
 				pagerTemplate: '',
 				show: 1,
+				singleSlide: false,
 				slide: 'li',
 				speed: 500
 			};
@@ -134,6 +140,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				pagerTemplate: data.firesliderPagerTemplate,
 				prev: data.firesliderPrev,
 				show: (data.firesliderShow) ? parseInt(data.firesliderShow) : undefined,
+				singleSlide: (data.firesliderSingleSlide) ? fireSlider._utilities.getBoolean(data.firesliderSingleSlide) : undefined,
 				slide: data.firesliderSlide,
 				speed: (data.firesliderSpeed) ? parseInt(data.firesliderSpeed) : undefined
 			};
@@ -151,7 +158,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Load slides
 			fs.slides = fireSlider._utilities.getDirectChildren(fs.slider, fs.options.slide);
-			if(fs.slides.length === 0) return;
+
+			// If there are no slides, do not continue
+			if(fs.slides.length === 0) return null;
+			if(!fs.options.singleSlide && fs.slides.length === 1) return null;
 
 			// Load settings
 			fs.settings = {
@@ -849,6 +859,11 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 				return simulatedDataset;
 			}
+		},
+
+		// Returns the CSS attribute value of a DOM element
+		getCssValue: function(elm, attribute) {
+			return elm.currentStyle ? elm.currentStyle[attribute] : getComputedStyle(elm, null)[attribute];
 		},
 
 		// Returns true if element matches selector

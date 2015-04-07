@@ -43,6 +43,16 @@
 
 	<h2>Slider with Thumbnail Pager</h2>
 
+	<!-- Single Slide Option: true will still animate a single slide, false will not: Default is false -->
+	<div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
+		<ul id="fireSlider3" 
+			data-fireslider-delay="4000" 
+			data-fireslider-effect="slideInOut"
+			data-fireslider-single-slide="false">
+			<li class="slide-3">3</li>
+		</ul>
+	</div>
+
 	<div class="section fireslider js-fireslider">
 		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward" data-fireslider-effect="slideInOut" data-fireslider-easing="[200, 18]" data-fireslider-breakpoints='[
 			{"breakpoint": 360, "show": 1, "active": 1},
@@ -69,6 +79,16 @@
 	<ul id="thumbnailPager"></ul>
 	<a class="prev" href="">Prev</a>
 	<a class="next" href="">Next</a>
+
+	<!-- DISPLAY NONE: Shouldn't crash the browser -->
+	<div class="section fireslider js-fireslider" style="display:none;">
+		<ul id="fireSlider">
+			<li class="slide-1">1</li>
+			<li class="slide-2">2</li>
+			<li class="slide-3">3</li>
+		</ul>
+		<div id="pager"></div>
+	</div>
 
 	<script type="text/javascript">
 
@@ -116,6 +136,9 @@
 			next: ".next",
 			prev: ".prev"
 		});
+
+
+		/* SHOULDN'T ERROR */
 
 		$('.test').fireSlider();
 
