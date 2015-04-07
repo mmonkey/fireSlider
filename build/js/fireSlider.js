@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.2) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.3) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -937,7 +937,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 		smartElementSearch: function(sel, relativeElem, index) {
 			// If selector ends with an id attribute, return matching element
 			var parts = sel.split(' ');
-			var last = parts[parts.length - 1];
+			var last = parts.pop();
 			if(last.indexOf('#') > -1) {
 				return document.querySelectorAll(sel)[0];
 			}
@@ -952,7 +952,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// If length of matches is >= this slide's index return matching element of the same index
 			var allMatches = document.querySelectorAll(sel);
-			if(allMatches.length >= index) {
+			if(index < allMatches.length) {
 				return allMatches[index];
 			}
 
