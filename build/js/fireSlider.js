@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.3) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.4) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -161,7 +161,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// If there are no slides, do not continue
 			if(fs.slides.length === 0) return null;
-			if(!fs.options.singleSlide && fs.slides.length === 1) return null;
 
 			// Load settings
 			fs.settings = {
@@ -180,9 +179,9 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			};
 
 			// Load prev, next, and pager elements
-			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.index) : undefined;
-			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.index) : undefined;
-			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.index) : undefined;
+			fs.settings.prev = (typeof fs.options.prev !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.prev, fs.slider, fs.index, fs.options.singleSlide) : undefined;
+			fs.settings.next = (typeof fs.options.next !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.next, fs.slider, fs.index, fs.options.singleSlide) : undefined;
+			fs.settings.pager = (typeof fs.options.pager !== 'undefined') ? fireSlider._utilities.smartElementSearch(fs.options.pager, fs.slider, fs.index, fs.options.singleSlide) : undefined;
 
 			function reloadSlider() {
 				fs.slides = fireSlider._utilities.getDirectChildren(fs.slider, fs.options.slide);
@@ -739,7 +738,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				fireSlider.eventManager.trigger('fireslider-init', fs);
 			}
 
-			setup();
+			if(fs.options.singleSlide || fs.slides.length !== 1) setup();
 
 			return fs;
 		}
@@ -934,7 +933,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 		},
 
 		// Returns the best matching element relative to the relativeElement or slide number
-		smartElementSearch: function(sel, relativeElem, index) {
+		smartElementSearch: function(sel, relativeElem, index, singleSlide) {
 			// If selector ends with an id attribute, return matching element
 			var parts = sel.split(' ');
 			var last = parts.pop();
@@ -950,14 +949,40 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			}
 
-			// If length of matches is >= this slide's index return matching element of the same index
-			var allMatches = document.querySelectorAll(sel);
-			if(index < allMatches.length) {
-				return allMatches[index];
+			// If a matching element is paired with the slider, return the matching element
+			var allMatches = document.querySelectorAll([fireSlider.selector, sel]);
+			var sliders = document.querySelectorAll(fireSlider.selector);
+			var elms = document.querySelectorAll(sel);
+			if(sliders.length && elms.length) {
+				var sliderFirst = (fireSlider._utilities.matchesSel(allMatches[0], fireSlider.selector));
+				var found = -1;
+				for(var i = 0; i < allMatches.length; i++) {
+					if (fireSlider._utilities.matchesSel(allMatches[i], fireSlider.selector)) {
+						found = (fireSlider._utilities.isSlider(allMatches[i], singleSlide)) ? found + 1 : found;
+					}
+					if (sliderFirst) {
+						if(found == index && allMatches.length >= (i + 1)) {
+							return (fireSlider._utilities.matchesSel(allMatches[(i + 1)], sel)) ? allMatches[(i + 1)] : undefined;
+						}
+					} else {
+						if(found == index && (i - 1) >= 0) {
+							return (fireSlider._utilities.matchesSel(allMatches[(i - 1)], sel)) ? allMatches[(i - 1)] : undefined;
+						}
+					}
+				}
 			}
 
-			// Else return first match
-			return document.querySelectorAll(sel)[0];
+			return undefined;
+		},
+
+		isSlider: function(elm, singleSlide) {
+			if(elm.clientWidth === 0 && elm.clientHeight === 0 && elm.clientTop === 0 && elm.clientLeft === 0) return false;
+			if(singleSlide) {
+				if(elm.childNodes < 1) return false;
+			} else {
+				if(elm.childNodes <= 1) return false;
+			}
+			return true;
 		},
 
 		// Custom events will bind to these htmlEvents in ie < 9

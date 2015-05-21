@@ -18,8 +18,7 @@
 	<div class="section fireslider js-fireslider">
 		<ul id="fireSlider" 
 			data-fireslider-delay="4000" 
-			data-fireslider-effect="fadeInOut" 
-			data-fireslider-pager="#pager">
+			data-fireslider-effect="fadeInOut">
 			<li class="slide-1">1
 				<ul>
 					<li>1</li>
@@ -35,7 +34,7 @@
 			<li class="slide-5">5</li> -->
 		</ul>
 
-		<div id="pager"></div>
+		<div class="pager"></div>
 	</div>
 
 	<a class="prev" href="">Prev</a>
@@ -44,13 +43,26 @@
 	<h2>Slider with Thumbnail Pager</h2>
 
 	<!-- Single Slide Option: true will still animate a single slide, false will not: Default is false -->
-	<div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
+	<div class="section fireslider js-fireslider" style="margin-bottom: 20px;" data-fireslider-pager="">
 		<ul id="fireSlider3" 
 			data-fireslider-delay="4000" 
 			data-fireslider-effect="slideInOut"
 			data-fireslider-single-slide="false">
 			<li class="slide-3">3</li>
 		</ul>
+		<!-- <div class="pager"></div> -->
+	</div>
+
+	<div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
+		<ul id="fireSlider4" 
+			data-fireslider-delay="4000" 
+			data-fireslider-effect="slideInOut"
+			data-fireslider-single-slide="false">
+			<li class="slide-1">1</li>
+			<li class="slide-2">2</li>
+			<li class="slide-3">3</li>
+		</ul>
+		<div class="pager"></div>
 	</div>
 
 	<div class="section fireslider js-fireslider">
@@ -87,7 +99,7 @@
 			<li class="slide-2">2</li>
 			<li class="slide-3">3</li>
 		</ul>
-		<div id="pager"></div>
+		<div class="pager"></div>
 	</div>
 
 	<script type="text/javascript">
@@ -134,7 +146,8 @@
 		// Calling fireSlider with only JS
 		var slider = FireSlider.slider('.js-fireslider > ul', {
 			next: ".next",
-			prev: ".prev"
+			prev: ".prev",
+			pager: ".pager"
 		});
 
 
