@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.4) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.41) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -145,7 +145,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				speed: (data.firesliderSpeed) ? parseInt(data.firesliderSpeed) : undefined
 			};
 
-			fs.breakpoints = (data.firesliderBreakpoints) ? fireSlider._utilities.parseJson(data.firesliderBreakpoints) : [];
+			bps = (breakpoints) ? breakpoints : [];
+			fs.breakpoints = (data.firesliderBreakpoints) ? fireSlider._utilities.parseJson(data.firesliderBreakpoints) : bps;
 
 			// Remove undefined data properties
 			fireSlider._utilities.removeUndefined(fs.data);
