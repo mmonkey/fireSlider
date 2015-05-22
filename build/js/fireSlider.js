@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.41) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.3.42) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -28,6 +28,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 						elements[i].play = slider.play;
 						elements[i].prevSlide = slider.prev;
 						elements[i].reverse = slider.reverse;
+						elements[i].resize = slider.resize;
 
 						this.sliders.push(slider);
 					}
@@ -63,6 +64,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			};
 
+			fireSlider._utilities.listen(window, 'resize', function() {
+				for(var i = 0; i < elements.length; i++) {
+					elements[i].resize();
+				}
+			});
+
 			return fireSlider._utilities.extend(this, elements);
 		},
 
@@ -89,6 +96,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				play: {},
 				positions: [],
 				prev: {},
+				resize: {},
 				reverse: {},
 				settings: {},
 				slider: null,
@@ -675,10 +683,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 					});
 				}
 
-				fireSlider._utilities.listen(window, 'resize', function() {
-					clearTimeout(fs.windowTimer);
-					fs.windowTimer = setTimeout(refresh, 10);
-				});
+				// fireSlider._utilities.listen(window, 'resize', function() {
+				// 	clearTimeout(fs.windowTimer);
+				// 	fs.windowTimer = setTimeout(refresh, 10);
+				// });
 			}
 
 			fs.next = function() {
@@ -707,6 +715,10 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				fs.settings.direction = 'backward';
 				startTimer(fs.settings.direction);
 			};
+
+			fs.resize = function() {
+				refresh();
+			}
 
 			// Set up the inital state of the slider
 			function setup() {
@@ -952,9 +964,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// If a matching element is paired with the slider, return the matching element
 			var allMatches = document.querySelectorAll([fireSlider.selector, sel]);
-			var sliders = document.querySelectorAll(fireSlider.selector);
-			var elms = document.querySelectorAll(sel);
-			if(sliders.length && elms.length) {
+			if(document.querySelectorAll(fireSlider.selector).length && document.querySelectorAll(sel).length) {
 				var sliderFirst = (fireSlider._utilities.matchesSel(allMatches[0], fireSlider.selector));
 				var found = -1;
 				for(var i = 0; i < allMatches.length; i++) {
@@ -1046,6 +1056,7 @@ if(window.jQuery) {
 				result.play = sliders.play;
 				result.prevSlide = sliders.prevSlide;
 				result.reverse = sliders.reverse;
+				result.resize = sliders.resize;
 			}
 
 			// Return jQuery object

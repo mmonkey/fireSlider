@@ -44,13 +44,14 @@
 
 	<!-- Single Slide Option: true will still animate a single slide, false will not: Default is false -->
 	<div class="section fireslider js-fireslider-carousel" style="margin-bottom: 20px;" data-fireslider-pager="">
-		<ul id="fireSlider3" 
-			data-fireslider-delay="4000" 
-			data-fireslider-effect="slideInOut"
-			data-fireslider-single-slide="false">
+		<ul id="fireSlider3" >
+			<li class="slide-1">1</li>
+			<li class="slide-2">2</li>
 			<li class="slide-3">3</li>
+			<li class="slide-4">4</li>
+			<li class="slide-5">5</li>
 		</ul>
-		<!-- <div class="pager"></div> -->
+		<div class="pager"></div>
 	</div>
 
 	<div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
@@ -66,7 +67,7 @@
 	</div>
 
 	<div class="section fireslider js-fireslider-carousel">
-		<ul id="fireSlider2" data-fireslider-show="5" data-fireslider-active="3" data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-speed="400" data-fireslider-delay="2000" data-fireslider-direction="backward" data-fireslider-effect="slideInOut" data-fireslider-easing="[200, 18]">
+		<ul id="fireSlider2"data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-direction="backward" data-fireslider-easing="[200, 18]">
 			<li class="slide-1" data-fireslider-pager-description="One">1
 				<ul>
 					<li>1</li>
@@ -148,21 +149,22 @@
 		var slider2 = FireSlider.slider('.js-fireslider-carousel > ul', {
 			next: ".next",
 			prev: ".prev",
-			pager: ".pager"
+			pager: ".pager",
+			show: 5,
+			active: 3,
+			speed: 400,
+			delay: 2000,
+			effect: "slideInOut"
 		},[
-			{"breakpoint": 360, "show": 1, "active": 1},
-			{"breakpoint": 580, "show": 2, "active": 1},
+			{"breakpoint": 1, "show": 1, "active": 1},
+			{"breakpoint": 520, "show": 2, "active": 1},
 			{"breakpoint": 720, "show": 3, "active": 2},
 			{"breakpoint": 860, "show": 5, "active": 3}
 		]);
 
 
-		/* SHOULDN'T ERROR */
-
+		/* SHOULDN'T ERROR - when no slider exists */
 		$('.test').fireSlider();
-
-		// Calling fireSlider with jQuery
-		//$('.js-fireslider > ul').fireSlider({speed: 600});
 
 	</script>
 	
