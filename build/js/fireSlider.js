@@ -1,4 +1,4 @@
-/*! fireSlider (1.3.42) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.4.0) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -64,11 +64,11 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			};
 
-			fireSlider._utilities.listen(window, 'resize', function() {
-				for(var i = 0; i < elements.length; i++) {
-					elements[i].resize();
+			this.resize = function() {
+				for(var i = 0; i < this.sliders.length; i++) {
+					this.sliders[i].resize();
 				}
-			});
+			};
 
 			return fireSlider._utilities.extend(this, elements);
 		},
@@ -80,6 +80,8 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				console.log('%cWARNING: fireSlider requires velocity.js to run correctly.', 'background: #E82C0C; color: white; padding: 0 12px;');
 				return null;
 			}
+
+			console.log(breakpoints);
 
 			// If slider element is hidden (display none), do not contiune.
 			if(elem.clientWidth === 0 && elem.clientHeight === 0 && elem.clientTop === 0 && elem.clientLeft === 0) return null;
@@ -443,9 +445,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 
 			// Refresh positions, breakpoints and slide count
 			function refresh() {
-				// Pause transitions
-				stopTimer();
-
 				// Update breakpoints and width settings
 				fs.settings.windowWidth = window.innerWidth;
 				fs.settings.sliderWidth = fs.slider.offsetWidth;
@@ -500,9 +499,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 						V.Utilities.dequeue(fs.slides, fs.options.effect);
 					}
 				}
-
-				// Play Transitions
-				startTimer(fs.settings.direction);
 
 				fireSlider.eventManager.trigger('fireslider-refreshed', fs);
 			}
@@ -682,11 +678,6 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 						}
 					});
 				}
-
-				// fireSlider._utilities.listen(window, 'resize', function() {
-				// 	clearTimeout(fs.windowTimer);
-				// 	fs.windowTimer = setTimeout(refresh, 10);
-				// });
 			}
 
 			fs.next = function() {
@@ -717,8 +708,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			};
 
 			fs.resize = function() {
-				refresh();
-			}
+				if(fs.breakpoints.length) {
+					stopTimer();
+					refresh();
+					startTimer(fs.settings.direction);
+				}
+			};
 
 			// Set up the inital state of the slider
 			function setup() {
@@ -962,6 +957,11 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			}
 
+			var parentSiblingMatches = (relativeElem.parentNode.parentNode) ? fireSlider._utilities.getDirectChildren(relativeElem.parentNode.parentNode, sel) : [];
+			if(parentSiblingMatches.length === 1) {
+				return parentSiblingMatches[0];
+			}
+
 			// If the number of sliders and the number of matching elements match, return the same indexed item.
 			var sliders = document.querySelectorAll(fireSlider.selector);
 			var items = document.querySelectorAll(sel);
@@ -1071,3 +1071,8 @@ if(window.jQuery) {
 		};
 	})(window.jQuery);
 }
+
+// listen for window resize event.
+FireSlider._utilities.listen(window, 'resize', function() {
+	FireSlider.resize();
+});
