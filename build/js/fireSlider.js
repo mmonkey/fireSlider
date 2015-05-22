@@ -962,6 +962,13 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			}
 
+			// If the number of sliders and the number of matching elements match, return the same indexed item.
+			var sliders = document.querySelectorAll(fireSlider.selector);
+			var items = document.querySelectorAll(sel);
+			if(sliders.length === items.length && items.length > index) {
+				return items[index];
+			}
+
 			// If a matching element is paired with the slider, return the matching element
 			var allMatches = document.querySelectorAll([fireSlider.selector, sel]);
 			if(document.querySelectorAll(fireSlider.selector).length && document.querySelectorAll(sel).length) {
