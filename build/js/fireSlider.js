@@ -1,4 +1,4 @@
-/*! fireSlider (1.4.0) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.4.1) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -1073,6 +1073,8 @@ if(window.jQuery) {
 }
 
 // listen for window resize event.
-FireSlider._utilities.listen(window, 'resize', function() {
-	FireSlider.resize();
-});
+if(FireSlider.length) {
+	FireSlider._utilities.listen(window, 'resize', function() {
+		FireSlider.resize();
+	});
+}
