@@ -146,7 +146,7 @@
 			pager: ".pager"
 		});
 
-		var slider2 = FireSlider.slider('.js-fireslider-carousel > ul', {
+		var slider2 = $('.js-fireslider-carousel > ul').fireSlider({
 			next: ".next",
 			prev: ".prev",
 			pager: ".pager",
@@ -161,6 +161,15 @@
 			{"breakpoint": 720, "show": 3, "active": 2},
 			{"breakpoint": 860, "show": 5, "active": 3}
 		]);
+
+		$(window).resize(function () {
+			if (window.outerWidth > 500) {
+				slider2.play();
+			} else {
+				slider2.pause();
+				slider2.goToSlide('first');
+			}
+		});
 
 
 		/* SHOULDN'T ERROR - when no slider exists */

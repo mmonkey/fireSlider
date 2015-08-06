@@ -1,4 +1,4 @@
-/*! fireSlider (1.4.2) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.4.3) (C) 2014 CJ O'Hara and Tyler Fowle. MIT @license: en.wikipedia.org/wiki/MIT_License */
 var V = (window.jQuery) ? $.Velocity : Velocity;
 
 (function (FireSlider, window, undefined) {
@@ -67,6 +67,15 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			this.resize = function() {
 				for(var i = 0; i < this.sliders.length; i++) {
 					this.sliders[i].resize();
+				}
+			};
+
+			this.goToSlide = function(index) {
+				for(var i = 0; i < this.sliders.length; i++) {
+					if (index == 'first') index = 0;
+					if (index == 'last') index = this.sliders[i].slides.length - 1;
+					index = (index < this.sliders[i].slides.length) ? index : (this.sliders[i].slides.length - 1);
+					this.sliders[i].goTo(index);
 				}
 			};
 
@@ -713,6 +722,12 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 				}
 			};
 
+			fs.goTo = function(index) {
+				if (fs.currentSlide != index) {
+					pagerTransition(index);
+				}
+			};
+
 			// Set up the inital state of the slider
 			function setup() {
 
@@ -1062,6 +1077,8 @@ if(window.jQuery) {
 				result.prevSlide = sliders.prevSlide;
 				result.reverse = sliders.reverse;
 				result.resize = sliders.resize;
+				result.goToSlide = sliders.goToSlide;
+				result.sliders = sliders.sliders;
 			}
 
 			// Return jQuery object
