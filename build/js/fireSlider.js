@@ -29,7 +29,7 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 						elements[i].prevSlide = slider.prev;
 						elements[i].reverse = slider.reverse;
 						elements[i].resize = slider.resize;
-
+						elements[i].goToSlide = slider.goTo;
 						this.sliders.push(slider);
 					}
 			}
@@ -65,17 +65,14 @@ var V = (window.jQuery) ? $.Velocity : Velocity;
 			};
 
 			this.resize = function() {
-				for(var i = 0; i < this.sliders.length; i++) {
-					this.sliders[i].resize();
+				for(var i = 0; i < elements.length; i++) {
+					elements[i].resize();
 				}
 			};
 
 			this.goToSlide = function(index) {
-				for(var i = 0; i < this.sliders.length; i++) {
-					if (index == 'first') index = 0;
-					if (index == 'last') index = this.sliders[i].slides.length - 1;
-					index = (index < this.sliders[i].slides.length) ? index : (this.sliders[i].slides.length - 1);
-					this.sliders[i].goTo(index);
+				for(var i = 0; i < elements.length; i++) {
+					elements[i].goToSlide(index);
 				}
 			};
 
@@ -1078,7 +1075,6 @@ if(window.jQuery) {
 				result.reverse = sliders.reverse;
 				result.resize = sliders.resize;
 				result.goToSlide = sliders.goToSlide;
-				result.sliders = sliders.sliders;
 			}
 
 			// Return jQuery object
