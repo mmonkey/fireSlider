@@ -8,12 +8,25 @@
 
 	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 	<script src="../build/js/vendor/velocity.min.js"></script>
-	<script src="../build/js/fireSlider.js"></script>
+	<script src="../build/js/jquery-fireSlider.js"></script>
 
 </head>
 <body>
 
 	<h1>Test</h1>
+
+	<ul class="test"
+		data-fireslider-pager="#thumbnailPager"
+		data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>'
+		data-fireslider-direction="backward"
+		data-fireslider-easing="[200, 18]">
+
+		<li>slide 1</li>
+		<li>slide 2</li>
+		<li>slide 3</li>
+	</ul>
+
+	<div class="test"></div>
 
 
 	<script type="text/javascript">

@@ -8,7 +8,7 @@
 
 	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
 	<script src="../build/js/vendor/velocity.min.js"></script>
-	<script src="../build/js/fireSlider.js"></script>
+	<script src="../build/js/jquery-fireSlider.js"></script>
 
 </head>
 <body>
@@ -67,7 +67,11 @@
 	</div>
 
 	<div class="section fireslider js-fireslider-carousel">
-		<ul id="fireSlider2"data-fireslider-pager="#thumbnailPager" data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>' data-fireslider-direction="backward" data-fireslider-easing="[200, 18]">
+		<ul id="fireSlider2"
+			data-fireslider-pager="#thumbnailPager"
+			data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>'
+			data-fireslider-direction="backward"
+			data-fireslider-easing="[200, 18]">
 			<li class="slide-1" data-fireslider-pager-description="One">1
 				<ul>
 					<li>1</li>
@@ -112,9 +116,9 @@
 
 		/* SAMPLE EVENT LISTENERS */
 
-		FireSlider.eventManager.listen('fireslider-init', function(data) {
-			console.log('fireSlider ' + data.index + ' initialized');
-		});
+		// FireSlider.eventManager.listen('fireslider-init', function(data) {
+		// 	console.log('fireSlider ' + data.index + ' initialized');
+		// });
 
 		// FireSlider.eventManager.listen('fireslider-before-transition', function(data) {
 		// 	console.log('fireSlider ' + data.index + ' before transition');
@@ -140,7 +144,7 @@
 		/* USING FIRESLIDER */
 
 		// Calling fireSlider with only JS
-		var slider = FireSlider.slider('.js-fireslider > ul', {
+		var slider = $('.js-fireslider > ul').fireSlider({
 			next: ".next",
 			prev: ".prev",
 			pager: ".pager"
@@ -170,6 +174,8 @@
 				slider2.goToSlide(0);
 			}
 		});
+
+		console.log(window.$.fn);
 
 
 		/* SHOULDN'T ERROR - when no slider exists */
