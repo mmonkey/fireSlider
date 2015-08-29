@@ -94,7 +94,7 @@
 
 	<!-- DISPLAY NONE: Shouldn't crash the browser -->
 	<div class="section fireslider js-fireslider" style="display:none;">
-		<ul id="fireSlider">
+		<ul id="fireSlider5">
 			<li class="slide-1">1</li>
 			<li class="slide-2">2</li>
 			<li class="slide-3">3</li>
@@ -166,16 +166,20 @@
 			{"breakpoint": 860, "show": 5, "active": 3}
 		]);
 
-		$(window).resize(function () {
-			if (window.outerWidth > 500) {
-				slider2.play();
-			} else {
-				slider2.pause();
-				slider2.goToSlide(0);
-			}
+		var slider3 = $('#fireSlider').fireSlider({
+			next: ".next2",
+			prev: ".prev2",
+			pager: ".pager2"
 		});
 
-		console.log(window.$.fn);
+		// $(window).resize(function () {
+		// 	if (window.outerWidth > 500) {
+		// 		slider2.play();
+		// 	} else {
+		// 		slider2.pause();
+		// 		slider2.goToSlide(0);
+		// 	}
+		// });
 
 
 		/* SHOULDN'T ERROR - when no slider exists */
