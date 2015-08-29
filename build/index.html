@@ -66,9 +66,8 @@
 		<div class="pager"></div>
 	</div>
 
-	<div class="section fireslider js-fireslider-carousel">
+	<div class="section fireslider js-fireslider-thumbnail-carousel">
 		<ul id="fireSlider2"
-			data-fireslider-pager="#thumbnailPager"
 			data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>'
 			data-fireslider-direction="backward"
 			data-fireslider-easing="[200, 18]">
@@ -142,35 +141,55 @@
 
 
 		/* USING FIRESLIDER */
+		var sliders = $('.js-fireslider > ul').each(function () {
+				$(this).data({
+					'pager': $(this).siblings('.pager'),
+					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
+					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
+				});
+			}).fireSlider();
 
-		// Calling fireSlider with only JS
-		var slider = $('.js-fireslider > ul').fireSlider({
-			next: ".next",
-			prev: ".prev",
-			pager: ".pager"
-		});
 
-		var slider2 = $('.js-fireslider-carousel > ul').fireSlider({
-			next: ".next",
-			prev: ".prev",
-			pager: ".pager",
-			show: 5,
-			active: 3,
-			speed: 400,
-			delay: 2000,
-			effect: "slideInOut"
-		},[
-			{"breakpoint": 1, "show": 1, "active": 1},
-			{"breakpoint": 520, "show": 2, "active": 1},
-			{"breakpoint": 720, "show": 3, "active": 2},
-			{"breakpoint": 860, "show": 5, "active": 3}
-		]);
+		var carousels = $('.js-fireslider-carousel > ul').each(function () {
+				$(this).data({
+					'pager': $(this).siblings('.pager'),
+					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
+					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
+				});
+			}).fireSlider({
+				active: 3,
+				breakpoints: [
+					{"breakpoint": 1, "show": 1, "active": 1},
+					{"breakpoint": 520, "show": 2, "active": 1},
+					{"breakpoint": 720, "show": 3, "active": 2},
+					{"breakpoint": 860, "show": 5, "active": 3}
+				],
+				delay: 2000,
+				effect: "slideInOut",
+				show: 5,
+				speed: 400
+			});
 
-		var slider3 = $('#fireSlider').fireSlider({
-			next: ".next2",
-			prev: ".prev2",
-			pager: ".pager2"
-		});
+
+		var thumbnailCarousles = $('.js-fireslider-thumbnail-carousel > ul').each(function () {
+				$(this).data({
+					'pager': $(this).parent().nextUntil('div[class*=js-fireslider]', '#thumbnailPager'),
+					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
+					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
+				});
+			}).fireSlider({
+				active: 3,
+				breakpoints: [
+					{"breakpoint": 1, "show": 1, "active": 1},
+					{"breakpoint": 520, "show": 2, "active": 1},
+					{"breakpoint": 720, "show": 3, "active": 2},
+					{"breakpoint": 860, "show": 5, "active": 3}
+				],
+				delay: 2000,
+				effect: "slideInOut",
+				show: 5,
+				speed: 400
+			});
 
 		// $(window).resize(function () {
 		// 	if (window.outerWidth > 500) {

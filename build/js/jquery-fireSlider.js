@@ -19,7 +19,6 @@
 		speed: 500
 	};
 
-	// The actual plugin constructor
 	function FireSlider (el, options, sel) {
 		this.$el = $(el);
 		this.selector = sel;
@@ -31,27 +30,29 @@
 		// Load breakpoints
 		this.options.breakpoints = ($.type(this.options.breakpoints) === 'string') ? $.parseJson(this.options.breakpoints) : this.options.breakpoints;
 
-		// Do not continue if there are fewer than 2 slides
-		// if (this.slides.length < 2) return false;
-
-		this.init();
+		if (this.init()) {
+			this.build();
+			this.run();
+		}
 	}
 
 	FireSlider.prototype = {
 
+		///// INITIALIZE /////
+
 		init: function () {
-			if (this.options[fireSlider]) {
-				var existing = this.options[fireSlider];
+			var slider = this;
+			if (slider.options[fireSlider]) {
+				var existing = slider.options[fireSlider];
 				// Unbind events
 				// reload elements
 				
 				console.log('already a fireslider!');
-				// this.resetPager(existing);
 			}
 
 
 			// Do not continue if element isn't visible
-			if (!this.$el.is(':visible')) return false;
+			if (!slider.$el.is(':visible')) return false;
 
 			// Do not continue if velocity isn't loaded
 			if ($.type($.Velocity) === 'undefined') {
@@ -60,121 +61,165 @@
 				return false;
 			}
 
-			this.slides = this.$el.children(this.options.slide);
-			if (typeof this.options.pager !== 'undefined') this.setupPager();
+			// Initialize slider
+			slider.initSlides();
 
-			this.initState();
+			// Do not continue if there are 1 or less slides
+			if (slider.slides.length < 2) return false;
 
-			// Load breakpoints
-			this.updateBreakpoints();
-			this.state.slideWidthPercent = 1 / this.state.show * 100;
-			this.state.slideWidth = this.state.sliderWidth / this.state.show;
+			slider.initState();
+			slider.initBreakpoints();
 
-			this.multiplySlides();
-
-			// Set the first active slide
-			this.state.currentSlide = 0;
-			this.$el.children(this.options.slide).eq(this.state.currentSlide).addClass(this.options.activeSlideClass);
-
-			// Reload Slides
-			this.slides = this.$el.children(this.options.slide);
-			this.positionSlides();
-
-			this.addSliderEventListeners();
-
-			this.startTimer(this.options.direction);
-
-			this.prev = function () {
-				this.transitionSlides('prev');
-			}
-
-			this.next = function () {
-				this.transitionSlides('next');
-			}
-
-			console.log(this);
+			return true;
 		},
 
-		getData: function (data) {
-			$.each(data, function(key, value) {
-				$.each(["fireslider", "fire-slider"], function (i, match) {
-					if (key.toLowerCase().indexOf(match) > -1 && key !== fireSlider) {
-						var newKey = key.replace(new RegExp(match, 'gi'), '');
-						newKey = newKey.charAt(0).toLowerCase() + newKey.slice(1);
-						data[newKey] = data[key];
-						delete data[key];
-					}
-				});
-			});
-			return data;
+		// Load slides onto slider
+		initSlides: function () {
+			var slider = this;
+			slider.slides = slider.$el.children(slider.options.slide);
 		},
 
+		// Creates a state object on the slider for storing information
 		initState: function () {
-			this.state = {
-				active: this.options.active,
+			var slider = this;
+			slider.state = {
+				active: slider.options.active,
 				currentSlide: 0,
-				direction: this.options.direction,
+				direction: slider.options.direction,
 				isPaused: false,
 				maxX: 0,
 				minX: 0,
-				sliderWidth: this.$el.outerWidth(),
-				slideWidth: this.$el.outerWidth() / this.options.show,
-				slideWidthPercent: 1 / this.options.show * 100,
-				show: this.options.show,
-				totalSlides: this.slides.length,
+				sliderWidth: slider.$el.outerWidth(),
+				slideWidth: slider.$el.outerWidth() / slider.options.show,
+				slideWidthPercent: 1 / slider.options.show * 100,
+				show: slider.options.show,
+				totalSlides: slider.slides.length,
 				windowWidth: window.innerWidth
 			};
 		},
 
-		// Fills pager with elements based on total slides, adds active class to the first slide
-		setupPager: function () {
-			var plugin = this;
+		// Initialize slider's breakpoints
+		initBreakpoints: function () {
+			var slider = this;
 
-			if(plugin.options.pagerTemplate.toLowerCase() === 'clone') {
-				plugin.createClonedPager();
+			// Reset show and active
+			slider.state.show = slider.options.show;
+			slider.state.active = slider.options.active;
 
-			} else if(plugin.options.pagerTemplate !== '') {
-				plugin.createCustomPager();
+			if(slider.options.breakpoints.length > 0) {
+				var index = -1;
+				var max = -1;
+				$.each(slider.options.breakpoints, function (i, item) {
+					if (item.breakpoint) {
+						if (item.breakpoint <= slider.state.windowWidth && item.breakpoint > max) {
+							index = i;
+							max = item.breakpoint;
+						}
+					}
+				});
 
-			} else {
-				plugin.createDefaultPager();
+				if(index !== -1) {
+					if(slider.options.breakpoints[index].show) {
+						slider.state.show = slider.options.breakpoints[index].show;
+					}
+					if(slider.options.breakpoints[index].active) {
+						slider.state.active = slider.options.breakpoints[index].active;
+					}
+				}
 			}
 
-			plugin.pages = plugin.options.pager.children();
+			slider.state.slideWidthPercent = 1 / slider.state.show * 100;
+			slider.state.slideWidth = slider.state.sliderWidth / slider.state.show;
+		},
+
+
+		///// BUILD /////
+
+		build: function () {
+			var slider = this;
+
+			if ($.type(slider.options.pager) === 'object') slider.buildPager();
+
+			slider.buildSlider();
+
+			// Set the first active slide
+			slider.state.currentSlide = 0;
+			slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
+
+			// Reload Slides
+			slider.slides = slider.$el.children(slider.options.slide);
+			slider.positionSlides();
+		},
+
+		// Create pager
+		buildPager: function () {
+			var slider = this;
+
+			if(slider.options.pagerTemplate.toLowerCase() === 'clone') {
+				slider.createClonedPager();
+
+			} else if(slider.options.pagerTemplate !== '') {
+				slider.createCustomPager();
+
+			} else {
+				slider.createDefaultPager();
+			}
+
+			slider.pages = slider.options.pager.children();
 
 			// Add active pager class to first element
-			plugin.pages.first().addClass(plugin.options.activePagerClass);
+			slider.pages.first().addClass(slider.options.activePagerClass);
+		},
 
-			// Add pager element click listener
-			plugin.options.pager.children().click(function (e) {
-				e.preventDefault();
-				$(plugin).index();
-				// fs.pagerTransition(plugin.getIndex(target));
-			});
+		// Append the appropriate number of slides to the slider
+		buildSlider: function () {
+			var slider = this;
+			var multiplier = this.calculateMultiplier()
+			var difference = (slider.state.totalSlides * multiplier) - slider.slides.length;
+
+			// Add elements if there is a possitive difference
+			if(difference > 0) {
+				for(var i = 0; i < difference; i++) {
+					var clone = slider.slides.eq(i % slider.state.totalSlides).clone();
+					if (clone.hasClass(slider.options.activeSlideClass)) {
+						clone.removeClass(slider.options.activeSlideClass);
+					}
+					slider.$el.append(clone);
+				}
+			}
+
+			// Remove elements if there is a negative difference
+			if(difference < 0) {
+				for(var j = slider.slides.length - 1; j >= (slider.slides.length + difference); j--) {
+					slider.$el.children(slider.options.slide).eq(j).remove();
+				}
+			}
+
+			return difference;
 		},
 
 		// Clone slides as pager elements
 		createClonedPager: function () {
-			var plugin = this;
-			$.each(plugin.slides, function (i, slide) {
-				plugin.options.pager.append($(slide).clone()).children.eq(i);
+			var slider = this;
+			$.each(slider.slides, function (i, slide) {
+				slider.options.pager.append($(slide).clone()).children.eq(i);
 			});
 		},
 
 		// Setup custom pager elements
 		createCustomPager: function () {
-			var plugin = this;
-			$.each(plugin.slides, function (i, slide) {
-				var markup = plugin.parsePagerTemplate(slide, plugin.options.pagerTemplate, i);
-				plugin.options.pager.append(markup).children().eq(i);
+			var slider = this;
+			$.each(slider.slides, function (i, slide) {
+				var markup = slider.parsePagerTemplate(slide, slider.options.pagerTemplate, i);
+				slider.options.pager.append(markup).children().eq(i);
 			});
 		},
 
 		// Setup pager with span elements
 		createDefaultPager: function () {
-			var plugin = this;
-			$.each(plugin.slides, function (i, slide) {
-				plugin.options.pager.append('<span></span>').children().eq(i);
+			var slider = this;
+			$.each(slider.slides, function (i, slide) {
+				slider.options.pager.append('<span></span>').children().eq(i);
 			});
 		},
 
@@ -208,146 +253,159 @@
 			return new RegExp('{{\\s*' + tag + '\\s*}}', 'g');
 		},
 
-		// Updates show and active based on breakpoints
-		updateBreakpoints: function () {
-			var plugin = this;
-
-			// Reset show and active
-			plugin.state.show = plugin.options.show;
-			plugin.state.active = plugin.options.active;
-
-			if(plugin.options.breakpoints.length > 0) {
-				var index = -1;
-				var max = -1;
-				$.each(plugin.options.breakpoints, function (i, bp) {
-					if (bp.breakpoint) {
-						if (bp.breakpoint <= plugin.state.windowWith && bp.breakpoint > max) {
-							index = i;
-							max = bp.breakpoint;
-						}
-					}
-				});
-
-				if(index !== -1) {
-					if(plugin.options.breakpoints[index].show) {
-						plugin.state.show = plugin.options.breakpoints[index].show;
-					}
-					if(plugin.options.breakpoints[index].active) {
-						plugin.settings.active = plugin.options.breakpoints[index].active;
-					}
-				}
-			}
-		},
-
-		// Duplicates slides based on the multiplier, returns new array
-		multiplySlides: function () {
-			var plugin = this;
-			var multiplier = this.calculateMultiplier()
-			var difference = (plugin.state.totalSlides * multiplier) - plugin.slides.length;
-
-			// Add elements if there is a possitive difference
-			if(difference > 0) {
-				for(var i = 0; i < difference; i++) {
-					var clone = plugin.slides.eq(i % plugin.state.totalSlides).clone();
-					if (clone.hasClass(plugin.options.activeSlideClass)) {
-						clone.removeClass(plugin.options.activeSlideClass);
-					}
-					plugin.$el.append(clone);
-				}
-			}
-
-			// Remove elements if there is a negative difference
-			if(difference < 0) {
-				for(var j = plugin.slides.length - 1; j >= (plugin.slides.length + difference); j--) {
-					plugin.$el.children(plugin.options.slide).eq(j).remove();
-				}
-			}
-
-			return difference;
-		},
-
 		// Returns the amount of times the slides should be duplicated to fit within the window width
 		calculateMultiplier: function () {
-			var plugin = this;
+			var slider = this;
 			var multiplier = 1;
 			var addSlides = 0;
 
-			plugin.state.windowWidth = window.innerWidth;
+			slider.state.windowWidth = window.innerWidth;
 
 			// How many additional slides do we need to cover the width of the screen plus 2 more for the next transition
-			if(plugin.state.slideWidth * plugin.state.totalSlides < plugin.state.windowWidth) {
-				addSlides = Math.ceil((plugin.state.windowWidth - (plugin.state.slideWidth * plugin.state.totalSlides)) / plugin.state.slideWidth);
+			if(slider.state.slideWidth * slider.state.totalSlides < slider.state.windowWidth) {
+				addSlides = Math.ceil((slider.state.windowWidth - (slider.state.slideWidth * slider.state.totalSlides)) / slider.state.slideWidth);
 			}
-			addSlides += plugin.state.totalSlides * 2;
+			addSlides += slider.state.totalSlides * 2;
 
 			// Create a multiply based on the number of additional slides needed
 			if(addSlides > 0) {
-				multiplier += Math.ceil(addSlides / plugin.state.totalSlides);
+				multiplier += Math.ceil(addSlides / slider.state.totalSlides);
 			}
 			return multiplier;
 		},
 
+		// Calculates positions for revolution amount
+		calculatePositions: function (revolutions) {
+			var slider = this;
+			var currentPositions = slider.positions.slice(0);
+			
+			for(var i = 0; i < revolutions; i++) {
+				slider.cyclePositions('next');
+			}
+
+			$.each(slider.slides.length, function (i, slide) {
+				$(slide).velocity({translateX: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
+			});
+		},
+
 		// Position Slides
 		positionSlides: function () {
-			var plugin = this;
-			var startPosition = Math.ceil(plugin.slides.length / 2) * -100 + (100 * (plugin.state.active - 1));
+			var slider = this;
+			var startPosition = Math.ceil(slider.slides.length / 2) * -100 + (100 * (slider.state.active - 1));
 			var positionsFirst = [];
 			var positionsSecond = [];
-			plugin.state.minX = startPosition;
-			plugin.state.maxX = startPosition + ((plugin.slides.length - 1) * 100);
-			for(var i = Math.floor(plugin.slides.length / 2); i < plugin.slides.length; i++) {
-				plugin.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: plugin.options.effect});
-				plugin.slides.eq(i).css({
-					width: plugin.state.slideWidthPercent + '%',
+			slider.state.minX = startPosition;
+			slider.state.maxX = startPosition + ((slider.slides.length - 1) * 100);
+			for(var i = Math.floor(slider.slides.length / 2); i < slider.slides.length; i++) {
+				slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+				slider.slides.eq(i).css({
+					width: slider.state.slideWidthPercent + '%',
 					position: 'absolute'
 				});
 				positionsSecond.push(startPosition);
 				startPosition += 100;
 			}
-			for(i = 0; i < Math.floor(plugin.slides.length / 2); i++) {
-				plugin.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: plugin.options.effect});
-				plugin.slides.eq(i).css({
-					width: plugin.state.slideWidthPercent + '%',
+			for(i = 0; i < Math.floor(slider.slides.length / 2); i++) {
+				slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+				slider.slides.eq(i).css({
+					width: slider.state.slideWidthPercent + '%',
 					position: 'absolute'
 				});
 				positionsFirst.push(startPosition);
 				startPosition += 100;
 			}
 
-			plugin.positions = positionsFirst.concat(positionsSecond);
-			plugin.slides.dequeue(plugin.options.effect);
+			slider.positions = positionsFirst.concat(positionsSecond);
+			slider.slides.dequeue(slider.options.effect);
 		},
 
-		// Add all necesary event listeners
-		addSliderEventListeners: function () {
-			var plugin = this;
 
-			plugin.options.prev.click(function (e) {
-				e.preventDefault();
-				plugin.prev();
-				return false;
-			});
+		///// RUN /////
 
-			plugin.options.next.click(function (e) {
-				e.preventDefault();
-				plugin.next();
-				return false;
-			});
+		run: function () {
+			var slider = this;
 
-			if (plugin.options.hoverPause) {
-				plugin.$el.mouseover(function (e) {
-					plugin.stopTimer();
+			slider.initEvents();
+			slider.initListeners();
+			slider.startTimer(slider.options.direction);
+		},
+
+		initEvents: function() {
+			var slider = this;
+
+			slider.prev = function () {
+				slider.transitionSlides('prev');
+			}
+
+			slider.next = function () {
+				slider.transitionSlides('next');
+			}
+
+			slider.pause = function () {
+				slider.stopTimer();
+			}
+
+			slider.play = function () {
+				slider.startTimer(slider.state.direction);
+			}
+
+			slider.reverse = function() {
+				slider.state.isPaused = false;
+				slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+				slider.pause();
+				slider.play();
+			}
+			
+			slider.goTo = function(index) {
+				if (slider.state.currentSlide != index) {
+					slider.pagerTransition(index);
+				}
+			}
+		},
+
+		initListeners: function() {
+			var slider = this;
+
+			// Prev button
+			if ($.type(slider.options.prev) === 'object') {
+				slider.options.prev.click(function (e) {
+					e.preventDefault();
+					slider.prev();
+					return false;
+				});
+			}
+
+			// Next button
+			if ($.type(slider.options.next) === 'object') {
+				slider.options.next.click(function (e) {
+					e.preventDefault();
+					slider.next();
+					return false;
+				});
+			}
+
+			// Pager buttons
+			if ($.type(slider.options.pager) === 'object') {
+				slider.options.pager.children().click(function (e) {
+					e.preventDefault();
+					slider.pagerTransition($(this).index());
+				});
+			}
+
+			if (slider.options.hoverPause) {
+				slider.$el.mouseover(function (e) {
+					slider.stopTimer();
 					return false;
 				});
 
-				plugin.$el.mouseout(function (e) {
-					plugin.startTimer(plugin.state.direction);
+				slider.$el.mouseout(function (e) {
+					slider.startTimer(slider.state.direction);
 					return false;
 				});
 			} 
 
-			if (plugin.options.disableLinks) {
-				plugin.$el.click(function (e) {
+			if (slider.options.disableLinks) {
+				slider.$el.click(function (e) {
 					var target = (e.target) ? e.target : e.srcElement;
 					if(target.tagName === "A") {
 						var isActive = false;
@@ -363,158 +421,224 @@
 					}
 				});
 			}
+
+			$(window).resize(function () {
+				slider.pause();
+				slider.refresh();
+				slider.play();
+			});
 		},
 
 		// Starts the timer
 		startTimer: function (direction) {
-			var plugin = this;
-			if(plugin.options.delay !== 0 && !plugin.state.isPaused) {
-				plugin.timer = setInterval(
-					(function (plugin) {
+			var slider = this;
+			if(slider.options.delay !== 0 && !slider.state.isPaused) {
+				slider.timer = setInterval(
+					(function (slider) {
 						return function() {
-							plugin.transitionSlides(direction);
+							slider.transitionSlides(direction);
 						}
-					})(plugin), plugin.options.delay);
+					})(slider), slider.options.delay);
 			}
 		},
 
 		// Stops the timer
 		stopTimer: function () {
-			var plugin = this;
-			clearInterval(plugin.timer);
+			var slider = this;
+			clearInterval(slider.timer);
 		},
 
+		// Move one slide in the provided direction
 		transitionSlides: function (direction) {
-			var plugin = this;
+			var slider = this;
 
 			//fireSlider.eventManager.trigger('fireslider-before-transition', fs);
 			
 			// Stop timer
-			plugin.stopTimer();
+			slider.stopTimer();
 
 			// Remove active classes
-			plugin.slides.eq(plugin.state.currentSlide).removeClass(plugin.options.activeSlideClass);
-			plugin.pages.eq(plugin.state.currentSlide % plugin.state.totalSlides).removeClass(plugin.options.activePagerClass);
+			slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
+			slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
 
-			plugin.updateCurrentSlide(direction);
+			slider.updateCurrentSlide(direction);
 
-			var currentPositions = plugin.positions.slice(0);
-			plugin.cyclePositions(direction);
+			var currentPositions = slider.positions.slice(0);
+			slider.cyclePositions(direction);
 
 			// Calculate New Position
-			$.each(plugin.slides, function (i, slide) {
-				plugin.effect.route($(slide), {
-					speed: plugin.options.speed,
-					effect: plugin.options.effect,
-					easing: plugin.options.easing,
+			$.each(slider.slides, function (i, slide) {
+				slider.Effects.route($(slide), {
+					speed: slider.options.speed,
+					effect: slider.options.effect,
+					easing: slider.options.easing,
 					currPos: currentPositions[i],
-					nextPos: plugin.positions[i],
-					snapping: (plugin.positions[i] === plugin.state.minX || plugin.positions[i] === plugin.state.maxX) ? true : false
+					nextPos: slider.positions[i],
+					snapping: (slider.positions[i] === slider.state.minX || slider.positions[i] === slider.state.maxX) ? true : false
 				});
 			});
 
-			plugin.slides.dequeue(plugin.options.effect);
+			// Animate Slides
+			slider.slides.dequeue(slider.options.effect);
 
 			// Add active classes
-			plugin.slides.eq(plugin.state.currentSlide).addClass(plugin.options.activeSlideClass);
-			plugin.pages.eq(plugin.state.currentSlide % plugin.state.totalSlides).addClass(plugin.options.activePagerClass);
+			slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
+			slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
 
 			// Restart timer
-			plugin.startTimer(plugin.state.direction);
+			slider.startTimer(slider.state.direction);
 
 			//fireSlider.eventManager.trigger('fireslider-after-transition', fs);
 		},
 
+		// Go to the slide relative to the index of a pager elements
+		pagerTransition: function (index) {
+			var slider = this;
+			var difference = index - (slider.state.currentSlide % slider.state.totalSlides);
+
+			if(difference !== 0) {
+
+				//fireSlider.eventManager.trigger('fireslider-before-transition', fs);
+				//fireSlider.eventManager.trigger('fireslider-before-pager-transition', fs);
+
+				// Stop Timer
+				slider.stopTimer();
+
+				// Reload Slides
+				slider.slides = slider.$el.children(slider.options.slide);
+
+				// Remove active classes
+				slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
+				slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
+
+				var currentPositions = slider.positions.slice(0);
+
+				if(difference < 0) {
+					for(var i = 0; i < Math.abs(difference); i++) {
+						slider.cyclePositions('prev');
+					}
+				} else {
+					for(var j = 0; j < Math.abs(difference); j++) {
+						slider.cyclePositions('next');
+					}
+				}
+
+				// Queue Animation
+				var snappingRange = 100 * Math.abs(difference - 1);
+				$.each(slider.slides, function (i, slide) {
+					slider.Effects.route($(slide), {
+						speed: slider.options.speed,
+						effect: slider.options.effect,
+						easing: slider.options.easing,
+						currPos: currentPositions[i],
+						nextPos: slider.positions[i],
+						snapping: ((difference < 0 && slider.positions[i] <= (slider.state.minX + snappingRange)) || (difference > 0 && slider.positions[i] >= (slider.state.maxX - snappingRange))) ? true : false
+					});
+				});
+
+				// Animate Slides
+				slider.slides.dequeue(slider.options.effect);
+
+				// Set current slide
+				slider.state.currentSlide = (slider.state.currentSlide + difference) % slider.slides.length;
+
+				// Add active classes
+				slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
+				slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
+
+				// Restart timer
+				slider.startTimer(slider.state.direction);
+
+				//fireSlider.eventManager.trigger('fireslider-after-transition', fs);
+				//fireSlider.eventManager.trigger('fireslider-after-pager-transition', fs);
+			}
+		},
+
+		// Update the sliders current slide state
 		updateCurrentSlide: function (direction) {
-			var plugin = this;
+			var slider = this;
 			if(direction === 'prev') {
-				plugin.state.currentSlide = (plugin.state.currentSlide === 0) ? (plugin.slides.length - 1) : plugin.state.currentSlide -= 1;
+				slider.state.currentSlide = (slider.state.currentSlide === 0) ? (slider.slides.length - 1) : slider.state.currentSlide -= 1;
 			} else {
-				plugin.state.currentSlide = (plugin.state.currentSlide === (plugin.slides.length - 1)) ? 0 : plugin.state.currentSlide += 1;
+				slider.state.currentSlide = (slider.state.currentSlide === (slider.slides.length - 1)) ? 0 : slider.state.currentSlide += 1;
 			}
 		},
 
 		// Move first position to last or vice versa
 		cyclePositions: function (direction) {
-			var plugin = this;
+			var slider = this;
 			if(direction === 'prev') {
-				var prev = plugin.positions.shift();
-				plugin.positions.push(prev);
+				var prev = slider.positions.shift();
+				slider.positions.push(prev);
 			} else {
-				var next = plugin.positions.pop();
-				plugin.positions.unshift(next);
+				var next = slider.positions.pop();
+				slider.positions.unshift(next);
 			}
 		},
 
-		// Go to the slide relative to the index of a pager elements
-		pagerTransition: function (index) {
 
-			var difference = index - (fs.settings.currentSlide % fs.settings.totalSlides);
+		///// HELPERS /////
 
-			if(difference !== 0) {
-
-				fireSlider.eventManager.trigger('fireslider-before-transition', fs);
-				fireSlider.eventManager.trigger('fireslider-before-pager-transition', fs);
-
-				// Stop Timer
-				stopTimer();
-
-				// Re-load slides
-				reloadSlider();
-
-				// Remove active classes
-				fireSlider._utilities.removeClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
-				fireSlider._utilities.removeClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
-
-				var currentPositions = fs.positions.slice(0);
-
-				if(difference < 0) {
-					for(var i = 0; i < Math.abs(difference); i++) {
-						cyclePositions('prev');
+		// Converts removes fireslider prefix from data stored on the slider object
+		getData: function (data) {
+			$.each(data, function(key, value) {
+				$.each(["fireslider", "fire-slider"], function (i, match) {
+					if (key.toLowerCase().indexOf(match) > -1 && key !== fireSlider) {
+						var newKey = key.replace(new RegExp(match, 'gi'), '');
+						newKey = newKey.charAt(0).toLowerCase() + newKey.slice(1);
+						data[newKey] = data[key];
+						delete data[key];
 					}
-				} else {
-					for(var j = 0; j < Math.abs(difference); j++) {
-						cyclePositions('next');
-					}
+				});
+			});
+			return data;
+		},
+
+		// Refresh positions, breakpoints and slide count
+		refresh: function() {
+			var slider = this;
+
+			// Update breakpoints and width states
+			slider.state.windowWidth = window.innerWidth;
+			slider.state.sliderWidth = slider.$el.outerWidth();
+
+			slider.initBreakpoints();
+
+			if (slider.slides.length !== (slider.calculateMultiplier() * slider.state.totalSlides)) {
+
+				// Remove active class
+				slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
+
+				// Rebuild slider
+				var difference = slider.buildSlider(slider.slides);
+				slider.initSlides();
+				slider.positionSlides(slider.slides);
+
+				if(slider.state.currentSlide > slider.slides.length) {
+					
+					// Re-position slides
+					slider.state.currentSlide = (slider.state.currentSlide % slider.slides.length);
+					slider.calculatePositions(Math.abs(difference));
+					slider.slides.dequeue(slider.options.effect);
+
 				}
 
-				var snappingRange = 100 * Math.abs(difference - 1);
-				for(var k = 0; k < fs.slides.length; k++) {
-					fireSlider.effect.route(fs.slides[k], {
-						speed: fs.options.speed,
-						effect: fs.options.effect,
-						easing: fs.options.easing,
-						currPos: currentPositions[k],
-						nextPos: fs.positions[k],
-						snapping: ((difference < 0 && fs.positions[k] <= (fs.settings.minX + snappingRange)) || (difference > 0 && fs.positions[k] >= (fs.settings.maxX - snappingRange))) ? true : false
-					});
-				}
+				// Re-add active class
+				slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
 
-				// Perform transitions
-				if(window.jQuery) {
-					$(fs.slides).dequeue(fs.options.effect);
-				} else {
-					V.Utilities.dequeue(fs.slides, fs.options.effect);
-				}
-
-				// Set current slide
-				fs.settings.currentSlide = (fs.settings.currentSlide + difference) % fs.slides.length;
-
-				// Add new active classes
-				fireSlider._utilities.addClass(fs.slides[fs.settings.currentSlide], fs.options.activeSlideClass);
-				fireSlider._utilities.addClass(fs.settings.pagerElems[fs.settings.currentSlide % fs.settings.totalSlides], fs.options.activePagerClass);
-
-				// Restart timer
-				startTimer(fs.settings.direction);
-
-				fireSlider.eventManager.trigger('fireslider-after-transition', fs);
-				fireSlider.eventManager.trigger('fireslider-after-pager-transition', fs);
+			} else {
+				
+				// Re-position slides
+				slider.positionSlides();
+				slider.calculatePositions(slider.state.currentSlide);
+				slider.slides.dequeue(slider.options.effect);
 			}
-		}
 
+			//fireSlider.eventManager.trigger('fireslider-refreshed', fs);
+		}
 	};
 
-	FireSlider.prototype.effect  = {
+	FireSlider.prototype.Effects = {
 
 		transitions: {
 			slideInOut: 'slideInOut',
@@ -537,11 +661,11 @@
 			var clone = el.clone();
 			el.parent().append(clone);
 
-			clone.velocity({translateX: [(options.nextPos + '%'), (options.nextPos + '%')]}, {duration: options.speed , queue: options.effect,
+			el.velocity({translateX: [(options.nextPos + '%'), (options.nextPos + '%')]}, {duration: options.speed , queue: options.effect,
 				begin: function() {
 					clone.velocity({opacity: [0.0, 1.0], zIndex: [1, 1]}, {duration: options.speed, easing: options.easing});
 				},
-				complete: function() { clone.parent().remove(clone); }
+				complete: function() { clone.remove(); }
 			});
 		},
 
@@ -563,4 +687,4 @@
 		});
 	};
 
-})( jQuery, window, document );
+})(jQuery, window, document);
