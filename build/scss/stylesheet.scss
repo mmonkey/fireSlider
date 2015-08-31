@@ -148,7 +148,7 @@ body, html {
 	position: relative;
 	overflow: hidden;
 
-	li {
+	li, div {
 		display: block;
 		height: 100%;
 		font-size: 120px;
@@ -189,22 +189,22 @@ body, html {
 			}
 		}
 	}
-	li.slide-1 {
+	li.slide-1, div.slide-1 {
 		background: #012840;
 	}
-	li.slide-2 {
+	li.slide-2, div.slide-2 {
 		background: #013940;
 	}
-	li.slide-3 {
+	li.slide-3, div.slide-3 {
 		background: #f2d857;
 	}
-	li.slide-4 {
+	li.slide-4, div.slide-4 {
 		background: #d98723;
 	}
-	li.slide-5 {
+	li.slide-5, div.slide-5 {
 		background: #bf3604;
 	}
-	li.fire-slider-active {
+	li.fire-slider-active, div.fire-slider-active {
 		opacity: 1;
 	}
 }

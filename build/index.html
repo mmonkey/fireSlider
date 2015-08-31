@@ -39,18 +39,18 @@
 
 	<a class="prev" href="">Prev</a>
 	<a class="next" href="">Next</a>
+	<a class="reverse" href="">Reverse</a>
 
 	<h2>Slider with Thumbnail Pager</h2>
 
-	<!-- Single Slide Option: true will still animate a single slide, false will not: Default is false -->
 	<div class="section fireslider js-fireslider-carousel" style="margin-bottom: 20px;" data-fireslider-pager="">
-		<ul id="fireSlider3" >
-			<li class="slide-1">1</li>
-			<li class="slide-2">2</li>
-			<li class="slide-3">3</li>
-			<li class="slide-4">4</li>
-			<li class="slide-5">5</li>
-		</ul>
+		<div id="fireSlider3" class="carousel">
+			<div class="slide-1">1</div>
+			<div class="slide-2">2</div>
+			<div class="slide-3">3</div>
+			<div class="slide-4">4</div>
+			<div class="slide-5">5</div>
+		</div>
 		<div class="pager"></div>
 	</div>
 
@@ -150,7 +150,7 @@
 			}).fireSlider();
 
 
-		var carousels = $('.js-fireslider-carousel > ul').each(function () {
+		var carousels = $('.js-fireslider-carousel > div.carousel').each(function () {
 				$(this).data({
 					'pager': $(this).siblings('.pager'),
 					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
@@ -167,6 +167,7 @@
 				delay: 2000,
 				effect: "slideInOut",
 				show: 5,
+				slide: 'div[class*=slide]',
 				speed: 400
 			});
 
@@ -191,14 +192,27 @@
 				speed: 400
 			});
 
-		// $(window).resize(function () {
-		// 	if (window.outerWidth > 500) {
-		// 		slider2.play();
-		// 	} else {
-		// 		slider2.pause();
-		// 		slider2.goToSlide(0);
-		// 	}
-		// });
+
+		sliders.on('fireSlider:next', function (e) {
+			console.log($(this).data().fireSlider);
+		});
+
+		$('a.reverse').click(function (e) {
+			e.preventDefault();
+			$(this).prevAll('div[class*=js-fireslider]:first').find('ul').data('fireSlider').reverse();
+		});
+
+		$(window).resize(function () {
+			var slider = carousels.data('fireSlider');
+			if (window.outerWidth > 500) {
+				if (slider.state.isPaused) slider.play();
+			} else {
+				if (!slider.state.isPaused) {
+					slider.slide(0);
+					slider.pause();
+				}
+			}
+		});
 
 
 		/* SHOULDN'T ERROR - when no slider exists */

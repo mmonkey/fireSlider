@@ -73,10 +73,21 @@
 			return true;
 		},
 
-		// Load slides onto slider
+		// // Load slides onto slider
 		initSlides: function () {
 			var slider = this;
-			slider.slides = slider.$el.children(slider.options.slide);
+			switch ($.type(slider.options.slide)) {
+				case 'object':
+					slider.slides = slider.options.slide;
+					break;
+				case 'string':
+					slider.slides = slider.$el.children(slider.options.slide);
+					break;
+				case 'undefined':
+				default:
+					slider.slides = [];
+					break;
+			}
 		},
 
 		// Creates a state object on the slider for storing information
@@ -334,43 +345,70 @@
 			var slider = this;
 
 			slider.prev = function () {
-				slider.transitionSlides('prev');
+				slider.$el.trigger('fireSlider:prev');
 			}
 
 			slider.next = function () {
-				slider.transitionSlides('next');
+				slider.$el.trigger('fireSlider:next');
 			}
 
 			slider.pause = function () {
-				slider.stopTimer();
+				slider.$el.trigger('fireSlider:pause');
 			}
 
 			slider.play = function () {
-				slider.startTimer(slider.state.direction);
+				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			}
 
-			slider.reverse = function() {
-				slider.state.isPaused = false;
-				slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
-				slider.pause();
-				slider.play();
+			slider.reverse = function () {
+				slider.$el.trigger('fireSlider:reverse');
 			}
 			
-			slider.goTo = function(index) {
-				if (slider.state.currentSlide != index) {
-					slider.pagerTransition(index);
-				}
+			slider.slide = function (index) {
+				slider.$el.trigger('fireSlider:slide', index);
 			}
 		},
 
 		initListeners: function() {
 			var slider = this;
 
+			slider.$el.on('fireSlider:prev', function (e) {
+				slider.transitionSlides('prev');
+			});
+
+			slider.$el.on('fireSlider:next', function (e) {
+				slider.transitionSlides('next');
+			});
+
+			slider.$el.on('fireSlider:pause', function (e) {
+				if (!slider.state.isPaused) {
+					slider.state.isPaused = true;
+					slider.stopTimer();
+				}
+			});
+
+			slider.$el.on('fireSlider:play', function (e, direction) {
+				if (slider.state.isPaused) {
+					slider.state.isPaused = false;
+					slider.startTimer(direction);
+				}
+			});
+
+			slider.$el.on('fireSlider:slide', function (e, index) {
+				if (slider.state.currentSlide != index) slider.pagerTransition(index);
+			});
+
+			slider.$el.on('fireSlider:reverse', function (e) {
+				if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
+				slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+				slider.$el.trigger('fireSlider:play', slider.state.direction);
+			});
+
 			// Prev button
 			if ($.type(slider.options.prev) === 'object') {
 				slider.options.prev.click(function (e) {
 					e.preventDefault();
-					slider.prev();
+					slider.$el.trigger('fireSlider:prev');
 					return false;
 				});
 			}
@@ -379,7 +417,7 @@
 			if ($.type(slider.options.next) === 'object') {
 				slider.options.next.click(function (e) {
 					e.preventDefault();
-					slider.next();
+					slider.$el.trigger('fireSlider:next');
 					return false;
 				});
 			}
@@ -388,44 +426,35 @@
 			if ($.type(slider.options.pager) === 'object') {
 				slider.options.pager.children().click(function (e) {
 					e.preventDefault();
-					slider.pagerTransition($(this).index());
+					slider.$el.trigger('fireSlider:slide', $(this).index());
 				});
 			}
 
-			if (slider.options.hoverPause) {
-				slider.$el.mouseover(function (e) {
-					slider.stopTimer();
-					return false;
-				});
+			// Pause on mouseover
+			slider.$el.mouseover(function (e) {
+				if (slider.options.hoverPause) slider.$el.trigger('fireSlider:pause');
+				return false;
+			});
 
-				slider.$el.mouseout(function (e) {
-					slider.startTimer(slider.state.direction);
-					return false;
-				});
-			} 
+			// Play on mouseout
+			slider.$el.mouseout(function (e) {
+				if (slider.options.hoverPause) slider.$el.trigger('fireSlider:play', slider.state.direction);
+				return false;
+			});
 
-			if (slider.options.disableLinks) {
-				slider.$el.click(function (e) {
-					var target = (e.target) ? e.target : e.srcElement;
-					if(target.tagName === "A") {
-						var isActive = false;
-						$.each($(this).parents(), function (i, parent) {
-							if (parent.hasClass(fs.options.activeSlideClass)) {
-								isActive = true;
-							}
-						});
-
-						if (isActive) {
-							e.preventDefault();
-						}
+			// Prevent link clicking on non-active slides
+			slider.slides.find('a').click(function (e) {
+				if (slider.options.disableLinks) {
+					if (!$(this).closest(slider.options.slide).hasClass(slider.options.activeSlideClass)) {
+						e.preventDefault();
 					}
-				});
-			}
+				}
+			});
 
 			$(window).resize(function () {
-				slider.pause();
+				slider.stopTimer();
 				slider.refresh();
-				slider.play();
+				slider.startTimer(slider.state.direction);
 			});
 		},
 
@@ -557,7 +586,7 @@
 		// Update the sliders current slide state
 		updateCurrentSlide: function (direction) {
 			var slider = this;
-			if(direction === 'prev') {
+			if(direction === 'prev' || direction.toLowerCase() === 'backward') {
 				slider.state.currentSlide = (slider.state.currentSlide === 0) ? (slider.slides.length - 1) : slider.state.currentSlide -= 1;
 			} else {
 				slider.state.currentSlide = (slider.state.currentSlide === (slider.slides.length - 1)) ? 0 : slider.state.currentSlide += 1;
@@ -567,7 +596,7 @@
 		// Move first position to last or vice versa
 		cyclePositions: function (direction) {
 			var slider = this;
-			if(direction === 'prev') {
+			if(direction === 'prev' || direction.toLowerCase() === 'backward') {
 				var prev = slider.positions.shift();
 				slider.positions.push(prev);
 			} else {
