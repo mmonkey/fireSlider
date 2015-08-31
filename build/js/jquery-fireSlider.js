@@ -42,14 +42,6 @@
 
 		init: function () {
 			var slider = this;
-			if (slider.options[fireSlider]) {
-				var existing = slider.options[fireSlider];
-				// Unbind events
-				// reload elements
-				
-				console.log('already a fireslider!');
-			}
-
 
 			// Do not continue if element isn't visible
 			if (!slider.$el.is(':visible')) return false;
@@ -63,6 +55,7 @@
 
 			// Initialize slider
 			slider.initSlides();
+			slider.backup = slider.slides.clone();
 
 			// Do not continue if there are 1 or less slides
 			if (slider.slides.length < 2) return false;
@@ -76,18 +69,7 @@
 		// // Load slides onto slider
 		initSlides: function () {
 			var slider = this;
-			switch ($.type(slider.options.slide)) {
-				case 'object':
-					slider.slides = slider.options.slide;
-					break;
-				case 'string':
-					slider.slides = slider.$el.children(slider.options.slide);
-					break;
-				case 'undefined':
-				default:
-					slider.slides = [];
-					break;
-			}
+			slider.slides = slider.$el.children(slider.options.slide);
 		},
 
 		// Creates a state object on the slider for storing information
@@ -149,7 +131,7 @@
 		build: function () {
 			var slider = this;
 
-			if ($.type(slider.options.pager) === 'object') slider.buildPager();
+			if (slider.options.pager instanceof jQuery) slider.buildPager();
 
 			slider.buildSlider();
 
@@ -180,6 +162,11 @@
 
 			// Add active pager class to first element
 			slider.pages.first().addClass(slider.options.activePagerClass);
+		},
+
+		destroyPager: function () {
+			var slider = this;
+			if (slider.options.pager instanceof jQuery) slider.pages.remove();
 		},
 
 		// Append the appropriate number of slides to the slider
@@ -336,12 +323,12 @@
 		run: function () {
 			var slider = this;
 
-			slider.initEvents();
-			slider.initListeners();
+			slider.initFunctions();
+			slider.bindEvents();
 			slider.startTimer(slider.options.direction);
 		},
 
-		initEvents: function() {
+		initFunctions: function() {
 			var slider = this;
 
 			slider.prev = function () {
@@ -367,9 +354,17 @@
 			slider.slide = function (index) {
 				slider.$el.trigger('fireSlider:slide', index);
 			}
+
+			slider.destroy = function () {
+				slider.stopTimer();
+				slider.unbindEvents();
+				slider.destroyPager();
+				slider.slides.remove();
+				slider.$el.append(slider.backup);
+			}
 		},
 
-		initListeners: function() {
+		bindEvents: function() {
 			var slider = this;
 
 			slider.$el.on('fireSlider:prev', function (e) {
@@ -404,26 +399,24 @@
 				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			});
 
-			// Prev button
-			if ($.type(slider.options.prev) === 'object') {
-				slider.options.prev.click(function (e) {
-					e.preventDefault();
-					slider.$el.trigger('fireSlider:prev');
-					return false;
-				});
-			}
+			slider.$el.on('fireSlider:refresh', function (e) {
+				slider.stopTimer();
+				slider.refresh();
+				slider.startTimer(slider.state.direction);
+			});
 
+			// Prev button
+			if (slider.options.prev instanceof jQuery) {
+				slider.options.prev.bind('click', $.proxy(slider.prevButtonClicked, slider));
+			}
+			
 			// Next button
-			if ($.type(slider.options.next) === 'object') {
-				slider.options.next.click(function (e) {
-					e.preventDefault();
-					slider.$el.trigger('fireSlider:next');
-					return false;
-				});
+			if (slider.options.next instanceof jQuery) {
+				slider.options.next.bind('click', $.proxy(slider.nextButtonClicked, slider));
 			}
 
 			// Pager buttons
-			if ($.type(slider.options.pager) === 'object') {
+			if (slider.options.pager instanceof jQuery) {
 				slider.options.pager.children().click(function (e) {
 					e.preventDefault();
 					slider.$el.trigger('fireSlider:slide', $(this).index());
@@ -452,10 +445,28 @@
 			});
 
 			$(window).resize(function () {
-				slider.stopTimer();
-				slider.refresh();
-				slider.startTimer(slider.state.direction);
+				slider.$el.trigger('fireSlider:refresh');
 			});
+		},
+
+		unbindEvents: function() {
+			var slider = this;
+
+			slider.$el.off('fireSlider:prev');
+			slider.$el.off('fireSlider:next');
+			slider.$el.off('fireSlider:pause');
+			slider.$el.off('fireSlider:play');
+			slider.$el.off('fireSlider:slide');
+			slider.$el.off('fireSlider:reverse');
+			slider.$el.off('fireSlider:refresh');
+
+			if (slider.options.prev instanceof jQuery) {
+				slider.options.prev.unbind('click', slider.prevButtonClicked);
+			}
+
+			if (slider.options.next instanceof jQuery) {
+				slider.options.next.unbind('click', slider.nextButtonClicked);
+			}
 		},
 
 		// Starts the timer
@@ -488,7 +499,10 @@
 
 			// Remove active classes
 			slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
-			slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
+
+			if (slider.pages instanceof jQuery) {
+				slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
+			}
 
 			slider.updateCurrentSlide(direction);
 
@@ -512,7 +526,10 @@
 
 			// Add active classes
 			slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
-			slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
+
+			if (slider.pages instanceof jQuery) {
+				slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
+			}
 
 			// Restart timer
 			slider.startTimer(slider.state.direction);
@@ -538,7 +555,10 @@
 
 				// Remove active classes
 				slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
-				slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
+
+				if (slider.pagers instanceof jQuery) {
+					slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
+				}
 
 				var currentPositions = slider.positions.slice(0);
 
@@ -573,7 +593,10 @@
 
 				// Add active classes
 				slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
-				slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
+
+				if (slider.pagers instanceof jQuery) {
+					slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
+				}
 
 				// Restart timer
 				slider.startTimer(slider.state.direction);
@@ -603,6 +626,21 @@
 				var next = slider.positions.pop();
 				slider.positions.unshift(next);
 			}
+		},
+
+
+		///// EVENTS /////
+
+		prevButtonClicked: function (e) {
+			var slider = this;
+			e.preventDefault();
+			slider.$el.trigger('fireSlider:prev');
+		},
+
+		nextButtonClicked: function (e) {
+			var slider = this;
+			e.preventDefault();
+			slider.$el.trigger('fireSlider:next');
 		},
 
 
@@ -710,9 +748,13 @@
 	$.fn[fireSlider] = function (options) {
 		var sel = this.selector;
 		return this.each(function () {
-			// if (!$.data(this, fireSlider)) {
-				$.data(this, fireSlider, new FireSlider(this, options, sel));
-			// }
+
+			if ($.data(this, fireSlider)) {
+				$(this).data(fireSlider).destroy();
+				$(this).removeData(fireSlider);
+			}
+			
+			$.data(this, fireSlider, new FireSlider(this, options, sel));
 		});
 	};
 

@@ -112,34 +112,6 @@
 
 		// FireSlider.effect.register('slideInOut', slideInOut);
 
-
-		/* SAMPLE EVENT LISTENERS */
-
-		// FireSlider.eventManager.listen('fireslider-init', function(data) {
-		// 	console.log('fireSlider ' + data.index + ' initialized');
-		// });
-
-		// FireSlider.eventManager.listen('fireslider-before-transition', function(data) {
-		// 	console.log('fireSlider ' + data.index + ' before transition');
-		// });
-
-		// FireSlider.eventManager.listen('fireslider-before-pager-transition', function(data) {
-		// 	console.log('fireSlider ' + data.index + ' before pager transition');
-		// });
-
-		// FireSlider.eventManager.listen('fireslider-after-transition', function(data) {
-		// 	console.log('fireslider ' + data.index + ' after transition');
-		// });
-
-		// FireSlider.eventManager.listen('fireslider-after-pager-transition', function(data) {
-		// 	console.log('fireSlider ' + data.index + ' after pager transition');
-		// });
-
-		// FireSlider.eventManager.listen('fireslider-refreshed', function(data) {
-		// 	console.log('fireSlider ' + data.index + ' refreshed');
-		// });
-
-
 		/* USING FIRESLIDER */
 		var sliders = $('.js-fireslider > ul').each(function () {
 				$(this).data({
@@ -193,6 +165,17 @@
 			});
 
 
+		// Override original slider
+		// var second = $('#fireSlider').each(function () {
+		// 	$(this).data({
+		// 		'next': {},
+		// 		'prev': {}
+		// 	});
+		// }).fireSlider({
+		// 	direction: 'backward'
+		// });
+
+		// Listen to events
 		sliders.on('fireSlider:next', function (e) {
 			console.log($(this).data().fireSlider);
 		});
