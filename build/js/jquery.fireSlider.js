@@ -1,4 +1,4 @@
-/*! fireSlider (2.0) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.5.0) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
 ;(function ($, window, document, undefined) {
 	var fireSlider = "fireSlider";
 	var defaults = {
@@ -172,7 +172,7 @@
 		// Append the appropriate number of slides to the slider
 		buildSlider: function () {
 			var slider = this;
-			var multiplier = this.calculateMultiplier()
+			var multiplier = this.calculateMultiplier();
 			var difference = (slider.state.totalSlides * multiplier) - slider.slides.length;
 
 			// Add elements if there is a possitive difference
@@ -333,27 +333,27 @@
 
 			slider.prev = function () {
 				slider.$el.trigger('fireSlider:prev');
-			}
+			};
 
 			slider.next = function () {
 				slider.$el.trigger('fireSlider:next');
-			}
+			};
 
 			slider.pause = function () {
 				slider.$el.trigger('fireSlider:pause');
-			}
+			};
 
 			slider.play = function () {
 				slider.$el.trigger('fireSlider:play', slider.state.direction);
-			}
+			};
 
 			slider.reverse = function () {
 				slider.$el.trigger('fireSlider:reverse');
-			}
+			};
 			
 			slider.slide = function (index) {
 				slider.$el.trigger('fireSlider:slide', index);
-			}
+			};
 
 			slider.destroy = function () {
 				slider.stopTimer();
@@ -361,7 +361,7 @@
 				slider.destroyPager();
 				slider.slides.remove();
 				slider.$el.append(slider.backup);
-			}
+			};
 		},
 
 		bindEvents: function() {
@@ -477,7 +477,7 @@
 					(function (slider) {
 						return function() {
 							slider.transitionSlides(direction);
-						}
+						};
 					})(slider), slider.options.delay);
 			}
 		},
