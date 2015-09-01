@@ -356,11 +356,7 @@
 			};
 
 			slider.destroy = function () {
-				slider.stopTimer();
-				slider.unbindEvents();
-				slider.destroyPager();
-				slider.slides.remove();
-				slider.$el.append(slider.backup);
+				slider.$el.trigger('fireSlider:destroy');
 			};
 		},
 
@@ -368,41 +364,55 @@
 			var slider = this;
 
 			slider.$el.on('fireSlider:prev', function (e) {
-				slider.transitionSlides('prev');
+				if (!e.isDefaultPrevented()) slider.transitionSlides('prev');
 			});
 
 			slider.$el.on('fireSlider:next', function (e) {
-				slider.transitionSlides('next');
+				if (!e.isDefaultPrevented()) slider.transitionSlides('next');
 			});
 
 			slider.$el.on('fireSlider:pause', function (e) {
-				if (!slider.state.isPaused) {
+				if (!e.isDefaultPrevented() && !slider.state.isPaused)  {
 					slider.state.isPaused = true;
 					slider.stopTimer();
 				}
 			});
 
 			slider.$el.on('fireSlider:play', function (e, direction) {
-				if (slider.state.isPaused) {
+				if (!e.isDefaultPrevented() && slider.state.isPaused) {
 					slider.state.isPaused = false;
 					slider.startTimer(direction);
 				}
 			});
 
 			slider.$el.on('fireSlider:slide', function (e, index) {
-				if (slider.state.currentSlide != index) slider.pagerTransition(index);
+				if (!e.isDefaultPrevented() && slider.state.currentSlide != index) slider.pagerTransition(index);
 			});
 
 			slider.$el.on('fireSlider:reverse', function (e) {
-				if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
-				slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
-				slider.$el.trigger('fireSlider:play', slider.state.direction);
+				if (!e.isDefaultPrevented()) {
+					if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
+					slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+					slider.$el.trigger('fireSlider:play', slider.state.direction);
+				}
 			});
 
 			slider.$el.on('fireSlider:refresh', function (e) {
-				slider.stopTimer();
-				slider.refresh();
-				slider.startTimer(slider.state.direction);
+				if (!e.isDefaultPrevented()) {
+					slider.stopTimer();
+					slider.refresh();
+					slider.startTimer(slider.state.direction);
+				}
+			});
+
+			slider.$el.on('fireSlider:destroy', function (e) {
+				if (!e.isDefaultPrevented()) {
+					slider.stopTimer();
+					slider.unbindEvents();
+					slider.destroyPager();
+					slider.slides.remove();
+					slider.$el.append(slider.backup);
+				}
 			});
 
 			// Prev button
@@ -556,7 +566,7 @@
 				// Remove active classes
 				slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
 
-				if (slider.pagers instanceof jQuery) {
+				if (slider.pages instanceof jQuery) {
 					slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
 				}
 
@@ -594,7 +604,7 @@
 				// Add active classes
 				slider.slides.eq(slider.state.currentSlide).addClass(slider.options.activeSlideClass);
 
-				if (slider.pagers instanceof jQuery) {
+				if (slider.pages instanceof jQuery) {
 					slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).addClass(slider.options.activePagerClass);
 				}
 

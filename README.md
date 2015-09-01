@@ -1,8 +1,8 @@
-fireSlider.js
+jquery.fireSlider.js
 =============
-fireSlider.js is a responsive slider and carousel plugin. It is content-agnostic, meaning it can create a slider from any type of HTML you want. Transitions are incredibly smooth, built with [Velocity.js](https://github.com/julianshapiro/velocity) animation library.
+fireSlider is a responsive slider and carousel plugin. It is content-agnostic, meaning it can create a slider from any type of HTML you want. Transitions are incredibly smooth, built with [Velocity.js](https://github.com/julianshapiro/velocity) animation library.
 
-fireSlider.js supports breakpoints out-of-the-box. You can set up completely different options based on the width of the browser window.
+fireSlider supports breakpoints out-of-the-box. You can set up completely different options based on the width of the browser window.
 
 Download
 --------
@@ -14,13 +14,13 @@ fireSlider has one dependency, Velocity.js, and it comes in two versions:
 
 **Includes Velocity.js:**
 ```html
-<script src="path/to/fireSlider.velocity.js"></script>
+<script src="path/to/jquery.fireSlider.velocity.js"></script>
 ```
 
 **Does not include Velocity.js:**
 ```html
 <script src="path/to/velocity.min.js"></script>
-<script src="path/to/fireSlider.min.js"></script>
+<script src="path/to/jquery.fireSlider.min.js"></script>
 ```
 Using this version of fireSlider will require you to include velocity also. This is good if you are already using Velocity.js elsewhere.
 
@@ -68,7 +68,7 @@ This is just an example, your slider can be any HTML with child elements inside.
 **Add controls:**
 
 ```html
-<ul class="slider">
+<ul id="slider">
 	<li><img src="path/to/image1.jpg"></li>
 	<li><img src="path/to/image2.jpg"></li>
 	<li><img src="path/to/image3.jpg"></li>
@@ -82,76 +82,40 @@ This is just an example, your slider can be any HTML with child elements inside.
 
 fireSlider supports previous and next slide controls as well as a pager. These controls are not required.
 
+
 Configure
 ---------
 
-**JavaScript**
+**Defaults only**
 
 ```javascript
-FireSlider.slider(".slider", {
-	show: 5,
-	active: 3,
-	prev: "#prev",
-	next: "#next",
-	pager: "#pager",
-	effect: "slideInOut",
-	speed: 500,
-	delay: 4500,
-}, [
-	{breakpoint: 840, show: 3, active: 2},
-	{breakpoint: 460, show: 1, active: 1}
-]);
+$('#slider').fireSlider();
 ```
 
-fireSlider only has one required option, and that is the selector of your slider. If you just want to use the default options:
+**Simple - One slider**  
+Pass in jQuery objects for prev, next and pager elements.
 
 ```javascript
-FireSlider.slider(".slider");
-```
-
-See all of fireSlider's default options with descriptions down below.
-
-**jQuery**
-
-```javascript
-$(".slider").fireSlider({
-	prev: "#prev",
-	next: "#next",
-	pager: "#pager"
+$("#slider").fireSlider({
+	prev: $('#prev'),
+	next: $('#next'),
+	pager: $('#pager')
 });
 ```
 
-To use just the default options with jQuery:
+**Advanced - Multiple sliders with the same selectors**  
+To use more advanced selectors, add them with data attributes. The example below allows selectors based on `$(this)` slider.
 
 ```javascript
-$(".slider").fireSlider();
+$('.js-slider > ul').each(function () {
+	$(this).data({
+		'pager': $(this).parent().nextUntil('.js-slider', '.pager'),
+		'prev': $(this).parent().nextUntil('.js-slider', '.prev'),
+		'next': $(this).parent().nextUntil('.js-slider', '.next')
+	});
+}).fireSlider();
 ```
 
-You may also want to leverage other jQuery functions:
-
-```javascript
-$(".slider").fireSlider().addClass("myClass");
-```
-
-**Arguments**
-
-JavaScript:
-
-```javascript
-FireSlider.slider(selector, options, breakpoints);
-```
-
-jQuery:
-
-```javascript
-$(selector).fireSlider(options, breakpoints);
-```
-
-Argument | Description | Type
-------------- | ------------- | -------------
-selector | A selector to the slider element | String
-options | Configureable options to customize the slider | Object
-breakpoints | A sub-set of options to update at certain browser widths | Array
 
 Style
 -------
@@ -182,62 +146,63 @@ Options
 
 Option | Description | Type | Default 
 ------------- | ------------- | ------------- | -------------
-slide | A selector for the slide elements. | string | "li"
-show | The amount of slides to show in the slider at once. | int | 1
 active | The position of the active slide. | int | 1
-speed | The speed of the transition (milliseconds). | int | 500
+activePagerClass | The class to be added to the current active pager element. | string | "fire-pager-active"
+activeSlideClass | The class to be added to the current active slide. | string | "fire-slider-active"
+breakpoints | See description below | array | N/A
 delay | The amount of time in between transitions (milliseconds). | int | 5000
 direction | The direction of the slide transitions. | string | "forward"
-activeSlideClass | The class to be added to the current active slide. | string | "fire-slider-active"
-activePagerClass | The class to be added to the current active pager element. | string | "fire-pager-active"
+disableLinks | Disable links on the non-active slides? | boolean | true
 effect | The transition effect to use. | string | "slideInOut", "fadeInOut"
 easing | The easing effect for the transition. | string or array | "swing"
 hoverPause | Pause transitions when mouse hovers? | boolean | false
-disableLinks | Disable links on the non-active slides? | boolean | true
-prev | The selector of the previous-slide button. | string | N/A
-next | The selector of the next-slide button. | string | N/A
-pager | The selector of the pager element. | string | N/A
+next | The selector of the next-slide button. | jQuery | N/A
+pager | The selector of the pager element. | jQuery | N/A
 pagerTemplate | Template for pager elements | HTML String | "`<span><\span>`"
+prev | The selector of the previous-slide button. | jQuery | N/A
+slide | A selector for the slide elements. | string | "li"
+show | The amount of slides to show in the slider at once. | int | 1
+speed | The speed of the transition (milliseconds). | int | 500
 
-All of fireSlider's options may also be setup with data-attributes on the slider element:
+Each option may also be setup with data-attributes on the slider element:
 
 ```html
-<ul class="slider" data-fireslider-speed="300" data-fireslider-pager="#pager">
+<ul class="slider" data-fireslider-speed="300">
 	<li><img src="path/to/image1.jpg"></li>
 	<li><img src="path/to/image2.jpg"></li>
 	<li><img src="path/to/image3.jpg"></li>
 </ul>
 ```
 
+However, for prev, next and pager options, using jQuery's `$.data()` works best for attribute options.
+
 All data-attributes are named the same as the options, except prepended by `data-fireslider-`. Two word options, like hoverPause, are instead `data-fireslider-hover-pause`.
 
 Breakpoints
 -----------
 
-Breakpoint options are similar to the main options, but limited to:
+Breakpoints allow you to set different settings on a slider based on the browser's width. Breakpoints are mobile-first, so the breakpoint attribute can be viewed as "greater than or equal to".
 
 Option | Description | Type | Default 
 ------------- | ------------- | ------------- | -------------
-breakpoint | Max pixel-width of the breakpoint range. | int | N/A
-show | The amount of slides to show in the slider at once. | int | 1
 active | The position of the active slide. | int | 1
+breakpoint | Minimum pixel-width of the breakpoint range. | int | N/A
+show | The amount of slides to show in the slider at once. | int | 1
 
 Setting up breakpoint options is a breeze:
 
 ```javascript
-var breakpoints = [
-	{breakpoint: 1200, show: 5, active: 3},
+var bps = [
+	{breakpoint: 1, show: 1, active: 1},
 	{breakpoint: 840, show: 3, active: 2},
-	{breakpoint: 460, show: 1, active: 1}
+	{breakpoint: 1200, show: 5, active: 3}
 ];
 
-FireSlider.slider(".slider", { effect: "fadeInOut" }, breakpoints);
+$('#slider').fireSlider({breakpoints: bps});
 ```
 
-You can also pass breakpoints via data-attribues, however, **they have to be formatted as valid JSON:**
-
 ```html
-<ul class="slider" data-fireslider-breakpoints='[{"breakpoint": 360, "show": 1, "active": 1},{"breakpoint": 580, "show": 2, "active": 1},{"breakpoint": 720, "show": 3, "active": 2},{"breakpoint": 860, "show": 4, "active": 2}]'>
+<ul class="slider" data-fireslider-breakpoints='[{"breakpoint": 1, "show": 1, "active": 1},{"breakpoint": 580, "show": 2, "active": 1},{"breakpoint": 720, "show": 3, "active": 2},{"breakpoint": 860, "show": 5, "active": 2}]'>
 	<li><img src="path/to/image1.jpg"></li>
 	<li><img src="path/to/image2.jpg"></li>
 	<li><img src="path/to/image3.jpg"></li>
@@ -252,7 +217,7 @@ Pager Template
 By default, a pager is filled with empty spans, however you can customize the pager elments with custom markup. Here is how to fill the pager with anchor links:
 
 ```javascript
-FireSlider.slider(".slider", {
+$('#slider').fireslider({
 	pager: "#pager",
 	pagerTemplate: '<a href="#" class="pager-dot"></a>'
 });
@@ -261,7 +226,7 @@ FireSlider.slider(".slider", {
 Optionally, you can clone your entire original slide, creating a "thumbnail" by setting `pagerTemplate: "clone"`:
 
 ```javascript
-FireSlider.slider(".slider", {
+$('#slider').fireslider({
 	pager: "#pager",
 	pagerTemplate: "clone"
 });
@@ -272,7 +237,7 @@ FireSlider.slider(".slider", {
 You can also further customize the output using tags:
 
 ```javascript
-FireSlider.slider(".slider", {
+$('#slider').fireslider({
 	pager: "#pager",
 	pagerTemplate: '<a href="#" class="pager-dot-{{num}}">{{description}}</a>'
 });
@@ -280,9 +245,9 @@ FireSlider.slider(".slider", {
 
 Tag | Description
 ------------- | -------------
+{{description}} | See below.
 {{num}} | The slide's position.
 {{src}} | The first image's src from the slide.
-{{description}} | See below.
 
 **{{description}} Tag**
 
@@ -296,9 +261,9 @@ You may add an additional data-attribute to your slide element:
 </ul>
 ```
 
-The pager will output the `data-fireslider-pager-description` in place of the `{{description}}` tag.
+The pager will output the value of `data-fireslider-pager-description` in place of the `{{description}}` tag.
 
-Custom Transition Effects
+Custom Transition Effects - OUTDATED
 --------
 You can add your own transition effects to fireSlider. Transition effects are written using velocity.js.
 
@@ -306,12 +271,12 @@ You can add your own transition effects to fireSlider. Transition effects are wr
 ```javascript
 var slideInOut = function(element, opts) {
 	var duration = (opts.snapping) ? 0 : opts.speed;
-	V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
+	element.velocity({translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
 };
 ```
-As you can see, we refer to `Velocity` as `V`. For more examples, see the source code (fireSlider.effect object).
 
-**Register new transition effect:**
+**Register new transition effect:**  
+
 ```javascript
 FireSlider.effect.register('slideInOut', slideInOut);
 ```
@@ -319,7 +284,7 @@ To register the new tranistion effect, we pass fireSlider's register function th
 
 **Now you can call the transition effect like normal:**
 ```html
-<ul class="slider" data-fireslider-speed="300" data-fireslider-pager="#pager" data-fireslider-effect="slideInOut">
+<ul class="slider" data-fireslider-speed="300" data-fireslider-effect="slideInOut">
 	<li><img src="path/to/image1.jpg"></li>
 	<li><img src="path/to/image2.jpg"></li>
 	<li><img src="path/to/image3.jpg"></li>
@@ -327,7 +292,8 @@ To register the new tranistion effect, we pass fireSlider's register function th
 ```
 You can also pass this as an option in the javascript function call to fireSlider.
 
-**Arguments passed to transition effects:**
+**Arguments passed to transition effects:**  
+
 ```javascript
 var transitionName = function(element, options) { ... }
 ```
@@ -335,12 +301,12 @@ The `element` is an individual slide, the options object contains:
 
 Option | Description | Type
 ------------- | ------------- | -------------
-effect | The name of the effect (we pass this to Velocity for queueing). | String
-easing | The desired easing to be used (see Velocity.js easing). | String, Array
-speed | The desired speed of the transition (Velocity refers to this as 'duration'). | int
-snapping | This will be true if the slide is tranistion from the end of the slider. | boolean
 currPos | The slides position before transitioning (This is a translateX position). | int
+easing | The desired easing to be used (see Velocity.js easing). | String, Array
+effect | The name of the effect (we pass this to Velocity for queueing). | String
 nextPos | The slides position after transitioning (This is a translateX position). | int
+snapping | This will be true if the slide is tranistion from the end of the slider. | boolean
+speed | The desired speed of the transition (Velocity refers to this as 'duration'). | int
 
 It is best to set `duration: 0` if snapping is true, this will prevent slides to "jump" from one end to the other.
 
@@ -350,21 +316,23 @@ fireSlider will trigger custom events that can be hooked into:
 
 Event | Description
 ------------- | -------------
-"fireslider-init" | Triggered right after the slider is initialized.
-"fireslider-before-transition" | Triggered right before a slide has transitioned.
-"fireslider-before-pager-transition" | Same as "fireslider-before-transition", but triggers when pager is used.
-"fireslider-after-transition" | Triggered right after a slide has transitioned.
-"fireslider-after-pager-transition" | Same as "fireslider-after-transition", but triggers when pager is used
-"fireslider-refreshed" | Triggered whenever the slider gets refreshed like on window resize.
+"fireSlider:destroy" | Triggered when a slider is destroyed.
+"fireSlider:next" | Triggered when the slide transitions to the next slide after the "next" element is clicked.
+"fireSlider:pause" | Triggered when the slider is paused.
+"fireSlider:play" | Triggered when the slider is un-paused.
+"fireSlider:prev" | Triggered when the slide transitions to the prev slide after the "prev" element is clicked.
+"fireSlider:refresh" | Triggered when the slider is resized.
+"fireSlider:reverse" | Triggered when the slider's direction is reversed.
+"fireSlider:slide" | Triggered when the slide function is called.
 
 You can listen for events like this:
 
 ```javascript
-FireSlider.eventManager.listen('fireslider-init', function(data) {
-	console.log("Slider " + (data.index + 1) + " has initialized!");
-});
+var slider = $('#slider').fireSlider();
 
-var slider = FireSlider.slider(".my_slider");
+slider.on("fireSlider:next", function (e) {
+	// your code here.
+});
 ```
 
 **Event Data**
@@ -373,20 +341,36 @@ The data available in an event listener:
 
 Property | Description
 ------------- | -------------
+$el | The jQuery slider element
+_attributes | The data-attributs set for the slider.
+_defaults | Default attributes for the slider.
+_name | "fireSlider"
+backup | Contains the origin jQuery slides
 breakpoints | Array of breakpoints set for the slider.
-data | The data-attributs set for the slider.
-index | The index of the slider (zero-indexed).
-isPaused | True if slider is paused.
+destroy | Function to destroy the slider, this leaves your original markup intact. To completely remove the slider, use jQuery's `$.remove()`.
 next | Function that goes to the next slide.
 options | The combined options set on the slider (data-attributes, default options, and javascript options).
+pages | jQuery array of pager pages
 pause | Function that pauses the slider.
 play | Function that plays the slider.
-prev | Functino that goes to the previous slide.
-reverse | Function that plays the slider in reverse.
 positions | Array of integers (translateX position of each slide).
-settings | Various settings used by fireSlider (simular to options, but these are not persistent).
-slider | The slider DOM element object.
+prev | Function that goes to the previous slide.
+reverse | Function that plays the slider in reverse.
+selector | The selector used to define the slider.
+slide | Function to transition to a slide, takes an index.
 slides | Array of slide DOM element objects that are contained in the slider.
+state | Various attributes that hold the state of the slider (simular to options, but these are not persistent).
+timer | Holds reference to the timer.
+
+This data can be recieved in the event:
+
+```javascript
+slider.on("fireSlider:next", function(e) {
+	var fireslider = $(this).data("fireSlider");
+	fireslider.reverse();
+});
+
+```
 
 Contribute
 ----------
@@ -395,7 +379,7 @@ Contribute
 Install the project dependencies:
 
 ```
-$ npm update
+$ npm install / update
 ```
 
 Start gulp:
@@ -410,4 +394,4 @@ You can submit issues [here.](https://github.com/mmonkey/fireSlider/issues)
 
 
 ----------
-[MIT License.](LICENSE.md) © CJ O'Hara and Tyler Fowle.
+[MIT License.](LICENSE.md) © CJ O'Hara.
