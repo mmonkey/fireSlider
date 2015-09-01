@@ -125,6 +125,7 @@ $('#slider').fireSlider({
 	slide: 'li',
 	speed: 700
 });
+```
 
 
 Style
