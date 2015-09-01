@@ -369,10 +369,7 @@ slider.on("fireSlider:next", function(e) {
 	var fireslider = $(this).data("fireSlider");
 	fireslider.reverse();
 });
-
 ```
-
-Any event can be cancelled with `.preventDefault()`.
 
 Contribute
 ----------
