@@ -116,6 +116,16 @@ $('.js-slider > ul').each(function () {
 }).fireSlider();
 ```
 
+**Passing other options**  
+This is an example of how to pass options to fireSlider, all options available are documented below.
+
+```javascript
+$('#slider').fireSlider({
+	delay: 4000,
+	slide: 'li',
+	speed: 700
+});
+
 
 Style
 -------
