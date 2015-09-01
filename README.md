@@ -372,6 +372,8 @@ slider.on("fireSlider:next", function(e) {
 
 ```
 
+Any event can be cancelled with `.preventDefault()`.
+
 Contribute
 ----------
 **Build** - (Requires [npm](http://nodejs.org/) and [gulp](http://gulpjs.com/))
