@@ -364,55 +364,49 @@
 			var slider = this;
 
 			slider.$el.on('fireSlider:prev', function (e) {
-				if (!e.isDefaultPrevented()) slider.transitionSlides('prev');
+				slider.transitionSlides('prev');
 			});
 
 			slider.$el.on('fireSlider:next', function (e) {
-				if (!e.isDefaultPrevented()) slider.transitionSlides('next');
+				slider.transitionSlides('next');
 			});
 
 			slider.$el.on('fireSlider:pause', function (e) {
-				if (!e.isDefaultPrevented() && !slider.state.isPaused)  {
+				if (!slider.state.isPaused)  {
 					slider.state.isPaused = true;
 					slider.stopTimer();
 				}
 			});
 
 			slider.$el.on('fireSlider:play', function (e, direction) {
-				if (!e.isDefaultPrevented() && slider.state.isPaused) {
+				if (slider.state.isPaused) {
 					slider.state.isPaused = false;
 					slider.startTimer(direction);
 				}
 			});
 
 			slider.$el.on('fireSlider:slide', function (e, index) {
-				if (!e.isDefaultPrevented() && slider.state.currentSlide != index) slider.pagerTransition(index);
+				if (slider.state.currentSlide != index) slider.pagerTransition(index);
 			});
 
 			slider.$el.on('fireSlider:reverse', function (e) {
-				if (!e.isDefaultPrevented()) {
-					if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
-					slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
-					slider.$el.trigger('fireSlider:play', slider.state.direction);
-				}
+				if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
+				slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			});
 
 			slider.$el.on('fireSlider:refresh', function (e) {
-				if (!e.isDefaultPrevented()) {
-					slider.stopTimer();
-					slider.refresh();
-					slider.startTimer(slider.state.direction);
-				}
+				slider.stopTimer();
+				slider.refresh();
+				slider.startTimer(slider.state.direction);
 			});
 
 			slider.$el.on('fireSlider:destroy', function (e) {
-				if (!e.isDefaultPrevented()) {
-					slider.stopTimer();
-					slider.unbindEvents();
-					slider.destroyPager();
-					slider.slides.remove();
-					slider.$el.append(slider.backup);
-				}
+				slider.stopTimer();
+				slider.unbindEvents();
+				slider.destroyPager();
+				slider.slides.remove();
+				slider.$el.append(slider.backup);
 			});
 
 			// Prev button
@@ -710,8 +704,6 @@
 				slider.calculatePositions(slider.state.currentSlide);
 				slider.slides.dequeue(slider.options.effect);
 			}
-
-			//fireSlider.eventManager.trigger('fireslider-refreshed', fs);
 		}
 	};
 
@@ -767,5 +759,7 @@
 			$.data(this, fireSlider, new FireSlider(this, options, sel));
 		});
 	};
+
+	window.fireSlider = FireSlider;
 
 })(jQuery, window, document);

@@ -274,22 +274,22 @@ You may add an additional data-attribute to your slide element:
 
 The pager will output the value of `data-fireslider-pager-description` in place of the `{{description}}` tag.
 
-Custom Transition Effects - OUTDATED
+Custom Transition Effects
 --------
 You can add your own transition effects to fireSlider. Transition effects are written using velocity.js.
 
 **Create a new transition effect:**
 ```javascript
-var slideInOut = function(element, opts) {
-	var duration = (opts.snapping) ? 0 : opts.speed;
-	element.velocity({translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
+var slideInOut = function (el, options) {
+	var duration = (options.snapping) ? 0 : options.speed;
+	el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
 };
 ```
 
 **Register new transition effect:**  
 
 ```javascript
-FireSlider.effect.register('slideInOut', slideInOut);
+fireSlider.prototype.Effects.register('slideInOut', slideInOut);
 ```
 To register the new tranistion effect, we pass fireSlider's register function the transition's name, and function.
 

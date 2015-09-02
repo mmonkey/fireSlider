@@ -104,13 +104,12 @@
 	<script type="text/javascript">
 
 		/* REGISTER NEW TRANSITION EFFECT */
-
-		// var slideInOut = function(element, opts) {
-		// 	var duration = (opts.snapping) ? 0 : opts.speed;
-		// 	V(element, {translateX: [(opts.nextPos + '%'), (opts.currPos + '%')]}, {duration: duration, queue: opts.effect, easing: opts.easing});
+		// var slideInOut = function (el, options) {
+		// 	var duration = (options.snapping) ? 0 : options.speed;
+		// 	el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
 		// };
 
-		// FireSlider.effect.register('slideInOut', slideInOut);
+		// fireSlider.prototype.Effects.register('slideInOut', slideInOut);
 
 		/* USING FIRESLIDER */
 		var sliders = $('.js-fireslider > ul').each(function () {
@@ -176,9 +175,9 @@
 		// });
 
 		// Listen to events
-		sliders.on('fireSlider:next', function (e) {
-			console.log($(this).data().fireSlider);
-		});
+		// sliders.on('fireSlider:prev', function (e) {
+		// 	console.log('prev');
+		// });
 
 		$('a.reverse').click(function (e) {
 			e.preventDefault();
