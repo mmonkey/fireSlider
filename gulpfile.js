@@ -36,12 +36,6 @@ gulp.task('min', ['lint'], function() {
 	return gulp.src('./assets/_js/docs.js')
 		.pipe(uglify())
 		.pipe(rename({suffix: '.min'}))
-		.pipe(gulp.dest('./assets/_js/'));
-});
-
-gulp.task('concat', ['min'], function() {
-	return gulp.src(['./assets/_js/vendor/jquery-1.11.2.min.js', './assets/_js/vendor/prism.js', './assets/_js/fireSlider.velocity.js', './assets/_js/docs.min.js'])
-		.pipe(concat('docs.min.js'))
 		.pipe(gulp.dest('./dist/'));
 });
 
@@ -57,5 +51,5 @@ gulp.task('browser-sync', function() {
 gulp.task('default', ['browser-sync'], function() {
 	gulp.watch('assets/_scss/**/*.scss', ['sass']);
 	gulp.watch('**/*.html', browserSync.reload);
-	gulp.watch('assets/_js/docs.js', ['lint', 'min', 'concat',browserSync.reload]);
+	gulp.watch('assets/_js/docs.js', ['lint', 'min', browserSync.reload]);
 });

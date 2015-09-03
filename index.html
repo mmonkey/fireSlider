@@ -2,16 +2,57 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>fireSlider.js | Docs</title>
+	<title>jquery.fireSlider.js</title>
 	<link rel="stylesheet" href="dist/docs.min.css">
+
+	<script type="text/javascript" src="assets/_js/vendor/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="assets/_js/vendor/velocity.min.js"></script>
+	<script type="text/javascript" src="assets/_js/vendor/prism.js"></script>
+	<script type="text/javascript" src="assets/_js/jquery.fireSlider.min.js"></script>
+
 </head>
 <body>
 	
 	<div class="row">
 		<div class="small-12 columns">
-			<h1>fireSlider.js</h1>
+			<h1>jquery.fireSlider.js</h1>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="small-12 columns">
+			<ul class="slider">
+				<li>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+		</div>
+	</div>
+
+	<form id="builder">
+		<div class="row">
+			<div class="small-6 medium-4 large-2 columns">
+				<label> Show
+					<input type="text" name="show">
+				</label>
+			</div>
+
+			<div class="small-6 medium-4 large-2 columns">
+				<label> Active
+					<input type="text" name="show">
+				</label>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="small-6 small-offset-3 medium-4 medium-offset-4 large-2 large-offset-5 columns">
+				<label>
+					<a href="#" class="button round" id="update-slider">Update Slider</a>
+				</label>
+			</div>
+		</div>
+	</form>
 
 	<div class="row">
 		<div class="small-12 columns">

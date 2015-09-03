@@ -1,0 +1,13 @@
+ul.slider {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 300px;
+	list-style: none;
+	overflow: hidden;
+
+	li {
+		display: block;
+		height: 100%;
+	}
+}
