@@ -2,7 +2,7 @@ var fireslider = $('.slider').fireSlider();
 var slider = fireslider.data('fireSlider');
 var form = $('form#builder');
 
-function updateSlider() {
+function updateSlider () {
 	if (form.find('[data-invalid]').length === 0) {
 		var options = {};
 		
@@ -10,7 +10,40 @@ function updateSlider() {
 			options[key] = form.find('[name="' + key + '"]').val();
 		});
 
-		slider.$el.fireSlider(options);
+		fireslider = slider.$el.fireSlider(options);
+		slider = fireslider.data('fireSlider');
+		updateJavascriptOutput();
+	}
+}
+
+function updateJavascriptOutput () {
+	var code = "";
+	$.each(slider._defaults, function (key, value) {
+		if (slider._defaults[key] != slider.options[key]) {
+			code += (code == "") ? "" : ",";
+			code += "\n\t" + key + ": " + formatCodeValue(key, slider.options[key]);
+		}
+	});
+
+	var selector = "\n$('.slider')";
+	var funcStart = (code == "") ? ".fireSlider(" : ".fireSlider.({";
+	var funcEnd = (code == "") ? ");" : "\n});";
+
+	$('.javascript-output').find('code').text(selector + funcStart + code + funcEnd);
+	Prism.highlightAll();
+}
+
+function formatCodeValue (key, value) {
+	switch (key) {
+		case "show":
+		case "active":
+		case "speed":
+		case "delay":
+			return value;
+			break;
+		default:
+			return '"' + value + '"';
+			break;
 	}
 }
 
