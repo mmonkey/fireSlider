@@ -27,13 +27,13 @@ gulp.task('sass', function() {
 });
 
 gulp.task('lint', function() {
-	return gulp.src('./assets/_js/docs.js')
+	return gulp.src('./assets/js/docs.js')
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
 
 gulp.task('min', ['lint'], function() {
-	return gulp.src('./assets/_js/docs.js')
+	return gulp.src('./assets/js/docs.js')
 		.pipe(uglify())
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('./dist/'));
@@ -51,5 +51,5 @@ gulp.task('browser-sync', function() {
 gulp.task('default', ['browser-sync'], function() {
 	gulp.watch('assets/_scss/**/*.scss', ['sass']);
 	gulp.watch('**/*.html', browserSync.reload);
-	gulp.watch('assets/_js/docs.js', ['lint', 'min', browserSync.reload]);
+	gulp.watch('assets/js/docs.js', ['lint', 'min', browserSync.reload]);
 });

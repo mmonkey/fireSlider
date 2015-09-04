@@ -14,9 +14,10 @@ $(document).ready(function () {
 
 		var show = parseInt(form.find('[name="show"]').val());
 		var active = parseInt(form.find('[name="active"]').val());
+		var options = {};
 
-		slider.options.show = (show > 0) ? show : slider.options.show;
-		slider.options.active = (active > 0 && active <= show) ? active : slider.options.active;
+		options.show = (show > 0) ? show : slider.options.show;
+		options.active = (active > 0 && active <= show) ? active : slider.options.active;
 
 
 		slider.refresh();
