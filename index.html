@@ -9,6 +9,8 @@
 	<script type="text/javascript" src="assets/js/vendor/velocity.min.js"></script>
 	<script type="text/javascript" src="assets/js/vendor/prism.js"></script>
 	<script type="text/javascript" src="assets/js/jquery.fireSlider.min.js"></script>
+	<script type="text/javascript" src="assets/js/vendor/foundation.js"></script>
+	<script type="text/javascript" src="assets/js/vendor/foundation.abide.js"></script>
 
 </head>
 <body>
@@ -16,31 +18,67 @@
 	<div class="row">
 		<div class="small-12 columns">
 			<h1>jquery.fireSlider.js</h1>
+			<p class="lead">A responsive carousel / slider plugin for jQuery.</p>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="small-12 columns">
 			<ul class="slider">
-				<li>1</li>
-				<li>2</li>
-				<li>3</li>
-				<li>4</li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
 			</ul>
 		</div>
 	</div>
 
-	<form id="builder">
+	<form id="builder" data-abide>
 		<div class="row">
 			<div class="small-6 medium-4 large-2 columns">
-				<label> Show
-					<input type="text" name="show">
+				<label> Speed
+					<input type="text" name="speed" pattern="number">
 				</label>
+				<small class="error">Speed must be a number</small>
+			</div>
+
+			<div class="small-6 medium-4 large-2 columns">
+				<label> Delay
+					<input type="text" name="delay" pattern="number">
+				</label>
+				<small class="error">Delay must be a number</small>
+			</div>
+
+			<div class="small-6 medium-4 large-2 columns">
+				<label> Show
+					<input type="text" name="show" pattern="number">
+				</label>
+				<small class="error">Show must be a number</small>
 			</div>
 
 			<div class="small-6 medium-4 large-2 columns">
 				<label> Active
-					<input type="text" name="show">
+					<input type="text" name="active" pattern="number">
+				</label>
+				<small class="error">Active must be a number</small>
+			</div>
+
+			<div class="small-12 medium-4 large-2 columns">
+				<label> Direction
+					<select name="direction">
+						<option value="forward">Forward</option>
+						<option value="backward">Backward</option>
+					</select>
+				</label>
+			</div>
+
+			<div class="small-12 medium-4 large-2 columns">
+				<label> Effect
+					<select name="effect">
+						<option value="slideInOut">slideInOut</option>
+						<option value="fadeInOut">fadeInOut</option>
+					</select>
 				</label>
 			</div>
 		</div>

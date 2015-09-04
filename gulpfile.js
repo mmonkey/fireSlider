@@ -18,7 +18,7 @@ var prefixBrowsers = [
 ];
 
 gulp.task('sass', function() {
-	return sass('./assets/_scss/docs.scss', { style: 'compressed' })
+	return sass('./assets/scss/docs.scss', { style: 'compressed' })
 		.on('error', function(e) { console.log(e.message); })
 		.pipe(autoprefixer({browsers: prefixBrowsers}))
 		.pipe(rename({suffix: '.min'}))
@@ -49,7 +49,7 @@ gulp.task('browser-sync', function() {
 });
 
 gulp.task('default', ['browser-sync'], function() {
-	gulp.watch('assets/_scss/**/*.scss', ['sass']);
+	gulp.watch('assets/scss/**/*.scss', ['sass']);
 	gulp.watch('**/*.html', browserSync.reload);
 	gulp.watch('assets/js/docs.js', ['lint', 'min', browserSync.reload]);
 });
