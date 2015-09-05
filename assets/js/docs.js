@@ -1,6 +1,7 @@
-var fireslider = $('.slider').fireSlider();
+var fireslider = $('ul.slider').fireSlider();
 var slider = fireslider.data('fireSlider');
 var form = $('form#builder');
+fetchImages();
 
 function updateSlider () {
 	if (form.find('[data-invalid]').length === 0) {
@@ -20,16 +21,24 @@ function updateJavascriptOutput () {
 	var code = "";
 	$.each(slider._defaults, function (key, value) {
 		if (slider._defaults[key] != slider.options[key]) {
-			code += (code == "") ? "" : ",";
+			code += (code === "") ? "" : ",";
 			code += "\n\t" + key + ": " + formatCodeValue(key, slider.options[key]);
 		}
 	});
 
-	var selector = "\n$('.slider')";
-	var funcStart = (code == "") ? ".fireSlider(" : ".fireSlider.({";
-	var funcEnd = (code == "") ? ");" : "\n});";
+	var hasPager = (slider.options.pager instanceof jQuery);
+	var hasNav = (slider.options.prev instanceof jQuery && slider.options.next instanceof jQuery)
 
-	$('.javascript-output').find('code').text(selector + funcStart + code + funcEnd);
+	var output = (hasPager || hasNav) ? "\n$('.slider').each(function () {" : "\n$('.slider')";
+	output += (hasPager) ? "\n\tpager: $(this).siblings('.pager')" : "";
+	output += (hasNav && hasPager) ? "," : "";
+	output += (hasNav) ? "\n\tprev: $(this).siblings('.prev'),\n\tnext: $(this).siblings('.next')" : "";
+	output += (hasPager || hasNav) ? "\n})" : "";
+	output += (code === "") ? ".fireSlider(" : ".fireSlider.({";
+	output += code;
+	output += (code === "") ? ");" : "\n});";
+
+	$('.javascript-output').find('code').text(output);
 	Prism.highlightAll();
 }
 
@@ -40,33 +49,36 @@ function formatCodeValue (key, value) {
 		case "speed":
 		case "delay":
 			return value;
-			break;
 		default:
 			return '"' + value + '"';
-			break;
 	}
 }
 
-// Build slider
-var delay = 0;
-slider.backup.each(function (index) {
-	var slide = $(this);
-	setTimeout(function () {
-		var time = $.now();
-		slide.css({
-			background: "url(https://unsplash.it/600/400/?random&time=" + time + ") center center",
-			backgroundSize: "cover"
-		});
-		if (index + 1 === slider.state.totalSlides) {
-			updateSlider();
-		}
-	}, delay);
-	delay += 100;
-});
+function fetchImages () {
+	var delay = 0;
+	slider.backup.each(function (index) {
+		var slide = $(this);
+		setTimeout(function () {
+			slide.css({
+				background: "url(https://unsplash.it/600/400/?random&time=" + $.now() + ") center center",
+				backgroundSize: "cover"
+			});
+			if (index + 1 === slider.state.totalSlides) {
+				updateSlider();
+			}
+		}, delay);
+		delay += 100;
+	});
+}
 
-form.find('a#update-slider').click(function (e) {
+form.find('a#updateSlider').click(function (e) {
 	e.preventDefault();
 	updateSlider();
+});
+
+form.find('a#fetchImages').click(function (e) {
+	e.preventDefault();
+	fetchImages();
 });
 
 // Prefill boxes

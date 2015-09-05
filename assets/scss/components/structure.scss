@@ -2,6 +2,11 @@ body, h1, h2, h3, h4, h5, h6 {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", sans-serif;
 }
 
-.setting-slide-output {
+.input-slider label.inline {
 	padding-top: 1em;
+}
+
+span.range-slider-handle {
+	text-align: center;
+	color: #fff;
 }

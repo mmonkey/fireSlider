@@ -8,12 +8,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<script type="text/javascript" src="assets/js/vendor/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="assets/js/vendor/modernizr.js"></script>
 	<script type="text/javascript" src="assets/js/vendor/velocity.min.js"></script>
 	<script type="text/javascript" src="assets/js/vendor/prism.js"></script>
 	<script type="text/javascript" src="assets/js/jquery.fireSlider.min.js"></script>
 	<script type="text/javascript" src="assets/js/vendor/foundation.js"></script>
 	<script type="text/javascript" src="assets/js/vendor/foundation.abide.js"></script>
 	<script type="text/javascript" src="assets/js/vendor/foundation.slider.js"></script>
+	<script type="text/javascript" src="assets/js/vendor/foundation.tooltip.js"></script>
 
 </head>
 <body>
@@ -34,90 +36,216 @@
 				<li>4</li>
 				<li>5</li>
 			</ul>
+			<a class="prev"><i class="fa fa-angle-double-left fa-3x"></i></a>
+			<a class="next"><i class="fa fa-angle-double-right fa-3x"></i></a>
+			<div class="pager"></div>
 		</div>
 	</div>
 
+	<br>
+
 	<form id="builder" data-abide>
-
 		<div class="row">
-			<div class="small-12 medium-6 columns">
-				<label>Show</label>
-				<div class="small-10 columns">
-					<div class="range-slider" data-slider data-options="display_selector: #showOutput; start: 1; end: 5; initial: 1;">
-						<span class="range-slider-handle" role="slider" tabindex="0"></span>
-						<span class="range-slider-active-segment"></span>
-						<input type="hidden" name="show">
+
+			<div class="small-12 columns">
+				<div class="row">
+
+					<fieldset>
+						<legend>fireSlider options</legend>
+
+						<!-- show -->
+						<div class="small-12 medium-6 columns input-slider">
+							<div class="row">
+								<div class="small-3 columns">
+									<label class="right inline">Show</label>
+								</div>
+								<div class="small-9 columns">
+									<div class="range-slider" data-slider data-options="display_selector: #showOutput; start: 1; end: 5; initial: 1;">
+										<span class="range-slider-handle" role="slider" tabindex="0" id="showOutput"></span>
+										<span class="range-slider-active-segment"></span>
+										<input type="hidden" name="show">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- active -->
+						<div class="small-12 medium-6 columns input-slider">
+							<div class="row">
+								<div class="small-3 columns">
+									<label class="right inline">Active</label>
+								</div>
+								<div class="small-9 columns">
+									<div class="range-slider" data-slider data-options="display_selector: #showActive; start: 1; end: 5; initial: 1;">
+										<span class="range-slider-handle" role="slider" tabindex="0" id="showActive"></span>
+										<span class="range-slider-active-segment"></span>
+										<input type="hidden" name="active">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- speed -->
+						<div class="small-12 medium-6 columns">
+							<div class="row">
+								<div class="small-3 columns">
+									<label class="right inline">Speed</label>
+								</div>
+								<div class="small-9 columns">
+									<input type="number" name="speed" pattern="number">
+									<small class="error">Speed must be a number</small>
+								</div>
+							</div>
+						</div>
+
+						<!-- delay -->
+						<div class="small-12 medium-6 columns">
+							<div class="row">
+								<div class="small-3 columns">
+									<label class="right inline">Delay</label>
+								</div>
+								<div class="small-9 columns">
+									<input type="number" name="delay" pattern="number">
+									<small class="error">Delay must be a number</small>
+								</div>
+							</div>
+						</div>
+
+						<!-- direction -->
+						<div class="small-12 medium-6 columns">
+							<div class="row">
+								<div class="small-3 columns">
+									<label class="right inline">Direction</label>
+								</div>
+								<div class="small-9 columns">
+									<select name="direction">
+										<option value="forward">Forward</option>
+										<option value="backward">Backward</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<!-- effect -->
+						<div class="small-12 medium-6 columns">
+							<div class="row">
+								<div class="small-3 columns">
+									<label class="right inline">Effect</label>
+								</div>
+								<div class="small-9 columns">
+									<select name="effect">
+										<option value="slideInOut">slideInOut</option>
+										<option value="fadeInOut">fadeInOut</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<!-- pager -->
+						<div class="small-6 medium-3 columns">
+							<div class="row">
+								<div class="small-6 columns">
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Show pager navigation?">Pager</span></label>
+								</div>
+								<div class="small-6 columns">
+									<div class="switch">
+										<input id="showPager" type="checkbox">
+										<label for="showPager"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- prev / next -->
+						<div class="small-6 medium-3 columns">
+							<div class="row">
+								<div class="small-6 columns">
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Show previous and next buttons?">Nav</span></label>
+								</div>
+								<div class="small-6 columns">
+									<div class="switch">
+										<input id="showNav" type="checkbox">
+										<label for="showNav"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- disable links -->
+						<div class="small-6 medium-3 columns">
+							<div class="row">
+								<div class="small-6 columns">
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Disable link clicking on non-active slide?">Links</span></label>
+								</div>
+								<div class="small-6 columns">
+									<div class="switch">
+										<input id="disableLinks" type="checkbox">
+										<label for="disableLinks"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- hover pause -->
+						<div class="small-6 medium-3 columns">
+							<div class="row">
+								<div class="small-6 columns">
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Pause the slider on mouse hover?">Hover</span></label>
+								</div>
+								<div class="small-6 columns">
+									<div class="switch">
+										<input id="hoverPause" type="checkbox">
+										<label for="hoverPause"></label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- slide class -->
+						<div class="small-12 columns">
+							<div class="row">
+								<div class="small-4 medium-3 columns">
+									<label class="right inline">Slide Class</label>
+								</div>
+								<div class="small-8 medium-9 columns">
+									<input type="text" name="activeSlideClass">
+								</div>
+							</div>
+						</div>
+
+						<!-- pager class -->
+						<div class="small-12 columns">
+							<div class="row">
+								<div class="small-4 medium-3 columns">
+									<label class="right inline">Pager Class</label>
+								</div>
+								<div class="small-8 medium-9 columns">
+									<input type="text" name="activePagerClass">
+								</div>
+							</div>
+						</div>
+
+						<!-- update button -->
+						<div class="small-12 columns text-center">
+							<ul class="button-group">
+								<li><a href="#" class="button secondary small" id="fetchImages">Refresh Images</a></li>
+								<li><a href="#" class="button small" id="updateSlider">Update Slider</a></li>
+							</ul>
+						</div>
+
+					</fieldset>
+
+					<div class="row">
+						<div class="small-12 columns javascript-output">
+							<pre class="line-numbers"><code class="language-javascript">
+							</code></pre>
+						</div>
 					</div>
+
 				</div>
-				<div class="small-2 columns setting-slide-output">
-					<span id="showOutput"></span>
-				</div>
-			</div>
-
-			<div class="small-12 medium-6 columns">
-				<label>Active</label>
-				<div class="small-10 columns">
-					<div class="range-slider" data-slider data-options="display_selector: #activeOutput; start: 1; end: 5; initial: 1;">
-						<span class="range-slider-handle" role="slider" tabindex="0"></span>
-						<span class="range-slider-active-segment"></span>
-						<input type="hidden" name="active">
-					</div>
-				</div>
-				<div class="small-2 columns setting-slide-output">
-					<span id="activeOutput"></span>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="small-6 medium-6 large-3 columns">
-				<label>Speed
-					<input type="number" name="speed" pattern="number">
-				</label>
-				<small class="error">Speed must be a number</small>
-			</div>
-
-			<div class="small-6 medium-6 large-3 columns">
-				<label>Delay
-					<input type="number" name="delay" pattern="number">
-				</label>
-				<small class="error">Delay must be a number</small>
-			</div>
-
-			<div class="small-12 medium-6 large-3 columns">
-				<label>Direction
-					<select name="direction">
-						<option value="forward">Forward</option>
-						<option value="backward">Backward</option>
-					</select>
-				</label>
-			</div>
-
-			<div class="small-12 medium-6 large-3 columns">
-				<label> Effect
-					<select name="effect">
-						<option value="slideInOut">slideInOut</option>
-						<option value="fadeInOut">fadeInOut</option>
-					</select>
-				</label>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="small-6 small-offset-3 medium-4 medium-offset-4 large-2 large-offset-5 columns">
-				<label>
-					<a href="#" class="button round" id="update-slider">Update Slider</a>
-				</label>
 			</div>
 		</div>
 	</form>
-
-	<div class="row">
-		<div class="small-12 columns javascript-output">
-			<pre class="line-numbers"><code class="language-javascript">
-			</code></pre>
-		</div>
-	</div>
 
 	<script src="dist/docs.min.js"></script>
 </body>
