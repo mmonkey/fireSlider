@@ -11,10 +11,44 @@ function updateSlider () {
 			options[key] = form.find('[name="' + key + '"]').val();
 		});
 
+		options.disableLinks = $('input#disableLinks').is(':checked');
+		options.hoverPause = $('input#hoverPause').is(':checked');
+
+		if ($('input#showPager').is(':checked')) {
+			slider.$el.data({
+				pager: slider.$el.siblings('.pager')
+			});
+			slider.$el.siblings('.pager').fadeIn();
+		} else {
+			slider.$el.removeData('pager');
+			slider.$el.siblings('.pager').fadeOut();
+		}
+
+		if ($('input#showNav').is(':checked')) {
+			slider.$el.data({
+				prev: slider.$el.siblings('.prev'),
+				next: slider.$el.siblings('.next')
+			});
+			slider.$el.siblings('.prev').fadeIn();
+			slider.$el.siblings('.next').fadeIn();
+		} else {
+			slider.$el.removeData('prev');
+			slider.$el.removeData('next');
+			slider.$el.siblings('.prev').fadeOut();
+			slider.$el.siblings('.next').fadeOut();
+		}
+
 		fireslider = slider.$el.fireSlider(options);
 		slider = fireslider.data('fireSlider');
-		updateJavascriptOutput();
+		updateOutput();
 	}
+}
+
+function updateOutput () {
+	updateJavascriptOutput();
+	updateHtmlOutput();
+	updateCssOutput();
+	Prism.highlightAll();
 }
 
 function updateJavascriptOutput () {
@@ -27,7 +61,7 @@ function updateJavascriptOutput () {
 	});
 
 	var hasPager = (slider.options.pager instanceof jQuery);
-	var hasNav = (slider.options.prev instanceof jQuery && slider.options.next instanceof jQuery)
+	var hasNav = (slider.options.prev instanceof jQuery && slider.options.next instanceof jQuery);
 
 	var output = (hasPager || hasNav) ? "\n$('.slider').each(function () {" : "\n$('.slider')";
 	output += (hasPager) ? "\n\tpager: $(this).siblings('.pager')" : "";
@@ -39,7 +73,40 @@ function updateJavascriptOutput () {
 	output += (code === "") ? ");" : "\n});";
 
 	$('.javascript-output').find('code').text(output);
-	Prism.highlightAll();
+}
+
+function updateHtmlOutput () {
+	var markup = '<ul class="slider">';
+	for (var i = 0; i < slider.state.totalSlides; i++) {
+		markup += '\n\t<li>' + (i + 1) + '</li>';
+	}
+	markup += '\n</ul>';
+	markup += (slider.options.prev instanceof jQuery) ? '\n<a class="prev"></a>' : '';
+	markup += (slider.options.next instanceof jQuery) ? '\n<a class="next"></a>' : '';
+	markup += (slider.options.pager instanceof jQuery) ? '\n<div class="pager"></div>' : '';
+
+	$('.html-output').find('code').text(markup);
+}
+
+function updateCssOutput () {
+	var css = 'ul.slider {\n\tdisplay: block;\n\theight: 300px;\n\tlist-style: none;\n\tmargin: 0;\n\tposition: relative;\n\twidth: 100%;';
+	css += ($('input#wrapSlides').is(':checked')) ? '\n\toverflow: hidden;' : '';
+	css += '\n}';
+	css += '\nul.slider > li {\n\tdisplay: block;\n\theight: 100%;\n}';
+
+	var pager = '\n.pager {\n\tpadding-top: 0.5em;\n\ttext-align: center;\n}';
+	pager += '\n.pager > span {\n\tbackground: #ddd;\n\tborder-radius: 50%;\n\tcursor: pointer;\n\tdisplay: inline-block;\n\theight: 0.75em;\n\tmargin: 0 0.25em;\n\twidth: 0.75em;\n}';
+	pager += '\n.pager > span:hover, .pager > span.fire-pager-active {\n\tbackground: #2ba6cb;\n}';
+
+	var nav = '\n.prev, .next {\n\tcolor: #fff;\n\tdisplay: block;\n\tfont-size: 5em;\n\theight: 0.75em;\n\tline-height: 0.5em;\n\tmargin-top: -0.5em;\n\tposition: absolute;\n\ttext-align: center;\n\ttext-shadow: 3px 3px 6px #000;\n\ttop: 50%;\n\twidth: 0.75em;\n}';
+	nav += '\n.prev:hover, .next:hover {\n\tcolor: #ddd;\n}';
+	nav += '\n.prev {\n\tleft: 0;\n}';
+	nav += '\n.next {\n\tright: 0;\n}';
+
+	css += (slider.options.prev instanceof jQuery && slider.options.next instanceof jQuery) ? nav : '';
+	css += (slider.options.pager instanceof jQuery) ? pager : '';
+
+	$('.css-output').find('code').text(css);
 }
 
 function formatCodeValue (key, value) {
@@ -86,6 +153,9 @@ $(document).ready(function () {
 	$.each(slider.options, function (key, value) {
 		form.find('[name="' + key + '"]').val(value);
 	});
+
+	$('input#disableLinks').prop('checked', slider.options.disableLinks);
+	$('input#hoverPause').prop('checked', slider.options.hoverPause);
 });
 
 // Configure validation

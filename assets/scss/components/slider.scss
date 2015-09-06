@@ -1,3 +1,7 @@
+div.slider-container {
+	padding: 0;	
+}
+
 ul.slider {
 	position: relative;
 	display: block;
@@ -7,7 +11,7 @@ ul.slider {
 	overflow: hidden;
 	margin: 0;
 
-	li {
+	& > li {
 		display: block;
 		height: 100%;
 		font-size: 5em;
@@ -21,39 +25,33 @@ ul.slider {
 }
 
 .prev, .next {
-	position: absolute;
-	display: block;
-	height: 3em;
-	width: 3em;
-	top: 50%;
-	margin-top: -1.5em;
-	text-align: center;
 	color: #fff;
-	text-shadow: 3px 3px 6px #000;
 	display: none;
+	font-size: 5em;
+	height: 0.75em;
+	line-height: 0.5em;
+	margin-top: -0.5em;
+	position: absolute;
+	text-align: center;
+	text-shadow: 3px 3px 6px #000;
+	top: 50%;
+	width: 0.75em;
 
 	&:hover {
-		color: #aaa;
+		color: #ddd;
 	}
 }
 
 .prev {
 	left: 0;
-	margin-left: 1em;
 }
 
 .next {
 	right: 0;
-	margin-right: 1em;
 }
 
 .pager {
-	position: absolute;
-	display: block;
-	width: 10em;
-	bottom: 0.5em;
-	left: 50%;
-	margin-left: -5em;
+	padding-top: 0.5em;
 	text-align: center;
 	display: none;
 
@@ -63,11 +61,11 @@ ul.slider {
 		width: 0.75em;
 		height: 0.75em;
 		border-radius: 50%;
-		background: #fff;
+		background: #ddd;
 		cursor: pointer;
 
 		&:hover, &.fire-pager-active {
-			background: #aaa;
+			background: #2ba6cb;
 		}
 	}
 }

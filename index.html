@@ -2,21 +2,10 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>jquery.fireSlider.js</title>
 	<link rel="stylesheet" href="dist/docs.min.css">
-
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
 	<script type="text/javascript" src="assets/js/vendor/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/modernizr.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/velocity.min.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/prism.js"></script>
-	<script type="text/javascript" src="assets/js/jquery.fireSlider.min.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/foundation.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/foundation.abide.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/foundation.slider.js"></script>
-	<script type="text/javascript" src="assets/js/vendor/foundation.tooltip.js"></script>
-
 </head>
 <body>
 	
@@ -28,7 +17,7 @@
 	</div>
 
 	<div class="row">
-		<div class="small-12 columns">
+		<div class="small-12 columns slider-container">
 			<ul class="slider">
 				<li>1</li>
 				<li>2</li>
@@ -36,8 +25,8 @@
 				<li>4</li>
 				<li>5</li>
 			</ul>
-			<a class="prev"><i class="fa fa-angle-double-left fa-3x"></i></a>
-			<a class="next"><i class="fa fa-angle-double-right fa-3x"></i></a>
+			<a class="prev">&laquo;</a>
+			<a class="next">&raquo;</a>
 			<div class="pager"></div>
 		</div>
 	</div>
@@ -57,7 +46,7 @@
 						<div class="small-12 medium-6 columns input-slider">
 							<div class="row">
 								<div class="small-3 columns">
-									<label class="right inline">Show</label>
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="How many slides should be visible in the slider at once?">Show</span></label>
 								</div>
 								<div class="small-9 columns">
 									<div class="range-slider" data-slider data-options="display_selector: #showOutput; start: 1; end: 5; initial: 1;">
@@ -73,7 +62,7 @@
 						<div class="small-12 medium-6 columns input-slider">
 							<div class="row">
 								<div class="small-3 columns">
-									<label class="right inline">Active</label>
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Which position should the active slide be?">Active</span></label>
 								</div>
 								<div class="small-9 columns">
 									<div class="range-slider" data-slider data-options="display_selector: #showActive; start: 1; end: 5; initial: 1;">
@@ -89,7 +78,7 @@
 						<div class="small-12 medium-6 columns">
 							<div class="row">
 								<div class="small-3 columns">
-									<label class="right inline">Speed</label>
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="How long in milliseconds should the transition take?">Speed</span></label>
 								</div>
 								<div class="small-9 columns">
 									<input type="number" name="speed" pattern="number">
@@ -102,7 +91,7 @@
 						<div class="small-12 medium-6 columns">
 							<div class="row">
 								<div class="small-3 columns">
-									<label class="right inline">Delay</label>
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="How long in milliseconds before transitioning?">Delay</span></label>
 								</div>
 								<div class="small-9 columns">
 									<input type="number" name="delay" pattern="number">
@@ -115,7 +104,7 @@
 						<div class="small-12 medium-6 columns">
 							<div class="row">
 								<div class="small-3 columns">
-									<label class="right inline">Direction</label>
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Which direction should the slides move?">Direction</span></label>
 								</div>
 								<div class="small-9 columns">
 									<select name="direction">
@@ -130,7 +119,7 @@
 						<div class="small-12 medium-6 columns">
 							<div class="row">
 								<div class="small-3 columns">
-									<label class="right inline">Effect</label>
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="Which transition effect should be used?">Effect</span></label>
 								</div>
 								<div class="small-9 columns">
 									<select name="effect">
@@ -202,24 +191,24 @@
 						</div>
 
 						<!-- slide class -->
-						<div class="small-12 columns">
+						<div class="small-12 medium-6 columns">
 							<div class="row">
-								<div class="small-4 medium-3 columns">
-									<label class="right inline">Slide Class</label>
+								<div class="small-4 large-3 columns">
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="What class should be given to the active slide?">Slide Class</span></label>
 								</div>
-								<div class="small-8 medium-9 columns">
+								<div class="small-8 large-9 columns">
 									<input type="text" name="activeSlideClass">
 								</div>
 							</div>
 						</div>
 
 						<!-- pager class -->
-						<div class="small-12 columns">
+						<div class="small-12 medium-6 columns">
 							<div class="row">
-								<div class="small-4 medium-3 columns">
-									<label class="right inline">Pager Class</label>
+								<div class="small-4 large-3 columns">
+									<label class="right inline"><span class="has-tip tip-bottom" data-tooltip aria-haspopup="true" title="What class should be given to the active pager element?">Pager Class</span></label>
 								</div>
-								<div class="small-8 medium-9 columns">
+								<div class="small-8 large-9 columns">
 									<input type="text" name="activePagerClass">
 								</div>
 							</div>
@@ -227,18 +216,35 @@
 
 						<!-- update button -->
 						<div class="small-12 columns text-center">
-							<ul class="button-group">
-								<li><a href="#" class="button secondary small" id="fetchImages">Refresh Images</a></li>
-								<li><a href="#" class="button small" id="updateSlider">Update Slider</a></li>
-							</ul>
+							<hr>
+							<a href="#" class="button secondary small" role="button" id="fetchImages">Refresh Images</a>
+							<a href="#" class="button small" role="button" id="updateSlider">Update Slider</a>
 						</div>
 
 					</fieldset>
 
 					<div class="row">
-						<div class="small-12 columns javascript-output">
-							<pre class="line-numbers"><code class="language-javascript">
-							</code></pre>
+						<ul class="tabs" data-tab>
+							<li class="tab-title active"><a href="#panelJs">Javascript</a></li>
+							<li class="tab-title"><a href="#panelHtml">HTML</a></li>
+							<li class="tab-title"><a href="#panelCss">CSS</a></li>
+						</ul>
+						<div class="tabs-content">
+							<div class="content active small-12 columns javascript-output" id="panelJs">
+								<pre class="line-numbers"><code class="language-javascript"></code></pre>
+								<div data-alert class="alert-box info">
+									<b>NOTICE</b> It is not recommended to call $.fireSlider() inside of $(document).ready()
+									<a href="#" class="close">&times;</a>
+								</div>
+							</div>
+							<div class="content small-12 columns html-output" id="panelHtml">
+								<pre class="line-numbers"><code class="language-markup">
+								</code></pre>
+							</div>
+							<div class="content small-12 columns css-output" id="panelCss">
+								<pre class="line-numbers"><code class="language-css">
+								</code></pre>
+							</div>
 						</div>
 					</div>
 
@@ -247,6 +253,9 @@
 		</div>
 	</form>
 
+	<script type="text/javascript" src="dist/vendor.min.js"></script>
+	<script type="text/javascript" src="assets/js/vendor/velocity.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery.fireSlider.min.js"></script>
 	<script src="dist/docs.min.js"></script>
 </body>
 </html>

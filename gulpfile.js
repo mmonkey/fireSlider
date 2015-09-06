@@ -17,7 +17,7 @@ var prefixBrowsers = [
 	'Opera 12.1'
 ];
 
-gulp.task('sass', function() {
+gulp.task('sass', function () {
 	return sass('./assets/scss/docs.scss', { style: 'compressed' })
 		.on('error', function(e) { console.log(e.message); })
 		.pipe(autoprefixer({browsers: prefixBrowsers}))
@@ -26,20 +26,27 @@ gulp.task('sass', function() {
 		.pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('lint', function() {
+gulp.task('lint', function () {
 	return gulp.src('./assets/js/docs.js')
 		.pipe(jshint())
 		.pipe(jshint.reporter('default'));
 });
 
-gulp.task('min', ['lint'], function() {
+gulp.task('min', ['lint'], function () {
 	return gulp.src('./assets/js/docs.js')
 		.pipe(uglify())
 		.pipe(rename({suffix: '.min'}))
 		.pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('browser-sync', function() {
+gulp.task('concat', function () {
+	return gulp.src(['./assets/js/vendor/modernizr.js', './assets/js/vendor/prism.js', './assets/js/vendor/foundation.js', './assets/js/vendor/foundation.*.js'])
+		.pipe(concat('vendor.min.js'))
+		.pipe(uglify())
+		.pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('browser-sync', function () {
 	browserSync.init({
 		server: {
 			baseDir: "./",
@@ -48,8 +55,9 @@ gulp.task('browser-sync', function() {
 	});
 });
 
-gulp.task('default', ['browser-sync'], function() {
+gulp.task('default', ['browser-sync'], function () {
 	gulp.watch('assets/scss/**/*.scss', ['sass']);
 	gulp.watch('**/*.html', browserSync.reload);
 	gulp.watch('assets/js/docs.js', ['lint', 'min', browserSync.reload]);
+	gulp.watch('assets/js/vendor/*.js', ['concat']);
 });
