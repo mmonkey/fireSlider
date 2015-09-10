@@ -10,3 +10,15 @@ span.range-slider-handle {
 	text-align: center;
 	color: #fff;
 }
+
+.breakpoint-input input {
+	margin: 0.5rem 0;
+}
+
+.remove-breakpoint a.button {
+	margin: 2rem 0 0 0;
+}
+
+.breakpoint-row:nth-of-type(2n) {
+	background: #e9e9e9;
+}
