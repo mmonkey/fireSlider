@@ -64,11 +64,12 @@ function updateJavascriptOutput () {
 	var hasNav = (slider.options.prev instanceof jQuery && slider.options.next instanceof jQuery);
 
 	var output = (hasPager || hasNav) ? "\n$('.slider').each(function () {" : "\n$('.slider')";
-	output += (hasPager) ? "\n\tpager: $(this).siblings('.pager')" : "";
+	output += (hasPager || hasNav) ? "\n\t$(this).data({" : "";
+	output += (hasPager) ? "\n\t\tpager: $(this).siblings('.pager')" : "";
 	output += (hasNav && hasPager) ? "," : "";
-	output += (hasNav) ? "\n\tprev: $(this).siblings('.prev'),\n\tnext: $(this).siblings('.next')" : "";
-	output += (hasPager || hasNav) ? "\n})" : "";
-	output += (code === "") ? ".fireSlider(" : ".fireSlider.({";
+	output += (hasNav) ? "\n\t\tprev: $(this).siblings('.prev'),\n\t\tnext: $(this).siblings('.next')" : "";
+	output += (hasPager || hasNav) ? "\n\t});\n})" : "";
+	output += (code === "") ? ".fireSlider(" : ".fireSlider({";
 	output += code;
 	output += (code === "") ? ");" : "\n});";
 
@@ -81,8 +82,8 @@ function updateHtmlOutput () {
 		markup += '\n\t<li>' + (i + 1) + '</li>';
 	}
 	markup += '\n</ul>';
-	markup += (slider.options.prev instanceof jQuery) ? '\n<a class="prev"></a>' : '';
-	markup += (slider.options.next instanceof jQuery) ? '\n<a class="next"></a>' : '';
+	markup += (slider.options.prev instanceof jQuery) ? '\n<a class="prev">&laquo;</a>' : '';
+	markup += (slider.options.next instanceof jQuery) ? '\n<a class="next">&raquo;</a>' : '';
 	markup += (slider.options.pager instanceof jQuery) ? '\n<div class="pager"></div>' : '';
 
 	$('.html-output').find('code').text(markup);
