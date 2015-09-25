@@ -1,4 +1,4 @@
-/*! fireSlider (1.5.0) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.5.1) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
 ;(function ($, window, document, undefined) {
 	var fireSlider = "fireSlider";
 	var defaults = {
@@ -281,7 +281,7 @@
 				slider.cyclePositions('next');
 			}
 
-			$.each(slider.slides.length, function (i, slide) {
+			$.each(slider.slides, function (i, slide) {
 				$(slide).velocity({translateX: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
 			});
 		},
