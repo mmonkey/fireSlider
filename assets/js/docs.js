@@ -116,6 +116,8 @@ function formatCodeValue (key, value) {
 		case "active":
 		case "speed":
 		case "delay":
+		case "disableLinks":
+		case "hoverPause":
 			return value;
 		default:
 			return '"' + value + '"';
