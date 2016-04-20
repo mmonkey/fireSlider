@@ -1,4 +1,4 @@
-/*! fireSlider (1.5.1) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.5.2) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
 ;(function ($, window, document, undefined) {
 	var fireSlider = "fireSlider";
 	var defaults = {
@@ -55,6 +55,7 @@
 
 			// Initialize slider
 			slider.initSlides();
+			slider.initFunctions();
 			slider.backup = slider.slides.clone();
 
 			// Do not continue if there are 1 or less slides
@@ -66,10 +67,43 @@
 			return true;
 		},
 
-		// // Load slides onto slider
+		// Load slides onto slider
 		initSlides: function () {
 			var slider = this;
 			slider.slides = slider.$el.children(slider.options.slide);
+		},
+
+		// Initialize slider
+		initFunctions: function() {
+			var slider = this;
+
+			slider.prev = function () {
+				slider.$el.trigger('fireSlider:prev');
+			};
+
+			slider.next = function () {
+				slider.$el.trigger('fireSlider:next');
+			};
+
+			slider.pause = function () {
+				slider.$el.trigger('fireSlider:pause');
+			};
+
+			slider.play = function () {
+				slider.$el.trigger('fireSlider:play', slider.state.direction);
+			};
+
+			slider.reverse = function () {
+				slider.$el.trigger('fireSlider:reverse');
+			};
+			
+			slider.slide = function (index) {
+				slider.$el.trigger('fireSlider:slide', index);
+			};
+
+			slider.destroy = function () {
+				slider.$el.trigger('fireSlider:destroy');
+			};
 		},
 
 		// Creates a state object on the slider for storing information
@@ -281,9 +315,17 @@
 				slider.cyclePositions('next');
 			}
 
-			$.each(slider.slides, function (i, slide) {
-				$(slide).velocity({translateX: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
-			});
+			if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+				$.each(slider.slides, function (i, slide) {
+					$(slide).velocity({translateX: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
+				});
+			}
+
+			if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+				$.each(slider.slides, function (i, slide) {
+					$(slide).velocity({translateY: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
+				});
+			}
 		},
 
 		// Position Slides
@@ -295,7 +337,14 @@
 			slider.state.minX = startPosition;
 			slider.state.maxX = startPosition + ((slider.slides.length - 1) * 100);
 			for(var i = Math.floor(slider.slides.length / 2); i < slider.slides.length; i++) {
-				slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+
+				if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+					slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+				}
+				if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+					slider.slides.eq(i).velocity({translateY: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+				}
+
 				slider.slides.eq(i).css({
 					width: slider.state.slideWidthPercent + '%',
 					position: 'absolute'
@@ -304,7 +353,14 @@
 				startPosition += 100;
 			}
 			for(i = 0; i < Math.floor(slider.slides.length / 2); i++) {
-				slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+
+				if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+					slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+				}
+				if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+					slider.slides.eq(i).velocity({translateY: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
+				}
+
 				slider.slides.eq(i).css({
 					width: slider.state.slideWidthPercent + '%',
 					position: 'absolute'
@@ -323,41 +379,8 @@
 		run: function () {
 			var slider = this;
 
-			slider.initFunctions();
 			slider.bindEvents();
 			slider.startTimer(slider.options.direction);
-		},
-
-		initFunctions: function() {
-			var slider = this;
-
-			slider.prev = function () {
-				slider.$el.trigger('fireSlider:prev');
-			};
-
-			slider.next = function () {
-				slider.$el.trigger('fireSlider:next');
-			};
-
-			slider.pause = function () {
-				slider.$el.trigger('fireSlider:pause');
-			};
-
-			slider.play = function () {
-				slider.$el.trigger('fireSlider:play', slider.state.direction);
-			};
-
-			slider.reverse = function () {
-				slider.$el.trigger('fireSlider:reverse');
-			};
-			
-			slider.slide = function (index) {
-				slider.$el.trigger('fireSlider:slide', index);
-			};
-
-			slider.destroy = function () {
-				slider.$el.trigger('fireSlider:destroy');
-			};
 		},
 
 		bindEvents: function() {
@@ -391,7 +414,12 @@
 
 			slider.$el.on('fireSlider:reverse', function (e) {
 				if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
-				slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+				if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+					slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+				}
+				if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+					slider.state.direction = (slider.state.direction.toLowerCase() == 'up') ? 'down' : 'up';
+				}
 				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			});
 
@@ -521,7 +549,8 @@
 					easing: slider.options.easing,
 					currPos: currentPositions[i],
 					nextPos: slider.positions[i],
-					snapping: (slider.positions[i] === slider.state.minX || slider.positions[i] === slider.state.maxX) ? true : false
+					snapping: (slider.positions[i] === slider.state.minX || slider.positions[i] === slider.state.maxX) ? true : false,
+					direction: slider.state.direction
 				});
 			});
 
@@ -585,7 +614,8 @@
 						easing: slider.options.easing,
 						currPos: currentPositions[i],
 						nextPos: slider.positions[i],
-						snapping: ((difference < 0 && slider.positions[i] <= (slider.state.minX + snappingRange)) || (difference > 0 && slider.positions[i] >= (slider.state.maxX - snappingRange))) ? true : false
+						snapping: ((difference < 0 && slider.positions[i] <= (slider.state.minX + snappingRange)) || (difference > 0 && slider.positions[i] >= (slider.state.maxX - snappingRange))) ? true : false,
+						direction: slider.state.direction
 					});
 				});
 
@@ -613,7 +643,7 @@
 		// Update the sliders current slide state
 		updateCurrentSlide: function (direction) {
 			var slider = this;
-			if(direction === 'prev' || direction.toLowerCase() === 'backward') {
+			if(direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() == 'down') {
 				slider.state.currentSlide = (slider.state.currentSlide === 0) ? (slider.slides.length - 1) : slider.state.currentSlide -= 1;
 			} else {
 				slider.state.currentSlide = (slider.state.currentSlide === (slider.slides.length - 1)) ? 0 : slider.state.currentSlide += 1;
@@ -623,7 +653,7 @@
 		// Move first position to last or vice versa
 		cyclePositions: function (direction) {
 			var slider = this;
-			if(direction === 'prev' || direction.toLowerCase() === 'backward') {
+			if(direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() == 'down') {
 				var prev = slider.positions.shift();
 				slider.positions.push(prev);
 			} else {
@@ -722,7 +752,14 @@
 		// Basic slide transition effect
 		slideInOut: function (el, options) {
 			var duration = (options.snapping) ? 0 : options.speed;
-			el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
+
+			if (options.direction == 'forward' || options.direction == 'backward') {
+				el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
+			}
+
+			if (options.direction == 'up' || options.direction == 'down') {
+				el.velocity({translateY: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
+			}
 		},
 
 		// Fade in / out transition effect

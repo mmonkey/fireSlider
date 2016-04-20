@@ -17,8 +17,7 @@
 
 	<div class="section fireslider js-fireslider">
 		<ul id="fireSlider" 
-			data-fireslider-delay="4000" 
-			data-fireslider-effect="fadeInOut">
+			data-fireslider-delay="4000">
 			<li class="slide-1">1
 				<ul>
 					<li>1</li>
@@ -70,7 +69,8 @@
 		<ul id="fireSlider2"
 			data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>'
 			data-fireslider-direction="backward"
-			data-fireslider-easing="[200, 18]">
+			data-fireslider-easing="[200, 18]"
+			data-fireslider-disable-links="false">
 			<li class="slide-1" data-fireslider-pager-description="One">1
 				<ul>
 					<li>1</li>
@@ -79,7 +79,7 @@
 				</ul>
 			</li>
 			<li class="slide-2" data-fireslider-pager-description="Two">2
-				<a href="">Test Link Clicking</a>
+				<a href="http://www.google.com" target="_blank">Test Link Clicking</a>
 			</li>
 			<li class="slide-3" data-fireslider-pager-description="Three">3</li>
 			<li class="slide-4" data-fireslider-pager-description="Four">4</li>
@@ -116,9 +116,11 @@
 				$(this).data({
 					'pager': $(this).siblings('.pager'),
 					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
-					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
+					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next'),
 				});
-			}).fireSlider();
+			}).fireSlider({
+				'direction': 'up'
+			});
 
 
 		var carousels = $('.js-fireslider-carousel > div.carousel').each(function () {

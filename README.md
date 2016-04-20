@@ -155,25 +155,25 @@ Add this to make it a slider instead of a carousel:
 Options
 -------
 
-Option | Description | Type | Default 
+Option | Description | Type | Default | Availiable Options
 ------------- | ------------- | ------------- | -------------
-active | The position of the active slide. | int | 1
-activePagerClass | The class to be added to the current active pager element. | string | "fire-pager-active"
-activeSlideClass | The class to be added to the current active slide. | string | "fire-slider-active"
-breakpoints | See description below | array | N/A
-delay | The amount of time in between transitions (milliseconds). | int | 5000
-direction | The direction of the slide transitions. | string | "forward"
-disableLinks | Disable links on the non-active slides? | boolean | true
-effect | The transition effect to use. | string | "slideInOut", "fadeInOut"
-easing | The easing effect for the transition. | string or array | "swing"
-hoverPause | Pause transitions when mouse hovers? | boolean | false
-next | The selector of the next-slide button. | jQuery | N/A
-pager | The selector of the pager element. | jQuery | N/A
-pagerTemplate | Template for pager elements | HTML String | "`<span><\span>`"
-prev | The selector of the previous-slide button. | jQuery | N/A
-slide | A selector for the slide elements. | string | "li"
-show | The amount of slides to show in the slider at once. | int | 1
-speed | The speed of the transition (milliseconds). | int | 500
+active | The position of the active slide. | int | 1 | n/a
+activePagerClass | The class to be added to the current active pager element. | string | "fire-pager-active" | n/a
+activeSlideClass | The class to be added to the current active slide. | string | "fire-slider-active" | n/a
+breakpoints | See description below | array | n/a | n/a
+delay | The amount of time in between transitions (milliseconds). | int | 5000 | n/a
+direction | The direction of the slide transitions. | string | "forward" | "forward", "backward", "up", "down"
+disableLinks | Disable links on the non-active slides? | boolean | true | true, false
+effect | The transition effect to use. | string | "slideInOut" | "slideInOut", "fadeInOut"
+easing | The easing effect for the transition. | string or array | "swing" | see [Velocity.js](https://github.com/julianshapiro/velocity)
+hoverPause | Pause transitions when mouse hovers? | boolean | false | true, false
+next | The selector of the next-slide button. | jQuery | n/a | n/a
+pager | The selector of the pager element. | jQuery | n/a | n/a
+pagerTemplate | Template for pager elements | HTML String | "`<span><\span>`" | n/a
+prev | The selector of the previous-slide button. | jQuery | n/a
+slide | A selector for the slide elements. | string | "li" | n/a
+show | The amount of slides to show in the slider at once. | int | 1 | n/a
+speed | The speed of the transition (milliseconds). | int | 500 | n/a
 
 Each option may also be setup with data-attributes on the slider element:
 
@@ -318,6 +318,7 @@ effect | The name of the effect (we pass this to Velocity for queueing). | Strin
 nextPos | The slides position after transitioning (This is a translateX position). | int
 snapping | This will be true if the slide is tranistion from the end of the slider. | boolean
 speed | The desired speed of the transition (Velocity refers to this as 'duration'). | int
+direction | The current direction of the slider | string (see options above)
 
 It is best to set `duration: 0` if snapping is true, this will prevent slides to "jump" from one end to the other.
 
