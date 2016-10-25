@@ -12,28 +12,19 @@ Getting Started
 ---------------
 fireSlider has one dependency, Velocity.js, and it comes in two versions:
 
-**Includes Velocity.js:**
+**Includes Velocity.js:**  
 ```html
 <script src="path/to/jquery.fireSlider.velocity.js"></script>
 ```
 
-**Does not include Velocity.js:**
+**Does not include Velocity.js:**  
 ```html
 <script src="path/to/velocity.min.js"></script>
 <script src="path/to/jquery.fireSlider.min.js"></script>
 ```
 Using this version of fireSlider will require you to include velocity also. This is good if you are already using Velocity.js elsewhere.
 
-**Use with jQuery**
-
-You can take advantage of jQuery, if you choose to do so.
-
-```html
-<script src="path/to/jQuery.min.js"></script>
-<script src="path/to/fireSlider.min.js"></script>
-```
-
-**Add Hammer.js for mobile swipe compatibility**
+**Add [Hammer.js](http://hammerjs.github.io/) for mobile swipe compatibility**  
 ```html
 <script src='path/to/hammer.min.js'></script>
 ```
@@ -161,7 +152,7 @@ Options
 -------
 
 Option | Description | Type | Default | Availiable Options
-------------- | ------------- | ------------- | -------------
+------------- | ------------- | ------------- | ------------- | -------------
 active | The position of the active slide. | int | 1 | n/a
 activePagerClass | The class to be added to the current active pager element. | string | "fire-pager-active" | n/a
 activeSlideClass | The class to be added to the current active slide. | string | "fire-slider-active" | n/a
