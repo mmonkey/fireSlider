@@ -16,7 +16,8 @@
 		show: 1,
 		singleSlide: false,
 		slide: 'li',
-		speed: 500
+		speed: 500,
+		swipe: true
 	};
 
 	function FireSlider (el, options, sel) {
@@ -479,6 +480,22 @@
 			$(window).resize(function () {
 				slider.$el.trigger('fireSlider:refresh');
 			});
+
+			//Swipe Events
+			// Do not allow swiping functions if Hammer isn't loaded
+			if (typeof Hammer !== 'undefined' &&  slider.options.swipe == true) {
+				var hammertime = new Hammer(slider.$el[0]);
+
+				hammertime.on('swipeleft', function(ev) {
+					slider.$el.trigger('fireSlider:next');
+					slider.$el.trigger('fireSlider:play', slider.state.direction);
+				});
+				
+				hammertime.on('swiperight', function(ev) {
+					slider.$el.trigger('fireSlider:prev');
+					slider.$el.trigger('fireSlider:play', slider.state.direction);
+				});
+			} 
 		},
 
 		unbindEvents: function() {

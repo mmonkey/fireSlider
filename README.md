@@ -33,13 +33,18 @@ You can take advantage of jQuery, if you choose to do so.
 <script src="path/to/fireSlider.min.js"></script>
 ```
 
+**Add Hammer.js for mobile swipe compatibility**
+```html
+<script src='path/to/hammer.min.js'></script>
+```
+
 Browser Support
 ---------------
 fireSlider works out-of-the-box with most all web browsers:
 
 | Chrome* | Firefox* | Opera* | Safari* | IE9+ | Mobile Safari* | Chrome Android |
 | ------- | -------- | ------ | ------- | ---- | -------------- | -------------- |
-| ✓ | ✓ | ✓| ✓ | ✓ | ✓ | Untested |
+| ✓ | ✓ | ✓| ✓ | ✓ | ✓ | ✓ |
 
 * Only the latest version tested.
 
@@ -174,6 +179,7 @@ prev | The selector of the previous-slide button. | jQuery | n/a
 slide | A selector for the slide elements. | string | "li" | n/a
 show | The amount of slides to show in the slider at once. | int | 1 | n/a
 speed | The speed of the transition (milliseconds). | int | 500 | n/a
+swipe | Determines if slider will have left/right mobile-touch swipe compatibility | boolean | true | true, false
 
 Each option may also be setup with data-attributes on the slider element:
 
@@ -319,6 +325,7 @@ nextPos | The slides position after transitioning (This is a translateX position
 snapping | This will be true if the slide is tranistion from the end of the slider. | boolean
 speed | The desired speed of the transition (Velocity refers to this as 'duration'). | int
 direction | The current direction of the slider | string (see options above)
+swipe | Determines if slider will have left/right swipe compatibility | boolean
 
 It is best to set `duration: 0` if snapping is true, this will prevent slides to "jump" from one end to the other.
 
