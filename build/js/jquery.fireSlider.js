@@ -1,4 +1,4 @@
-/*! fireSlider (1.5.3) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+/*! fireSlider (1.5.4) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
 ;(function ($, window, document, undefined) {
     var fireSlider = "fireSlider";
     var defaults = {
@@ -46,6 +46,7 @@
 
             // Do not continue if element isn't visible
             if (!slider.$el.is(':visible')) return false;
+	        if (slider.options.show < 1 || slider.$el.outerWidth() < 1 || slider.$el.width < 1) return false;
 
             // Do not continue if velocity isn't loaded
             if ($.type($.Velocity) === 'undefined') {
@@ -210,7 +211,7 @@
             var multiplier = this.calculateMultiplier();
             var difference = (slider.state.totalSlides * multiplier) - slider.slides.length;
 
-            // Add elements if there is a possitive difference
+            // Add elements if there is a positive difference
             if (difference > 0) {
                 for (var i = 0; i < difference; i++) {
                     var clone = slider.slides.eq(i % slider.state.totalSlides).clone();
@@ -291,14 +292,16 @@
             var slider = this;
             var multiplier = 1;
             var addSlides = 0;
+            var maxSlides = 60;
 
             slider.state.windowWidth = window.innerWidth;
 
             // How many additional slides do we need to cover the width of the screen plus 2 more for the next transition
-            if (slider.state.slideWidth * slider.state.totalSlides < slider.state.windowWidth) {
+            if (slider.state.slideWidth > 0 && slider.state.slideWidth * slider.state.totalSlides < slider.state.windowWidth) {
                 addSlides = Math.ceil((slider.state.windowWidth - (slider.state.slideWidth * slider.state.totalSlides)) / slider.state.slideWidth);
             }
             addSlides += slider.state.totalSlides * 2;
+            addSlides = (addSlides + slider.state.totalSlides > maxSlides) ? maxSlides - slider.state.totalSlides : addSlides;
 
             // Create a multiply based on the number of additional slides needed
             if (addSlides > 0) {
