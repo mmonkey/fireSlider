@@ -15,10 +15,7 @@ var velocityComment = '/*! VelocityJS.org (C) 2014 Julian Shapiro. MIT @license:
 var velocity = 'var Velocity = require(\'velocity-animate\');\n';
 
 gulp.task('sass', function() {
-	return gulp.src(['build/scss/*.scss', '!build/scss/_*.scss'])
-		.pipe(sass({
-			style: 'compressed'
-		}))
+	sass('build/scss/stylesheet.scss', {style: 'compressed'})
 		.on('error', function (err) { console.log(err.message); })
 		.pipe(gulp.dest('build/css'))
 		.pipe(browserSync.reload({stream: true}));

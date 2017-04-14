@@ -30,22 +30,38 @@
 
         // Load breakpoints
         this.options.breakpoints = ($.type(this.options.breakpoints) === 'string') ? $.parseJson(this.options.breakpoints) : this.options.breakpoints;
-
-        if (this.init()) {
-            this.build();
-            this.run();
-        }
+        this.preInit();
     }
 
     FireSlider.prototype = {
 
         ///// INITIALIZE /////
 
+        preInit: function () {
+            var slider = this;
+            slider.initialized = slider.init();
+
+            if (slider.initialized) {
+                slider.build();
+                slider.run();
+            } else {
+                $(window).resize(function () {
+	                if (!slider.initialized) {
+	                    slider.initialized = slider.init();
+		                if (slider.initialized) {
+			                slider.build();
+			                slider.run();
+		                }
+	                }
+                });
+            }
+        },
+
         init: function () {
             var slider = this;
 
-            // Do not continue if element isn't visible
-            if (!slider.$el.is(':visible')) return false;
+	        // Do not continue if element isn't visible
+	        if (!slider.$el.is(':visible')) return false;
 	        if (slider.options.show < 1 || slider.$el.outerWidth() < 1 || slider.$el.width < 1) return false;
 
             // Do not continue if velocity isn't loaded
@@ -722,6 +738,10 @@
             // Update breakpoints and width states
             slider.state.windowWidth = window.innerWidth;
             slider.state.sliderWidth = slider.$el.outerWidth();
+
+	        // Do not continue if element isn't visible
+	        if (!slider.$el.is(':visible')) return false;
+	        if (slider.options.show < 1 || slider.$el.outerWidth() < 1 || slider.$el.width < 1) return false;
 
             slider.initBreakpoints();
 

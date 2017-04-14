@@ -148,6 +148,10 @@ body, html {
 	position: relative;
 	overflow: hidden;
 
+	@media screen and (max-width: 500px) {
+		display: none;
+	}
+
 	li, div {
 		display: block;
 		height: 100%;
