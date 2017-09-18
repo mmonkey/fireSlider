@@ -1,6 +1,35 @@
-/*! fireSlider (1.5.4) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
-;(function ($, window, document, undefined) {
-    var fireSlider = "fireSlider";
+/*! fireSlider (1.5.5) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+
+// Uses CommonJS, AMD or browser globals to create a jQuery plugin.
+// https://github.com/umdjs/umd/blob/master/templates/jqueryPlugin.js
+(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(['jquery'], factory);
+	} else if (typeof module === 'object' && module.exports) {
+		// Node/CommonJS
+		module.exports = function( root, jQuery ) {
+			if ( jQuery === undefined ) {
+				// require('jQuery') returns a factory that requires window to
+				// build a jQuery instance, we normalize how we use modules
+				// that require this pattern but the window provided is a noop
+				// if it's defined (how jquery works)
+				if ( typeof window !== 'undefined' ) {
+					jQuery = require('jquery');
+				}
+				else {
+					jQuery = require('jquery')(root);
+				}
+			}
+			factory(jQuery);
+			return jQuery;
+		};
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}(function ($) {
+
     var defaults = {
         active: 1,
         activePagerClass: 'fire-pager-active',
@@ -502,7 +531,7 @@
 
             //Swipe Events
             // Do not allow swiping functions if Hammer isn't loaded
-            if (typeof Hammer !== 'undefined' && slider.options.swipe == true) {
+            if (typeof Hammer !== 'undefined' && slider.options.swipe === true) {
                 var hammertime = new Hammer(slider.$el[0]);
 
                 hammertime.on('swipeleft', function (ev) {
@@ -827,19 +856,19 @@
         }
     };
 
-    $.fn[fireSlider] = function (options) {
-        var sel = this.selector;
-        return this.each(function () {
+	$.fn.fireSlider = function (options) {
+		var sel = this.selector;
+		return this.each(function () {
 
-            if ($.data(this, fireSlider)) {
-                $(this).data(fireSlider).destroy();
-                $(this).removeData(fireSlider);
-            }
+			if ($.data(this, 'fireSlider')) {
+				$(this).data('fireSlider').destroy();
+				$(this).removeData('fireSlider');
+			}
 
-            $.data(this, fireSlider, new FireSlider(this, options, sel));
-        });
-    };
+			$.data(this, 'fireSlider', new FireSlider(this, options, sel));
+		});
+	};
 
     window.fireSlider = FireSlider;
 
-})(jQuery, window, document);
+}));
