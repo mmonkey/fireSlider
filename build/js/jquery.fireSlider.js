@@ -315,7 +315,7 @@
             if (result.search(srcTag) !== -1) {
                 var img = slide.querySelectorAll('img')[0];
                 var src = (typeof img !== "undefined") ? img.src : '';
-                result = result.replace(numTag, src);
+                result = result.replace(srcTag, src);
             }
 
             var descriptionTag = this.getTemplateTagRegex('description');
