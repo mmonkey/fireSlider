@@ -9,7 +9,7 @@ var gulp = require('gulp'),
 		uglify = require('gulp-uglify'),
 		util = require('gulp-util');
 
-var version = '1.5.5';
+var version = '1.5.6';
 var versionComment = '/*! fireSlider (' + version + ') (C) 2014 CJ O\'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */\n';
 var velocityComment = '/*! VelocityJS.org (C) 2014 Julian Shapiro. MIT @license: en.wikipedia.org/wiki/MIT_License */\n/*! VelocityJS.org jQuery Shim (C) 2014 The jQuery Foundation. MIT @license: en.wikipedia.org/wiki/MIT_License. */\n';
 var velocity = 'var Velocity = require(\'velocity-animate\');\n';
