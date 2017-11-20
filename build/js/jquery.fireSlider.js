@@ -1,35 +1,5 @@
-/*! fireSlider (1.5.5) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
-
-// Uses CommonJS, AMD or browser globals to create a jQuery plugin.
-// https://github.com/umdjs/umd/blob/master/templates/jqueryPlugin.js
-(function (factory) {
-	if (typeof define === 'function' && define.amd) {
-		// AMD. Register as an anonymous module.
-		define(['jquery'], factory);
-	} else if (typeof module === 'object' && module.exports) {
-		// Node/CommonJS
-		module.exports = function (root, jQuery) {
-			if (jQuery === undefined) {
-				// require('jQuery') returns a factory that requires window to
-				// build a jQuery instance, we normalize how we use modules
-				// that require this pattern but the window provided is a noop
-				// if it's defined (how jquery works)
-				if (typeof window !== 'undefined') {
-					jQuery = require('jquery');
-				}
-				else {
-					jQuery = require('jquery')(root);
-				}
-			}
-			factory(jQuery);
-			return jQuery;
-		};
-	} else {
-		// Browser globals
-		factory(jQuery);
-	}
-}(function ($) {
-
+/*! fireSlider (1.5.6) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
+;(function ($, window, document, undefined) {
 	var defaults = {
 		active: 1,
 		activePagerClass: 'fire-pager-active',
@@ -52,7 +22,6 @@
 	function FireSlider(el, options, sel) {
 		this.$el = $(el);
 		this.selector = sel;
-		this._name = fireSlider;
 		this._defaults = defaults;
 		this._attributes = this.getData(this.$el.data());
 		this.options = $.extend({}, defaults, options, this._attributes);
@@ -296,7 +265,7 @@
 		// Setup pager with span elements
 		createDefaultPager: function () {
 			var slider = this;
-			$.each(slider.slides, function (i, slide) {
+			$.each(slider.slides, function (i) {
 				slider.options.pager.append('<span></span>').children().eq(i);
 			});
 		},
@@ -363,13 +332,13 @@
 				slider.cyclePositions('next');
 			}
 
-			if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+			if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
 				$.each(slider.slides, function (i, slide) {
 					$(slide).velocity({translateX: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
 				});
 			}
 
-			if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+			if (slider.state.direction === 'up' || slider.state.direction === 'down') {
 				$.each(slider.slides, function (i, slide) {
 					$(slide).velocity({translateY: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
 				});
@@ -386,10 +355,10 @@
 			slider.state.maxX = startPosition + ((slider.slides.length - 1) * 100);
 			for (var i = Math.floor(slider.slides.length / 2); i < slider.slides.length; i++) {
 
-				if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
 					slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
 				}
-				if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+				if (slider.state.direction === 'up' || slider.state.direction === 'down') {
 					slider.slides.eq(i).velocity({translateY: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
 				}
 
@@ -402,10 +371,10 @@
 			}
 			for (i = 0; i < Math.floor(slider.slides.length / 2); i++) {
 
-				if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
+				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
 					slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
 				}
-				if (slider.state.direction == 'up' || slider.state.direction == 'down') {
+				if (slider.state.direction === 'up' || slider.state.direction === 'down') {
 					slider.slides.eq(i).velocity({translateY: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
 				}
 
@@ -433,15 +402,15 @@
 		bindEvents: function () {
 			var slider = this;
 
-			slider.$el.on('fireSlider:prev', function (e) {
+			slider.$el.on('fireSlider:prev', function () {
 				slider.transitionSlides('prev');
 			});
 
-			slider.$el.on('fireSlider:next', function (e) {
+			slider.$el.on('fireSlider:next', function () {
 				slider.transitionSlides('next');
 			});
 
-			slider.$el.on('fireSlider:pause', function (e) {
+			slider.$el.on('fireSlider:pause', function () {
 				if (!slider.state.isPaused) {
 					slider.state.isPaused = true;
 					slider.stopTimer();
@@ -456,27 +425,27 @@
 			});
 
 			slider.$el.on('fireSlider:slide', function (e, index) {
-				if (slider.state.currentSlide != index) slider.pagerTransition(index);
+				if (slider.state.currentSlide !== index) slider.pagerTransition(index);
 			});
 
-			slider.$el.on('fireSlider:reverse', function (e) {
+			slider.$el.on('fireSlider:reverse', function () {
 				if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
-				if (slider.state.direction == 'forward' || slider.state.direction == 'backward') {
-					slider.state.direction = (slider.state.direction.toLowerCase() == 'forward') ? 'backward' : 'forward';
+				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
+					slider.state.direction = (slider.state.direction.toLowerCase() === 'forward') ? 'backward' : 'forward';
 				}
-				if (slider.state.direction == 'up' || slider.state.direction == 'down') {
-					slider.state.direction = (slider.state.direction.toLowerCase() == 'up') ? 'down' : 'up';
+				if (slider.state.direction === 'up' || slider.state.direction === 'down') {
+					slider.state.direction = (slider.state.direction.toLowerCase() === 'up') ? 'down' : 'up';
 				}
 				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			});
 
-			slider.$el.on('fireSlider:refresh', function (e) {
+			slider.$el.on('fireSlider:refresh', function () {
 				slider.stopTimer();
 				slider.refresh();
 				slider.startTimer(slider.state.direction);
 			});
 
-			slider.$el.on('fireSlider:destroy', function (e) {
+			slider.$el.on('fireSlider:destroy', function () {
 				slider.stopTimer();
 				slider.unbindEvents();
 				slider.destroyPager();
@@ -503,13 +472,13 @@
 			}
 
 			// Pause on mouseover
-			slider.$el.mouseover(function (e) {
+			slider.$el.mouseover(function () {
 				if (slider.options.hoverPause) slider.$el.trigger('fireSlider:pause');
 				return false;
 			});
 
 			// Play on mouseout
-			slider.$el.mouseout(function (e) {
+			slider.$el.mouseout(function () {
 				if (slider.options.hoverPause) slider.$el.trigger('fireSlider:play', slider.state.direction);
 				return false;
 			});
@@ -532,12 +501,12 @@
 			if (typeof Hammer !== 'undefined' && slider.options.swipe === true) {
 				var hammertime = new Hammer(slider.$el[0]);
 
-				hammertime.on('swipeleft', function (ev) {
+				hammertime.on('swipeleft', function () {
 					slider.$el.trigger('fireSlider:next');
 					slider.$el.trigger('fireSlider:play', slider.state.direction);
 				});
 
-				hammertime.on('swiperight', function (ev) {
+				hammertime.on('swiperight', function () {
 					slider.$el.trigger('fireSlider:prev');
 					slider.$el.trigger('fireSlider:play', slider.state.direction);
 				});
@@ -612,7 +581,7 @@
 					easing: slider.options.easing,
 					currPos: currentPositions[i],
 					nextPos: slider.positions[i],
-					snapping: (slider.positions[i] === slider.state.minX || slider.positions[i] === slider.state.maxX) ? true : false,
+					snapping: slider.positions[i] === slider.state.minX || slider.positions[i] === slider.state.maxX,
 					direction: slider.state.direction
 				});
 			});
@@ -677,7 +646,7 @@
 						easing: slider.options.easing,
 						currPos: currentPositions[i],
 						nextPos: slider.positions[i],
-						snapping: ((difference < 0 && slider.positions[i] <= (slider.state.minX + snappingRange)) || (difference > 0 && slider.positions[i] >= (slider.state.maxX - snappingRange))) ? true : false,
+						snapping: (difference < 0 && slider.positions[i] <= (slider.state.minX + snappingRange)) || (difference > 0 && slider.positions[i] >= (slider.state.maxX - snappingRange)),
 						direction: slider.state.direction
 					});
 				});
@@ -706,7 +675,7 @@
 		// Update the sliders current slide state
 		updateCurrentSlide: function (direction) {
 			var slider = this;
-			if (direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() == 'down') {
+			if (direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() === 'down') {
 				slider.state.currentSlide = (slider.state.currentSlide === 0) ? (slider.slides.length - 1) : slider.state.currentSlide -= 1;
 			} else {
 				slider.state.currentSlide = (slider.state.currentSlide === (slider.slides.length - 1)) ? 0 : slider.state.currentSlide += 1;
@@ -716,7 +685,7 @@
 		// Move first position to last or vice versa
 		cyclePositions: function (direction) {
 			var slider = this;
-			if (direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() == 'down') {
+			if (direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() === 'down') {
 				var prev = slider.positions.shift();
 				slider.positions.push(prev);
 			} else {
@@ -743,7 +712,7 @@
 
 		// Converts removes fireslider prefix from data stored on the slider object
 		getData: function (data) {
-			$.each(data, function (key, value) {
+			$.each(data, function (key) {
 				$.each(["fireslider", "fire-slider"], function (i, match) {
 					if (key.toLowerCase().indexOf(match) > -1 && key !== fireSlider) {
 						var newKey = key.replace(new RegExp(match, 'gi'), '');
@@ -818,11 +787,11 @@
 		slideInOut: function (el, options) {
 			var duration = (options.snapping) ? 0 : options.speed;
 
-			if (options.direction == 'forward' || options.direction == 'backward') {
+			if (options.direction === 'forward' || options.direction === 'backward') {
 				el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
 			}
 
-			if (options.direction == 'up' || options.direction == 'down') {
+			if (options.direction === 'up' || options.direction === 'down') {
 				el.velocity({translateY: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
 			}
 		},
@@ -867,4 +836,4 @@
 
 	window.fireSlider = FireSlider;
 
-}));
+})(jQuery, window, document);

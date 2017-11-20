@@ -1,209 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>fireSlider - Test</title>
-	<link rel="stylesheet" type="text/css" href="../build/css/stylesheet.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>fireSlider - Test</title>
+    <link rel="stylesheet" type="text/css" href="../build/css/stylesheet.css">
 
-	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-	<script src="../build/js/vendor/velocity.min.js"></script>
-	<script src="../build/js/vendor/hammer.min.js"></script>
-	<script src="../build/js/jquery.fireSlider.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!--<script src="../build/js/vendor/velocity.min.js"></script>-->
+    <!--<script src="../build/js/vendor/hammer.min.js"></script>-->
+    <!--<script src="../build/js/jquery.fireSlider.js"></script>-->
+    <script src="./../dist/jquery.fireSlider.velocity.js"></script>
 </head>
 <body>
 
-	<h1>FireSlider - Development</h1>
+<h1>FireSlider - Development</h1>
 
-	<div class="section fireslider js-fireslider">
-		<ul id="fireSlider" 
-			data-fireslider-delay="4000">
-			<li class="slide-1">1
-				<ul>
-					<li>1</li>
-					<li>2</li>
-					<li>3</li>
-				</ul>
-			</li>
-			<li class="slide-2">2
-				<a href="http://www.google.com">Test Link Clicking</a>
-			</li>
-			<li class="slide-3">3</li>
-			<!-- <li class="slide-4">4</li>
-			<li class="slide-5">5</li> -->
-		</ul>
+<div class="section fireslider js-fireslider">
+    <ul id="fireSlider"
+        data-fireslider-delay="4000">
+        <li class="slide-1">1
+            <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+            </ul>
+        </li>
+        <li class="slide-2">2
+            <a href="http://www.google.com">Test Link Clicking</a>
+        </li>
+        <li class="slide-3">3</li>
+        <!-- <li class="slide-4">4</li>
+        <li class="slide-5">5</li> -->
+    </ul>
 
-		<div class="pager"></div>
-	</div>
+    <div class="pager"></div>
+</div>
 
-	<a class="prev" href="">Prev</a>
-	<a class="next" href="">Next</a>
-	<a class="reverse" href="">Reverse</a>
+<a class="prev" href="">Prev</a>
+<a class="next" href="">Next</a>
+<a class="reverse" href="">Reverse</a>
 
-	<h2>Slider with Thumbnail Pager</h2>
+<h2>Slider with Thumbnail Pager</h2>
 
-	<div class="section fireslider js-fireslider-carousel" style="margin-bottom: 20px;" data-fireslider-pager="">
-		<div id="fireSlider3" class="carousel">
-			<div class="slide-1">1</div>
-			<div class="slide-2">2</div>
-			<div class="slide-3">3</div>
-			<div class="slide-4">4</div>
-			<div class="slide-5">5</div>
-		</div>
-		<div class="pager"></div>
-	</div>
+<div class="section fireslider js-fireslider-carousel" style="margin-bottom: 20px;" data-fireslider-pager="">
+    <div id="fireSlider3" class="carousel">
+        <div class="slide-1">1</div>
+        <div class="slide-2">2</div>
+        <div class="slide-3">3</div>
+        <div class="slide-4">4</div>
+        <div class="slide-5">5</div>
+    </div>
+    <div class="pager"></div>
+</div>
 
-	<div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
-		<ul id="fireSlider4" 
-			data-fireslider-delay="4000" 
-			data-fireslider-effect="slideInOut"
-			data-fireslider-single-slide="false">
-			<li class="slide-1">1</li>
-			<li class="slide-2">2</li>
-			<li class="slide-3">3</li>
-		</ul>
-		<div class="pager"></div>
-	</div>
+<div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
+    <ul id="fireSlider4"
+        data-fireslider-delay="4000"
+        data-fireslider-effect="slideInOut"
+        data-fireslider-single-slide="false">
+        <li class="slide-1">1</li>
+        <li class="slide-2">2</li>
+        <li class="slide-3">3</li>
+    </ul>
+    <div class="pager"></div>
+</div>
 
-	<div class="section fireslider js-fireslider-thumbnail-carousel">
-		<ul id="fireSlider2"
-			data-fireslider-pager-template='<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>'
-			data-fireslider-direction="backward"
-			data-fireslider-easing="[200, 18]"
-			data-fireslider-disable-links="false">
-			<li class="slide-1" data-fireslider-pager-description="One">1
-				<ul>
-					<li>1</li>
-					<li>2</li>
-					<li>3</li>
-				</ul>
-			</li>
-			<li class="slide-2" data-fireslider-pager-description="Two">2
-				<a href="http://www.google.com" target="_blank">Test Link Clicking</a>
-			</li>
-			<li class="slide-3" data-fireslider-pager-description="Three">3</li>
-			<li class="slide-4" data-fireslider-pager-description="Four">4</li>
-			<li class="slide-5" data-fireslider-pager-description="Five">5</li>
-		</ul>
-	</div>
+<div class="section fireslider js-fireslider-thumbnail-carousel">
+    <ul id="fireSlider2"
+        data-fireslider-direction="backward"
+        data-fireslider-easing="[200, 18]"
+        data-fireslider-disable-links="false">
+        <li class="slide-1" data-fireslider-pager-description="One">1
+            <ul>
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+            </ul>
+        </li>
+        <li class="slide-2" data-fireslider-pager-description="Two">2
+            <a href="http://www.google.com" target="_blank">Test Link Clicking</a>
+        </li>
+        <li class="slide-3" data-fireslider-pager-description="Three-Test">3</li>
+        <li class="slide-4" data-fireslider-pager-description="Four">4</li>
+        <li class="slide-5" data-fireslider-pager-description="Five">5</li>
+    </ul>
+</div>
 
-	<ul id="thumbnailPager"></ul>
-	<a class="prev" href="">Prev</a>
-	<a class="next" href="">Next</a>
+<ul id="thumbnailPager"></ul>
+<a class="prev" href="">Prev</a>
+<a class="next" href="">Next</a>
 
-	<!-- DISPLAY NONE: Shouldn't crash the browser -->
-	<div class="section fireslider js-fireslider" style="display:none;">
-		<ul id="fireSlider5">
-			<li class="slide-1">1</li>
-			<li class="slide-2">2</li>
-			<li class="slide-3">3</li>
-		</ul>
-		<div class="pager"></div>
-	</div>
+<!-- DISPLAY NONE: Shouldn't crash the browser -->
+<div class="section fireslider js-fireslider" style="display:none;">
+    <ul id="fireSlider5">
+        <li class="slide-1">1</li>
+        <li class="slide-2">2</li>
+        <li class="slide-3">3</li>
+    </ul>
+    <div class="pager"></div>
+</div>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 
-		/* REGISTER NEW TRANSITION EFFECT */
-		// var slideInOut = function (el, options) {
-		// 	var duration = (options.snapping) ? 0 : options.speed;
-		// 	el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
-		// };
+	/* REGISTER NEW TRANSITION EFFECT */
+	// var slideInOut = function (el, options) {
+	// 	var duration = (options.snapping) ? 0 : options.speed;
+	// 	el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
+	// };
 
-		// fireSlider.prototype.Effects.register('slideInOut', slideInOut);
+	// fireSlider.prototype.Effects.register('slideInOut', slideInOut);
 
-		/* USING FIRESLIDER */
-		var sliders = $('.js-fireslider > ul').each(function () {
-				$(this).data({
-					'pager': $(this).siblings('.pager'),
-					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
-					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next'),
-				});
-			}).fireSlider({
-				'direction': 'up'
-			});
-
-
-		var carousels = $('.js-fireslider-carousel > div.carousel').each(function () {
-				$(this).data({
-					'pager': $(this).siblings('.pager'),
-					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
-					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
-				});
-			}).fireSlider({
-				active: 3,
-				breakpoints: [
-					{"breakpoint": 1, "show": 1, "active": 1},
-					{"breakpoint": 520, "show": 2, "active": 1},
-					{"breakpoint": 720, "show": 3, "active": 2},
-					{"breakpoint": 860, "show": 5, "active": 3}
-				],
-				delay: 2000,
-				effect: "slideInOut",
-				show: 5,
-				slide: 'div[class*=slide]',
-				speed: 400
-			});
-
-
-		var thumbnailCarousles = $('.js-fireslider-thumbnail-carousel > ul').each(function () {
-				$(this).data({
-					'pager': $(this).parent().nextUntil('div[class*=js-fireslider]', '#thumbnailPager'),
-					'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
-					'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
-				});
-			}).fireSlider({
-				active: 3,
-				breakpoints: [
-					{"breakpoint": 1, "show": 1, "active": 1},
-					{"breakpoint": 520, "show": 2, "active": 1},
-					{"breakpoint": 720, "show": 3, "active": 2},
-					{"breakpoint": 860, "show": 5, "active": 3}
-				],
-				delay: 2000,
-				effect: "slideInOut",
-				show: 5,
-				speed: 400
-			});
-
-
-		// Override original slider
-		// var second = $('#fireSlider').each(function () {
-		// 	$(this).data({
-		// 		'next': {},
-		// 		'prev': {}
-		// 	});
-		// }).fireSlider({
-		// 	direction: 'backward'
-		// });
-
-		// Listen to events
-		// sliders.on('fireSlider:prev', function (e) {
-		// 	console.log('prev');
-		// });
-
-		$('a.reverse').click(function (e) {
-			e.preventDefault();
-			$(this).prevAll('div[class*=js-fireslider]:first').find('ul').data('fireSlider').reverse();
+	/* USING FIRESLIDER */
+	var sliders = $('.js-fireslider > ul').each(function () {
+		$(this).data({
+			'pager': $(this).siblings('.pager'),
+			'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
+			'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next'),
 		});
+	}).fireSlider({
+		'direction': 'up'
+	});
 
-		$(window).resize(function () {
-			var slider = carousels.data('fireSlider');
-			if (window.outerWidth > 500) {
-				if (slider.state.isPaused) slider.play();
-			} else {
-				if (!slider.state.isPaused) {
-					slider.slide(0);
-					slider.pause();
-				}
+	var carousels = $('.js-fireslider-carousel > div.carousel').each(function () {
+		$(this).data({
+			'pager': $(this).siblings('.pager'),
+			'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
+			'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
+		});
+	}).fireSlider({
+		active: 3,
+		breakpoints: [
+			{"breakpoint": 1, "show": 1, "active": 1},
+			{"breakpoint": 520, "show": 2, "active": 1},
+			{"breakpoint": 720, "show": 3, "active": 2},
+			{"breakpoint": 860, "show": 5, "active": 3}
+		],
+		delay: 2000,
+		effect: "slideInOut",
+		show: 5,
+		slide: 'div[class*=slide]',
+		speed: 400
+	});
+
+	var thumbnailCarousles = $('.js-fireslider-thumbnail-carousel > ul').each(function () {
+		$(this).data({
+			'pager': $(this).parent().nextUntil('div[class*=js-fireslider]', '#thumbnailPager'),
+			'prev': $(this).parent().nextUntil('div[class*=js-fireslider]', '.prev'),
+			'next': $(this).parent().nextUntil('div[class*=js-fireslider]', '.next')
+		});
+	}).fireSlider({
+		active: 3,
+		breakpoints: [
+			{"breakpoint": 1, "show": 1, "active": 1},
+			{"breakpoint": 520, "show": 2, "active": 1},
+			{"breakpoint": 720, "show": 3, "active": 2},
+			{"breakpoint": 860, "show": 5, "active": 3}
+		],
+		delay: 2000,
+		effect: "slideInOut",
+		show: 5,
+		speed: 400,
+		pagerTemplate: '<li class="slide-{{ num }}"><a href="">{{ description }}</a></li>'
+	});
+
+	// Override original slider
+	// var second = $('#fireSlider').each(function () {
+	// 	$(this).data({
+	// 		'next': {},
+	// 		'prev': {}
+	// 	});
+	// }).fireSlider({
+	// 	direction: 'backward'
+	// });
+
+	// Listen to events
+	// sliders.on('fireSlider:prev', function (e) {
+	// 	console.log('prev');
+	// });
+
+	$('a.reverse').click(function (e) {
+		e.preventDefault();
+		$(this).prevAll('div[class*=js-fireslider]:first').find('ul').data('fireSlider').reverse();
+	});
+
+	$(window).resize(function () {
+		var slider = carousels.data('fireSlider');
+		if (window.outerWidth > 500) {
+			if (slider.state.isPaused) slider.play();
+		} else {
+			if (!slider.state.isPaused) {
+				slider.slide(0);
+				slider.pause();
 			}
-		});
+		}
+	});
 
+	/* SHOULDN'T ERROR - when no slider exists */
+	$('.test').fireSlider();
 
-		/* SHOULDN'T ERROR - when no slider exists */
-		$('.test').fireSlider();
+</script>
 
-	</script>
-	
 </body>
 </htm>
