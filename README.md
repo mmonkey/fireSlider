@@ -10,21 +10,18 @@ Get the latest version of fireSlider [here.](https://github.com/mmonkey/fireSlid
 
 Getting Started
 ---------------
-fireSlider has one dependency, Velocity.js, and it comes in two versions:
+fireSlider has two dependencies, these must be included before hand.
 
-**Includes Velocity.js:**  
+**Required Dependencies**
 ```html
-<script src="path/to/jquery.fireSlider.velocity.js"></script>
-```
-
-**Does not include Velocity.js:**  
-```html
+<script src="path/to/jquery.min.js"></script>
 <script src="path/to/velocity.min.js"></script>
 <script src="path/to/jquery.fireSlider.min.js"></script>
 ```
-Using this version of fireSlider will require you to include velocity also. This is good if you are already using Velocity.js elsewhere.
 
-**Add [Hammer.js](http://hammerjs.github.io/) for mobile swipe compatibility**  
+**Optional Dependencies**
+
+* [Hammer.js](http://hammerjs.github.io/) for mobile swipe compatibility  
 ```html
 <script src='path/to/hammer.min.js'></script>
 ```
@@ -334,6 +331,11 @@ Event | Description
 "fireSlider:refresh" | Triggered when the slider is resized.
 "fireSlider:reverse" | Triggered when the slider's direction is reversed.
 "fireSlider:slide" | Triggered when the slide function is called.
+"fireSlider:transition:before" | Triggered before a slide transitions.
+"fireSlider:transition:after" | Triggered after a slide transitions.
+"fireSlider:button:prev" | Triggered when a previous button is clicked.
+"fireSlider:button:next" | Triggered when a next button is clicked.
+"fireSlider:button:pager" | Triggered when a pager button is clicked.
 
 You can listen for events like this:
 
@@ -383,18 +385,25 @@ slider.on("fireSlider:next", function(e) {
 
 Contribute
 ----------
-**Build** - (Requires [npm](http://nodejs.org/) and [gulp](http://gulpjs.com/))
+**Build** - (Requires [npm](http://nodejs.org/))
 
 Install the project dependencies:
 
 ```
-$ npm install / update
+$ npm install
 ```
 
-Start gulp:
+Commands:
 
 ```
-$ gulp
+# Run the JS and CSS build process
+$ npm run build
+
+# Serve the test page (http://localhost:8888)
+$ npm run serve
+
+# Serve the test page and build when changes are detected
+$ npm run dev
 ```
 
 **Issues**

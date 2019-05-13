@@ -6,10 +6,10 @@
     <title>fireSlider - Test</title>
     <link rel="stylesheet" type="text/css" href="../build/css/stylesheet.css">
 
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <!--<script src="../build/js/vendor/velocity.min.js"></script>-->
-    <!--<script src="../build/js/vendor/hammer.min.js"></script>-->
-    <!--<script src="../build/js/jquery.fireSlider.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.2/velocity.min.js"></script>-->
+    <!--<script src="./../dist/jquery.fireSlider.min.js"></script>-->
     <script src="./../dist/jquery.fireSlider.velocity.js"></script>
 </head>
 <body>
@@ -70,7 +70,7 @@
     <ul id="fireSlider2"
         data-fireslider-direction="backward"
         data-fireslider-easing="[200, 18]"
-        data-fireslider-disable-links="false">
+        data-fireslider-disable-links="true">
         <li class="slide-1" data-fireslider-pager-description="One">1
             <ul>
                 <li>1</li>
@@ -121,6 +121,10 @@
 	}).fireSlider({
 		'direction': 'up'
 	});
+
+	sliders.on('fireSlider:button:pager', function (e, i) {
+		console.log('page: ' + i);
+    });
 
 	var carousels = $('.js-fireslider-carousel > div.carousel').each(function () {
 		$(this).data({
@@ -202,4 +206,4 @@
 </script>
 
 </body>
-</htm>
+</html>

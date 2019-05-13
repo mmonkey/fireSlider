@@ -1,6 +1,7 @@
-/*! fireSlider (1.5.6) (C) CJ O'Hara. MIT @license: en.wikipedia.org/wiki/MIT_License */
-;(function ($, window, document, undefined) {
-	var defaults = {
+'use strict';
+
+(function ($, window) {
+	const defaults = {
 		active: 1,
 		activePagerClass: 'fire-pager-active',
 		activeSlideClass: 'fire-slider-active',
@@ -19,10 +20,8 @@
 		swipe: true
 	};
 
-	function FireSlider(el, options, sel) {
+	function FireSlider(el, options) {
 		this.$el = $(el);
-		this.selector = sel;
-		this._defaults = defaults;
 		this._attributes = this.getData(this.$el.data());
 		this.options = $.extend({}, defaults, options, this._attributes);
 
@@ -33,17 +32,19 @@
 
 	FireSlider.prototype = {
 
-		///// INITIALIZE /////
+		/**
+		 * Initialize fireSlider
+		 */
 
 		preInit: function () {
-			var slider = this;
+			const slider = this;
 			slider.initialized = slider.init();
 
 			if (slider.initialized) {
 				slider.build();
 				slider.run();
 			} else {
-				$(window).resize(function () {
+				$(window).resize(() => {
 					if (!slider.initialized) {
 						slider.initialized = slider.init();
 						if (slider.initialized) {
@@ -55,12 +56,12 @@
 			}
 		},
 
-		init: function () {
-			var slider = this;
+		init() {
+			const slider = this;
 
 			// Do not continue if element isn't visible
 			if (!slider.$el.is(':visible')) return false;
-			if (slider.options.show < 1 || slider.$el.outerWidth() < 1 || slider.$el.width < 1) return false;
+			if (slider.options.show < 1 || slider.$el.outerWidth() < 1 || slider.$el.width() < 1) return false;
 
 			// Do not continue if velocity isn't loaded
 			if ($.type($.Velocity) === 'undefined') {
@@ -84,47 +85,48 @@
 		},
 
 		// Load slides onto slider
-		initSlides: function () {
-			var slider = this;
+		initSlides() {
+			const slider = this;
 			slider.slides = slider.$el.children(slider.options.slide);
 		},
 
 		// Initialize slider
-		initFunctions: function () {
-			var slider = this;
+		initFunctions() {
+			const slider = this;
 
-			slider.prev = function () {
+			slider.prev = () => {
 				slider.$el.trigger('fireSlider:prev');
 			};
 
-			slider.next = function () {
+			slider.next = () => {
 				slider.$el.trigger('fireSlider:next');
 			};
 
-			slider.pause = function () {
+			slider.pause = () => {
 				slider.$el.trigger('fireSlider:pause');
 			};
 
-			slider.play = function () {
+			slider.play = () => {
 				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			};
 
-			slider.reverse = function () {
+			slider.reverse = () => {
 				slider.$el.trigger('fireSlider:reverse');
 			};
 
-			slider.slide = function (index) {
+			slider.slide = index => {
 				slider.$el.trigger('fireSlider:slide', index);
 			};
 
-			slider.destroy = function () {
+			slider.destroy = () => {
 				slider.$el.trigger('fireSlider:destroy');
 			};
 		},
 
 		// Creates a state object on the slider for storing information
-		initState: function () {
-			var slider = this;
+		initState() {
+			const slider = this;
+
 			slider.state = {
 				active: slider.options.active,
 				currentSlide: 0,
@@ -142,17 +144,17 @@
 		},
 
 		// Initialize slider's breakpoints
-		initBreakpoints: function () {
-			var slider = this;
+		initBreakpoints() {
+			const slider = this;
 
 			// Reset show and active
 			slider.state.show = slider.options.show;
 			slider.state.active = slider.options.active;
 
 			if (slider.options.breakpoints.length > 0) {
-				var index = -1;
-				var max = -1;
-				$.each(slider.options.breakpoints, function (i, item) {
+				let index = -1;
+				let max = -1;
+				$.each(slider.options.breakpoints, (i, item) => {
 					if (item.breakpoint) {
 						if (item.breakpoint <= slider.state.windowWidth && item.breakpoint > max) {
 							index = i;
@@ -175,10 +177,12 @@
 			slider.state.slideWidth = slider.state.sliderWidth / slider.state.show;
 		},
 
-		///// BUILD /////
+		/**
+		 * Build fireSlider
+		 */
 
-		build: function () {
-			var slider = this;
+		build() {
+			const slider = this;
 
 			if (slider.options.pager instanceof jQuery) slider.buildPager();
 
@@ -194,8 +198,8 @@
 		},
 
 		// Create pager
-		buildPager: function () {
-			var slider = this;
+		buildPager() {
+			const slider = this;
 
 			if (slider.options.pagerTemplate.toLowerCase() === 'clone') {
 				slider.createClonedPager();
@@ -213,21 +217,20 @@
 			slider.pages.first().addClass(slider.options.activePagerClass);
 		},
 
-		destroyPager: function () {
-			var slider = this;
+		destroyPager() {
+			const slider = this;
 			if (slider.options.pager instanceof jQuery) slider.pages.remove();
 		},
 
 		// Append the appropriate number of slides to the slider
-		buildSlider: function () {
-			var slider = this;
-			var multiplier = this.calculateMultiplier();
-			var difference = (slider.state.totalSlides * multiplier) - slider.slides.length;
+		buildSlider() {
+			const slider = this;
+			const difference = (slider.state.totalSlides * slider.calculateMultiplier()) - slider.slides.length;
 
 			// Add elements if there is a positive difference
 			if (difference > 0) {
-				for (var i = 0; i < difference; i++) {
-					var clone = slider.slides.eq(i % slider.state.totalSlides).clone();
+				for (let i = 0; i < difference; i++) {
+					const clone = slider.slides.eq(i % slider.state.totalSlides).clone();
 					if (clone.hasClass(slider.options.activeSlideClass)) {
 						clone.removeClass(slider.options.activeSlideClass);
 					}
@@ -237,7 +240,7 @@
 
 			// Remove elements if there is a negative difference
 			if (difference < 0) {
-				for (var j = slider.slides.length - 1; j >= (slider.slides.length + difference); j--) {
+				for (let j = slider.slides.length - 1; j >= (slider.slides.length + difference); j--) {
 					slider.$el.children(slider.options.slide).eq(j).remove();
 				}
 			}
@@ -246,49 +249,51 @@
 		},
 
 		// Clone slides as pager elements
-		createClonedPager: function () {
-			var slider = this;
-			$.each(slider.slides, function (i, slide) {
+		createClonedPager() {
+			const slider = this;
+			$.each(slider.slides, (i, slide) => {
 				slider.options.pager.append($(slide).clone()).children.eq(i);
 			});
 		},
 
 		// Setup custom pager elements
-		createCustomPager: function () {
-			var slider = this;
-			$.each(slider.slides, function (i, slide) {
-				var markup = slider.parsePagerTemplate(slide, slider.options.pagerTemplate, i);
+		createCustomPager() {
+			const slider = this;
+			$.each(slider.slides, (i, slide) => {
+				const markup = slider.parsePagerTemplate(slide, slider.options.pagerTemplate, i);
 				slider.options.pager.append(markup).children().eq(i);
 			});
 		},
 
 		// Setup pager with span elements
-		createDefaultPager: function () {
-			var slider = this;
-			$.each(slider.slides, function (i) {
+		createDefaultPager() {
+			const slider = this;
+			$.each(slider.slides, i => {
 				slider.options.pager.append('<span></span>').children().eq(i);
 			});
 		},
 
 		// Parse tags from pager template
-		parsePagerTemplate: function (slide, template, index) {
-			var result = template;
+		parsePagerTemplate(slide, template, index) {
+			const slider = this;
 
-			var numTag = this.getTemplateTagRegex('num');
+			let result = template;
+
+			const numTag = slider.getTemplateTagRegex('num');
 			if (result.search(numTag) !== -1) {
 				result = result.replace(numTag, (index + 1).toString());
 			}
 
-			var srcTag = this.getTemplateTagRegex('src');
+			const srcTag = slider.getTemplateTagRegex('src');
 			if (result.search(srcTag) !== -1) {
-				var img = slide.querySelectorAll('img')[0];
-				var src = (typeof img !== "undefined") ? img.src : '';
+				const img = slide.querySelectorAll('img')[0];
+				const src = (typeof img !== 'undefined') ? img.src : '';
 				result = result.replace(srcTag, src);
 			}
 
-			var descriptionTag = this.getTemplateTagRegex('description');
+			const descriptionTag = slider.getTemplateTagRegex('description');
 			if (result.search(descriptionTag) !== -1) {
-				var des = ($(slide).data().firesliderPagerDescription !== "undefined") ? $(slide).data().firesliderPagerDescription : '';
+				const des = ($(slide).data().firesliderPagerDescription !== 'undefined') ? $(slide).data().firesliderPagerDescription : '';
 				result = result.replace(descriptionTag, des);
 			}
 
@@ -296,16 +301,16 @@
 		},
 
 		// Create a regex string for parsing a template tag
-		getTemplateTagRegex: function (tag) {
+		getTemplateTagRegex(tag) {
 			return new RegExp('{{\\s*' + tag + '\\s*}}', 'g');
 		},
 
 		// Returns the amount of times the slides should be duplicated to fit within the window width
-		calculateMultiplier: function () {
-			var slider = this;
-			var multiplier = 1;
-			var addSlides = 0;
-			var maxSlides = 60;
+		calculateMultiplier() {
+			const slider = this;
+			let multiplier = 1;
+			let addSlides = 0;
+			let maxSlides = 60;
 
 			slider.state.windowWidth = window.innerWidth;
 
@@ -324,36 +329,36 @@
 		},
 
 		// Calculates positions for revolution amount
-		calculatePositions: function (revolutions) {
-			var slider = this;
-			var currentPositions = slider.positions.slice(0);
+		calculatePositions(revolutions) {
+			const slider = this;
 
-			for (var i = 0; i < revolutions; i++) {
+			for (let i = 0; i < revolutions; i++) {
 				slider.cyclePositions('next');
 			}
 
 			if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
-				$.each(slider.slides, function (i, slide) {
+				$.each(slider.slides, (i, slide) => {
 					$(slide).velocity({translateX: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
 				});
 			}
 
 			if (slider.state.direction === 'up' || slider.state.direction === 'down') {
-				$.each(slider.slides, function (i, slide) {
+				$.each(slider.slides, (i, slide) => {
 					$(slide).velocity({translateY: (slider.positions[i] + '%')}, {duration: 0, queue: slider.options.effect});
 				});
 			}
 		},
 
 		// Position Slides
-		positionSlides: function () {
-			var slider = this;
-			var startPosition = Math.ceil(slider.slides.length / 2) * -100 + (100 * (slider.state.active - 1));
-			var positionsFirst = [];
-			var positionsSecond = [];
+		positionSlides() {
+			const slider = this;
+			const positionsFirst = [];
+			const positionsSecond = [];
+			let startPosition = Math.ceil(slider.slides.length / 2) * -100 + (100 * (slider.state.active - 1));
+
 			slider.state.minX = startPosition;
 			slider.state.maxX = startPosition + ((slider.slides.length - 1) * 100);
-			for (var i = Math.floor(slider.slides.length / 2); i < slider.slides.length; i++) {
+			for (let i = Math.floor(slider.slides.length / 2); i < slider.slides.length; i++) {
 
 				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
 					slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
@@ -369,7 +374,7 @@
 				positionsSecond.push(startPosition);
 				startPosition += 100;
 			}
-			for (i = 0; i < Math.floor(slider.slides.length / 2); i++) {
+			for (let i = 0; i < Math.floor(slider.slides.length / 2); i++) {
 
 				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
 					slider.slides.eq(i).velocity({translateX: (startPosition + '%')}, {duration: 0, queue: slider.options.effect});
@@ -390,45 +395,47 @@
 			slider.slides.dequeue(slider.options.effect);
 		},
 
-		///// RUN /////
+		/**
+		 * Run fireSlider
+		 */
 
-		run: function () {
-			var slider = this;
+		run() {
+			const slider = this;
 
 			slider.bindEvents();
 			slider.startTimer(slider.options.direction);
 		},
 
-		bindEvents: function () {
-			var slider = this;
+		bindEvents() {
+			const slider = this;
 
-			slider.$el.on('fireSlider:prev', function () {
+			slider.$el.on('fireSlider:prev', () => {
 				slider.transitionSlides('prev');
 			});
 
-			slider.$el.on('fireSlider:next', function () {
+			slider.$el.on('fireSlider:next', () => {
 				slider.transitionSlides('next');
 			});
 
-			slider.$el.on('fireSlider:pause', function () {
+			slider.$el.on('fireSlider:pause', () => {
 				if (!slider.state.isPaused) {
 					slider.state.isPaused = true;
 					slider.stopTimer();
 				}
 			});
 
-			slider.$el.on('fireSlider:play', function (e, direction) {
+			slider.$el.on('fireSlider:play', (e, direction) => {
 				if (slider.state.isPaused) {
 					slider.state.isPaused = false;
 					slider.startTimer(direction);
 				}
 			});
 
-			slider.$el.on('fireSlider:slide', function (e, index) {
+			slider.$el.on('fireSlider:slide', (e, index) => {
 				if (slider.state.currentSlide !== index) slider.pagerTransition(index);
 			});
 
-			slider.$el.on('fireSlider:reverse', function () {
+			slider.$el.on('fireSlider:reverse', () => {
 				if (!slider.state.isPaused) slider.$el.trigger('fireSlider:pause');
 				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
 					slider.state.direction = (slider.state.direction.toLowerCase() === 'forward') ? 'backward' : 'forward';
@@ -439,13 +446,13 @@
 				slider.$el.trigger('fireSlider:play', slider.state.direction);
 			});
 
-			slider.$el.on('fireSlider:refresh', function () {
+			slider.$el.on('fireSlider:refresh', () => {
 				slider.stopTimer();
 				slider.refresh();
 				slider.startTimer(slider.state.direction);
 			});
 
-			slider.$el.on('fireSlider:destroy', function () {
+			slider.$el.on('fireSlider:destroy', () => {
 				slider.stopTimer();
 				slider.unbindEvents();
 				slider.destroyPager();
@@ -465,56 +472,57 @@
 
 			// Pager buttons
 			if (slider.options.pager instanceof jQuery) {
-				slider.options.pager.children().click(function (e) {
+				slider.options.pager.children().click(e => {
 					e.preventDefault();
-					slider.$el.trigger('fireSlider:slide', $(this).index());
+					slider.$el.trigger('fireSlider:button:pager', $(e.target).index());
+					slider.$el.trigger('fireSlider:slide', $(e.target).index());
 				});
 			}
 
 			// Pause on mouseover
-			slider.$el.mouseover(function () {
+			slider.$el.mouseover(() => {
 				if (slider.options.hoverPause) slider.$el.trigger('fireSlider:pause');
 				return false;
 			});
 
 			// Play on mouseout
-			slider.$el.mouseout(function () {
+			slider.$el.mouseout(() => {
 				if (slider.options.hoverPause) slider.$el.trigger('fireSlider:play', slider.state.direction);
 				return false;
 			});
 
 			// Prevent link clicking on non-active slides
-			slider.slides.find('a').click(function (e) {
+			slider.slides.find('a').click(e => {
 				if (slider.options.disableLinks) {
-					if (!$(this).closest(slider.options.slide).hasClass(slider.options.activeSlideClass)) {
+					if (!$(e.target).closest(slider.options.slide).hasClass(slider.options.activeSlideClass)) {
 						e.preventDefault();
 					}
 				}
 			});
 
-			$(window).resize(function () {
+			$(window).resize(() => {
 				slider.$el.trigger('fireSlider:refresh');
 			});
 
 			//Swipe Events
 			// Do not allow swiping functions if Hammer isn't loaded
 			if (typeof Hammer !== 'undefined' && slider.options.swipe === true) {
-				var hammertime = new Hammer(slider.$el[0]);
+				const hammertime = new Hammer(slider.$el[0]);
 
-				hammertime.on('swipeleft', function () {
+				hammertime.on('swipeleft', () => {
 					slider.$el.trigger('fireSlider:next');
 					slider.$el.trigger('fireSlider:play', slider.state.direction);
 				});
 
-				hammertime.on('swiperight', function () {
+				hammertime.on('swiperight', () => {
 					slider.$el.trigger('fireSlider:prev');
 					slider.$el.trigger('fireSlider:play', slider.state.direction);
 				});
 			}
 		},
 
-		unbindEvents: function () {
-			var slider = this;
+		unbindEvents() {
+			const slider = this;
 
 			slider.$el.off('fireSlider:prev');
 			slider.$el.off('fireSlider:next');
@@ -534,12 +542,13 @@
 		},
 
 		// Starts the timer
-		startTimer: function (direction) {
-			var slider = this;
+		startTimer(direction) {
+			const slider = this;
+
 			if (slider.options.delay !== 0 && !slider.state.isPaused) {
 				slider.timer = setInterval(
-					(function (slider) {
-						return function () {
+					(slider => {
+						return () => {
 							slider.transitionSlides(direction);
 						};
 					})(slider), slider.options.delay);
@@ -547,16 +556,17 @@
 		},
 
 		// Stops the timer
-		stopTimer: function () {
-			var slider = this;
+		stopTimer() {
+			const slider = this;
 			clearInterval(slider.timer);
 		},
 
 		// Move one slide in the provided direction
-		transitionSlides: function (direction) {
-			var slider = this;
+		transitionSlides(direction) {
+			const slider = this;
 
-			//fireSlider.eventManager.trigger('fireslider-before-transition', fs);
+			// Trigger before transition event
+			slider.$el.trigger('fireSlider:transition:before');
 
 			// Stop timer
 			slider.stopTimer();
@@ -570,11 +580,11 @@
 
 			slider.updateCurrentSlide(direction);
 
-			var currentPositions = slider.positions.slice(0);
+			const currentPositions = slider.positions.slice(0);
 			slider.cyclePositions(direction);
 
 			// Calculate New Position
-			$.each(slider.slides, function (i, slide) {
+			$.each(slider.slides, (i, slide) => {
 				slider.Effects.route($(slide), {
 					speed: slider.options.speed,
 					effect: slider.options.effect,
@@ -599,18 +609,19 @@
 			// Restart timer
 			slider.startTimer(slider.state.direction);
 
-			//fireSlider.eventManager.trigger('fireslider-after-transition', fs);
+			// Trigger after transition event
+			slider.$el.trigger('fireSlider:transition:after');
 		},
 
 		// Go to the slide relative to the index of a pager elements
-		pagerTransition: function (index) {
-			var slider = this;
-			var difference = index - (slider.state.currentSlide % slider.state.totalSlides);
+		pagerTransition(index) {
+			const slider = this;
+			const difference = index - (slider.state.currentSlide % slider.state.totalSlides);
 
 			if (difference !== 0) {
 
-				//fireSlider.eventManager.trigger('fireslider-before-transition', fs);
-				//fireSlider.eventManager.trigger('fireslider-before-pager-transition', fs);
+				// Trigger before transition event
+				slider.$el.trigger('fireSlider:transition:before');
 
 				// Stop Timer
 				slider.stopTimer();
@@ -625,21 +636,21 @@
 					slider.pages.eq(slider.state.currentSlide % slider.state.totalSlides).removeClass(slider.options.activePagerClass);
 				}
 
-				var currentPositions = slider.positions.slice(0);
+				const currentPositions = slider.positions.slice(0);
 
 				if (difference < 0) {
-					for (var i = 0; i < Math.abs(difference); i++) {
+					for (let i = 0; i < Math.abs(difference); i++) {
 						slider.cyclePositions('prev');
 					}
 				} else {
-					for (var j = 0; j < Math.abs(difference); j++) {
+					for (let i = 0; i < Math.abs(difference); i++) {
 						slider.cyclePositions('next');
 					}
 				}
 
 				// Queue Animation
-				var snappingRange = 100 * Math.abs(difference - 1);
-				$.each(slider.slides, function (i, slide) {
+				const snappingRange = 100 * Math.abs(difference - 1);
+				$.each(slider.slides, (i, slide) => {
 					slider.Effects.route($(slide), {
 						speed: slider.options.speed,
 						effect: slider.options.effect,
@@ -667,14 +678,15 @@
 				// Restart timer
 				slider.startTimer(slider.state.direction);
 
-				//fireSlider.eventManager.trigger('fireslider-after-transition', fs);
-				//fireSlider.eventManager.trigger('fireslider-after-pager-transition', fs);
+				// Trigger after transition event
+				slider.$el.trigger('fireSlider:transition:after');
 			}
 		},
 
 		// Update the sliders current slide state
-		updateCurrentSlide: function (direction) {
-			var slider = this;
+		updateCurrentSlide(direction) {
+			const slider = this;
+
 			if (direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() === 'down') {
 				slider.state.currentSlide = (slider.state.currentSlide === 0) ? (slider.slides.length - 1) : slider.state.currentSlide -= 1;
 			} else {
@@ -683,39 +695,50 @@
 		},
 
 		// Move first position to last or vice versa
-		cyclePositions: function (direction) {
-			var slider = this;
+		cyclePositions(direction) {
+			const slider = this;
+
 			if (direction === 'prev' || direction.toLowerCase() === 'backward' || direction.toLowerCase() === 'down') {
-				var prev = slider.positions.shift();
+				const prev = slider.positions.shift();
 				slider.positions.push(prev);
 			} else {
-				var next = slider.positions.pop();
+				const next = slider.positions.pop();
 				slider.positions.unshift(next);
 			}
 		},
 
-		///// EVENTS /////
+		/**
+		 * fireSlider Events
+		 */
 
-		prevButtonClicked: function (e) {
-			var slider = this;
+		prevButtonClicked(e) {
+			const slider = this;
 			e.preventDefault();
+
+			// Trigger button event
+			slider.$el.trigger('fireSlider:button:prev');
 			slider.$el.trigger('fireSlider:prev');
 		},
 
-		nextButtonClicked: function (e) {
-			var slider = this;
+		nextButtonClicked(e) {
+			const slider = this;
 			e.preventDefault();
+
+			// Trigger button event
+			slider.$el.trigger('fireSlider:button:next');
 			slider.$el.trigger('fireSlider:next');
 		},
 
-		///// HELPERS /////
+		/**
+		 * fireSlider utilities
+		 */
 
 		// Converts removes fireslider prefix from data stored on the slider object
-		getData: function (data) {
-			$.each(data, function (key) {
-				$.each(["fireslider", "fire-slider"], function (i, match) {
+		getData(data) {
+			$.each(data, key => {
+				$.each(['fireslider', 'fire-slider'], (i, match) => {
 					if (key.toLowerCase().indexOf(match) > -1 && key !== fireSlider) {
-						var newKey = key.replace(new RegExp(match, 'gi'), '');
+						let newKey = key.replace(new RegExp(match, 'gi'), '');
 						newKey = newKey.charAt(0).toLowerCase() + newKey.slice(1);
 						data[newKey] = data[key];
 						delete data[key];
@@ -726,8 +749,8 @@
 		},
 
 		// Refresh positions, breakpoints and slide count
-		refresh: function () {
-			var slider = this;
+		refresh() {
+			const slider = this;
 
 			// Update breakpoints and width states
 			slider.state.windowWidth = window.innerWidth;
@@ -745,7 +768,7 @@
 				slider.slides.eq(slider.state.currentSlide).removeClass(slider.options.activeSlideClass);
 
 				// Rebuild slider
-				var difference = slider.buildSlider(slider.slides);
+				const difference = slider.buildSlider(slider.slides);
 				slider.initSlides();
 				slider.positionSlides(slider.slides);
 
@@ -778,14 +801,14 @@
 			fadeInOut: 'fadeInOut'
 		},
 
-		register: function (effectName, fn) {
+		register(effectName, fn) {
 			this.transitions[effectName] = effectName;
 			this[effectName] = fn;
 		},
 
 		// Basic slide transition effect
-		slideInOut: function (el, options) {
-			var duration = (options.snapping) ? 0 : options.speed;
+		slideInOut(el, options) {
+			const duration = (options.snapping) ? 0 : options.speed;
 
 			if (options.direction === 'forward' || options.direction === 'backward') {
 				el.velocity({translateX: [(options.nextPos + '%'), (options.currPos + '%')]}, {duration: duration, queue: options.effect, easing: options.easing});
@@ -797,24 +820,25 @@
 		},
 
 		// Fade in / out transition effect
-		fadeInOut: function (el, options) {
-			var clone = el.clone();
+		fadeInOut(el, options) {
+			const clone = el.clone();
 			el.parent().append(clone);
 
 			el.velocity({translateX: [(options.nextPos + '%'), (options.nextPos + '%')]}, {
 				duration: options.speed, queue: options.effect,
-				begin: function () {
+				begin() {
 					clone.velocity({opacity: [0.0, 1.0], zIndex: [1, 1]}, {duration: options.speed, easing: options.easing});
 				},
-				complete: function () {
+				complete() {
 					clone.remove();
 				}
 			});
 		},
 
 		// Routes slide to correct transition effect
-		route: function (el, options) {
-			var effectName = options.effect;
+		route(el, options) {
+			const effectName = options.effect;
+
 			if (typeof this.transitions[effectName] !== 'undefined' && typeof (this[effectName]) === 'function') {
 				this[effectName](el, options);
 			}
@@ -822,18 +846,15 @@
 	};
 
 	$.fn.fireSlider = function (options) {
-		var sel = this.selector;
 		return this.each(function () {
-
 			if ($.data(this, 'fireSlider')) {
 				$(this).data('fireSlider').destroy();
 				$(this).removeData('fireSlider');
 			}
-
-			$.data(this, 'fireSlider', new FireSlider(this, options, sel));
+			$.data(this, 'fireSlider', new FireSlider(this, options));
 		});
 	};
 
 	window.fireSlider = FireSlider;
 
-})(jQuery, window, document);
+})(jQuery, window);
