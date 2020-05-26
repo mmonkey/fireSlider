@@ -165,6 +165,7 @@ pager | The selector of the pager element. | jQuery | n/a | n/a
 pagerTemplate | Template for pager elements | HTML String | "`<span><\span>`" | n/a
 prev | The selector of the previous-slide button. | jQuery | n/a
 slide | A selector for the slide elements. | string | "li" | n/a
+slideOffset | The offset position of queued slides (percent). | double | 100.0 | n/a
 show | The amount of slides to show in the slider at once. | int | 1 | n/a
 speed | The speed of the transition (milliseconds). | int | 500 | n/a
 swipe | Determines if slider will have left/right mobile-touch swipe compatibility | boolean | true | true, false

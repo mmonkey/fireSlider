@@ -16,6 +16,7 @@
 		show: 1,
 		singleSlide: false,
 		slide: 'li',
+		slideOffset: 100.0,
 		speed: 500,
 		swipe: true
 	};
@@ -354,10 +355,10 @@
 			const slider = this;
 			const positionsFirst = [];
 			const positionsSecond = [];
-			let startPosition = Math.ceil(slider.slides.length / 2) * -100 + (100 * (slider.state.active - 1));
+			let startPosition = Math.ceil(slider.slides.length / 2) * (slider.options.slideOffset * -1) + (slider.options.slideOffset * (slider.state.active - 1));
 
 			slider.state.minX = startPosition;
-			slider.state.maxX = startPosition + ((slider.slides.length - 1) * 100);
+			slider.state.maxX = startPosition + ((slider.slides.length - 1) * slider.options.slideOffset);
 			for (let i = Math.floor(slider.slides.length / 2); i < slider.slides.length; i++) {
 
 				if (slider.state.direction === 'forward' || slider.state.direction === 'backward') {
@@ -372,7 +373,7 @@
 					position: 'absolute'
 				});
 				positionsSecond.push(startPosition);
-				startPosition += 100;
+				startPosition += slider.options.slideOffset;
 			}
 			for (let i = 0; i < Math.floor(slider.slides.length / 2); i++) {
 
@@ -388,7 +389,7 @@
 					position: 'absolute'
 				});
 				positionsFirst.push(startPosition);
-				startPosition += 100;
+				startPosition += slider.options.slideOffset;
 			}
 
 			slider.positions = positionsFirst.concat(positionsSecond);
