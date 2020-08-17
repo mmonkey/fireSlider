@@ -124,7 +124,12 @@
 
 	sliders.on('fireSlider:button:pager', function (e, i) {
 		console.log('page: ' + i);
-    });
+		});
+
+		sliders.on('fireSlider:transition:after', function (e) {
+			console.log('transitioned');
+		});
+
 
 	var carousels = $('.js-fireslider-carousel > div.carousel').each(function () {
 		$(this).data({
