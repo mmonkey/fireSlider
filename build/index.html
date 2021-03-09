@@ -44,7 +44,7 @@
 <h2>Slider with Thumbnail Pager</h2>
 
 <div class="section fireslider js-fireslider-carousel" style="margin-bottom: 20px;" data-fireslider-pager="">
-    <div id="fireSlider3" class="carousel">
+    <div id="fireSlider3" class="carousel pauseable">
         <div class="slide-1">1</div>
         <div class="slide-2">2</div>
         <div class="slide-3">3</div>
@@ -53,6 +53,8 @@
     </div>
     <div class="pager"></div>
 </div>
+
+<a class="play-pause" href="">Play / Pause</a>
 
 <div class="section fireslider js-fireslider" style="margin-bottom: 20px;">
     <ul id="fireSlider4"
@@ -192,6 +194,17 @@
 	$('a.reverse').click(function (e) {
 		e.preventDefault();
 		$(this).prevAll('div[class*=js-fireslider]:first').find('ul').data('fireSlider').reverse();
+	});
+
+	var playing = true;
+	$('a.play-pause').click(function (e) {
+		e.preventDefault();
+		if (playing) {
+			$('.pauseable').data('fireSlider').pause();
+		} else {
+			$('.pauseable').data('fireSlider').play();
+		}
+		playing = !playing;
 	});
 
 	$(window).resize(function () {

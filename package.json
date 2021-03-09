@@ -1,6 +1,6 @@
 {
   "name": "fireSlider",
-  "version": "v1.6.2",
+  "version": "v1.6.3",
   "description": "A responsive javascript slider and carousel plugin, with breakpoints",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "watch:js": "onchange 'build/js/**/*.js' -- npm run build:js"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.12",
+    "browser-sync": "^2.26.14",
     "browserify": "^16.2.3",
     "jquery": "^3.5.1",
     "npm-run-all": "^4.1.5",
