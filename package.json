@@ -19,7 +19,7 @@
     "watch:js": "onchange 'build/js/**/*.js' -- npm run build:js"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.14",
+    "browser-sync": "^2.27.10",
     "browserify": "^16.2.3",
     "jquery": "^3.5.1",
     "npm-run-all": "^4.1.5",
